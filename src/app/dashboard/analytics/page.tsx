@@ -13,7 +13,19 @@ import {
 
 export default function AnalyticsPage() {
 
+  const [message, setMessage] =
+    useState("");
+
+  const [aiResponse, setAiResponse] =
+    useState("");
+
   const [views, setViews] = useState(0);
+
+  const [growth, setGrowth] =
+    useState(0);
+
+  const [viralProduct, setViralProduct] =
+    useState<any>(null);
 
   const [topProducts, setTopProducts] = useState<any[]>([]);
 
@@ -43,6 +55,61 @@ export default function AnalyticsPage() {
   setViews(
     analyticsData?.length || 0
   );
+
+  // CRESCIMENTO REAL
+
+const today = new Date();
+
+const todayViews =
+  analyticsData?.filter((item) => {
+
+    const itemDate =
+      new Date(item.created_at);
+
+    return (
+      itemDate.getDate() ===
+      today.getDate()
+    );
+
+  }).length || 0;
+
+const yesterday = new Date();
+
+yesterday.setDate(
+  yesterday.getDate() - 1
+);
+
+const yesterdayViews =
+  analyticsData?.filter((item) => {
+
+    const itemDate =
+      new Date(item.created_at);
+
+    return (
+      itemDate.getDate() ===
+      yesterday.getDate()
+    );
+
+  }).length || 0;
+
+let growthPercent = 0;
+
+if (yesterdayViews > 0) {
+
+  growthPercent =
+    (
+      (
+        todayViews -
+        yesterdayViews
+      ) /
+      yesterdayViews
+    ) * 100;
+
+}
+
+setGrowth(
+  Math.round(growthPercent)
+);
 
   // AGRUPAR VIEWS POR DIA
 
@@ -171,6 +238,16 @@ const finalRanking =
 
   setViralProducts(finalRanking);
 
+  // PRODUTO VIRAL
+
+if (finalRanking.length > 0) {
+
+  setViralProduct(
+    finalRanking[0]
+  );
+
+}
+
   setTopProducts(finalRanking);
 
   console.log(ranking);
@@ -185,11 +262,34 @@ const finalRanking =
   const [chartData, setChartData] =
   useState<any[]>([]);
 
-  const aiMessage = views > 50
-  ? "🚀 Seu perfil está crescendo acima da média hoje."
-  : views > 20
-  ? "🔥 Seus produtos estão começando a ganhar tráfego."
-  : "📈 Continue divulgando seus produtos para aumentar as visualizações.";
+  let aiMessage = "";
+
+if (growth > 40) {
+
+  aiMessage =
+    "🚀 Seu tráfego cresceu muito hoje. Continue divulgando agora.";
+
+} else if (growth > 20) {
+
+  aiMessage =
+    "📈 Seu perfil está crescendo acima da média.";
+
+} else if (views > 50) {
+
+  aiMessage =
+    "🔥 Seus produtos estão recebendo bastante tráfego.";
+
+} else if (viralProduct) {
+
+  aiMessage =
+    `🔥 Produto viral do dia: ${viralProduct.title}`;
+
+} else {
+
+  aiMessage =
+    "📊 Continue divulgando seus produtos para crescer.";
+
+}
 
 const [viralProducts, setViralProducts] =
   useState<any[]>([]);
@@ -234,9 +334,6 @@ const radarData = [
   },
 
 ];
-
-const [message, setMessage] =
-  useState("");
 
 const [chatMessages, setChatMessages] =
   useState([
@@ -446,7 +543,8 @@ return (
             </div>
 
             <div className="text-green-400 font-bold">
-              +32%
+              {growth > 0 ? "+" : ""}
+              {growth}%
             </div>
 
           </div>
@@ -483,6 +581,55 @@ return (
 </div>
 
         </div>
+
+        {/* PRODUTO VIRAL */}
+        <div className="
+          bg-zinc-900
+          border
+          border-zinc-800
+          rounded-3xl
+          p-8
+          mb-10
+        ">
+
+  <div className="flex items-center justify-between">
+
+    <div>
+
+      <p className="text-green-400 font-bold">
+        🔥 PRODUTO VIRAL DO DIA
+      </p>
+
+      <h2 className="text-3xl font-black mt-3">
+
+        {viralProduct?.title ||
+          "Nenhum produto"}
+
+      </h2>
+
+      <p className="text-zinc-400 mt-2">
+        Produto com maior tráfego hoje
+      </p>
+
+    </div>
+
+    <div className="
+      bg-green-500
+      text-black
+      px-6
+      py-4
+      rounded-2xl
+      font-black
+      text-2xl
+    ">
+
+      {viralProduct?.total || 0}
+
+    </div>
+
+  </div>
+
+</div>
 
         {/* HEATMAP */}
 <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 mb-10">
@@ -688,32 +835,93 @@ return (
 
   </div>
 
-  {/* CHAT */}
-  <div className="space-y-4 max-h-[400px] overflow-y-auto mb-6">
+  <div className="mt-6 flex gap-3">
 
-    {chatMessages.map((msg, index) => (
+  <input
+    value={message}
+    onChange={(e) =>
+      setMessage(e.target.value)
+    }
+    placeholder="Pergunte para IA..."
+    className="
+      flex-1
+      bg-zinc-900
+      border
+      border-zinc-800
+      rounded-2xl
+      px-4
+      py-3
+      text-white
+      outline-none
+    "
+  />
 
-      <div
-        key={index}
-        className={`
-          p-4
-          rounded-2xl
-          max-w-[80%]
-          ${
-            msg.role === "assistant"
-              ? "bg-zinc-800"
-              : "bg-green-500 text-black ml-auto"
+  <button
+
+    onClick={async () => {
+
+      const response =
+        await fetch(
+          "/api/ai/chat",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+              message,
+            }),
           }
-        `}
-      >
+        );
 
-        {msg.text}
+      const data =
+        await response.json();
 
-      </div>
+      setAiResponse(
+        data.message
+      );
 
-    ))}
+    }}
+
+    className="
+      bg-green-500
+      hover:bg-green-400
+      text-black
+      px-6
+      rounded-2xl
+      font-bold
+    "
+  >
+
+    Enviar
+
+  </button>
+
+</div>
+
+{/* RESPOSTA IA */}
+
+{aiResponse && (
+
+  <div className="
+    mt-5
+    bg-zinc-900
+    border
+    border-green-500/30
+    rounded-3xl
+    p-5
+    text-zinc-200
+    leading-relaxed
+  ">
+
+    {aiResponse}
 
   </div>
+
+)}
 
   {/* INPUT */}
   <div className="flex gap-3">
