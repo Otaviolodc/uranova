@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import {
   LineChart,
   Line,
@@ -12,6 +13,69 @@ import {
 
 export default function AnalyticsPage() {
 
+  const [views, setViews] = useState(0);
+
+  const [topProducts, setTopProducts] = useState<any[]>([]);
+
+  async function fetchAnalytics() {
+
+    useEffect(() => {
+
+  fetchAnalytics();
+
+}, []);
+
+  const { data: userData } =
+    await supabase.auth.getUser();
+
+  const user = userData.user;
+
+  if (!user) return;
+
+  // BUSCAR ANALYTICS
+  const { data: analyticsData } =
+    await supabase
+      .from("analytics")
+      .select("*")
+      .eq("user_id", user.id);
+
+  // TOTAL DE VIEWS
+  setViews(
+    analyticsData?.length || 0
+  );
+
+  // AGRUPAR PRODUTOS
+  const grouped: any = {};
+
+  analyticsData?.forEach((item) => {
+
+    if (!grouped[item.product_id]) {
+      grouped[item.product_id] = 0;
+    }
+
+    grouped[item.product_id]++;
+
+  });
+
+  const ranking = Object.entries(grouped)
+    .map(([id, total]) => ({
+      id,
+      total,
+    }))
+    .sort((a: any, b: any) => b.total - a.total);
+
+  setTopProducts(ranking);
+
+  console.log(ranking);
+
+  useEffect(() => {
+
+  fetchAnalytics();
+
+}, []);
+
+}
+  
   const chartData = [
   { day: "Seg", clicks: 12 },
   { day: "Ter", clicks: 18 },
@@ -21,24 +85,11 @@ export default function AnalyticsPage() {
   { day: "Sáb", clicks: 41 },
   { day: "Dom", clicks: 67 },
 ];
-  const aiMessages = [
-
-  "🚀 Seus links cresceram acima da média hoje.",
-
-  "🔥 Produtos com imagem convertem até 4x mais.",
-
-  "📈 Seu horário mais forte é entre 19h e 22h.",
-
-  "🤖 Seu perfil tem potencial viral hoje.",
-
-  "💰 Links com títulos curtos performam melhor.",
-
-];
-
-  const randomMessage =
-  aiMessages[0];
-
-const totalClicks = 128;
+  const aiMessage = views > 50
+  ? "🚀 Seu perfil está crescendo acima da média hoje."
+  : views > 20
+  ? "🔥 Seus produtos estão começando a ganhar tráfego."
+  : "📈 Continue divulgando seus produtos para aumentar as visualizações.";
 
 const links = [
   1, 2, 3, 4, 5
@@ -49,7 +100,7 @@ const scoreIA =
     100,
     (
       links.length * 12 +
-      totalClicks * 2
+      views * 2
     )
   );
 
@@ -187,6 +238,44 @@ return (
 
         {/* CARDS */}
         <div className="grid grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+
+          <div className="mt-10 bg-zinc-900 p-6 rounded-3xl">
+
+  <h2 className="text-2xl font-bold mb-6">
+    🔥 Produtos em Alta
+  </h2>
+
+  <div className="space-y-4">
+
+    {topProducts.map((product: any, index) => (
+
+      <div
+        key={product.id}
+        className="flex items-center justify-between bg-black/40 border border-zinc-800 rounded-2xl p-4"
+      >
+
+        <div>
+          <p className="text-sm text-zinc-500">
+            #{index + 1}
+          </p>
+
+          <h3 className="font-bold">
+            Produto ID:
+            {product.id}
+          </h3>
+        </div>
+
+        <div className="text-green-400 font-black text-2xl">
+          {product.total}
+        </div>
+
+      </div>
+
+    ))}
+
+  </div>
+
+</div>
 
           {/* RECEITA */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
@@ -468,7 +557,7 @@ return (
     </p>
 
     <p className="text-lg">
-      {randomMessage}
+      {aiMessage}
     </p>
 
   </div>

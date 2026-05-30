@@ -33,6 +33,16 @@ export default function ProductPage() {
 
     setProduct(data);
 
+    // ANALYTICS
+    await supabase
+  .from("analytics")
+  .insert({
+    user_id: data.user_id,
+    product_id: data.id,
+    event_type: "product_view",
+    page: "product",
+  });
+
     if (data) {
 
       const { data: related } =
