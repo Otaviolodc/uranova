@@ -74,6 +74,51 @@ const formattedChart =
 
 setChartData(formattedChart);
 
+// AGRUPAR POR HORÁRIO
+
+const groupedHours: any = {};
+
+analyticsData?.forEach((item) => {
+
+  const hour =
+    new Date(item.created_at)
+      .getHours();
+
+  if (!groupedHours[hour]) {
+    groupedHours[hour] = 0;
+  }
+
+  groupedHours[hour]++;
+
+});
+
+const formattedHeatmap =
+  Object.entries(groupedHours).map(
+    ([hour, total]) => {
+
+      let level = 1;
+
+      if (Number(total) >= 20) {
+        level = 5;
+      } else if (Number(total) >= 15) {
+        level = 4;
+      } else if (Number(total) >= 10) {
+        level = 3;
+      } else if (Number(total) >= 5) {
+        level = 2;
+      }
+
+      return {
+        hour: `${hour}h`,
+        level,
+        total,
+      };
+
+    }
+  );
+
+setHeatmapData(formattedHeatmap);
+
   // AGRUPAR PRODUTOS
   const grouped: any = {};
 
@@ -158,25 +203,8 @@ const scoreIA =
     )
   );
 
-  const heatmapData = [
-
-  { hour: "08h", level: 1 },
-
-  { hour: "10h", level: 2 },
-
-  { hour: "12h", level: 3 },
-
-  { hour: "14h", level: 2 },
-
-  { hour: "16h", level: 4 },
-
-  { hour: "18h", level: 5 },
-
-  { hour: "20h", level: 4 },
-
-  { hour: "22h", level: 2 },
-
-];
+const [heatmapData, setHeatmapData] =
+  useState<any[]>([]);
 
 const radarData = [
 
