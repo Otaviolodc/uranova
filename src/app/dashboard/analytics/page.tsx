@@ -837,69 +837,6 @@ return (
 
   <div className="mt-6 flex gap-3">
 
-  <input
-    value={message}
-    onChange={(e) =>
-      setMessage(e.target.value)
-    }
-    placeholder="Pergunte para IA..."
-    className="
-      flex-1
-      bg-zinc-900
-      border
-      border-zinc-800
-      rounded-2xl
-      px-4
-      py-3
-      text-white
-      outline-none
-    "
-  />
-
-  <button
-
-    onClick={async () => {
-
-      const response =
-        await fetch(
-          "/api/ai/chat",
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify({
-              message,
-            }),
-          }
-        );
-
-      const data =
-        await response.json();
-
-      setAiResponse(
-        data.message
-      );
-
-    }}
-
-    className="
-      bg-green-500
-      hover:bg-green-400
-      text-black
-      px-6
-      rounded-2xl
-      font-bold
-    "
-  >
-
-    Enviar
-
-  </button>
-
 </div>
 
 {/* RESPOSTA IA */}
