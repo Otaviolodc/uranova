@@ -87,14 +87,46 @@ setChartData(formattedChart);
 
   });
 
-  const ranking = Object.entries(grouped)
+  const ranking =Object.entries(grouped)
     .map(([id, total]) => ({
       id,
       total,
     }))
     .sort((a: any, b: any) => b.total - a.total);
 
-  setTopProducts(ranking);
+    // PEGAR PRODUTOS REAIS
+
+const productIds =
+  ranking.map((item: any) => item.id);
+
+const { data: productsData } =
+  await supabase
+    .from("products_checkout")
+    .select("*")
+    .in("id", productIds);
+
+const finalRanking =
+  ranking.map((rank: any) => {
+
+    const product =
+      productsData?.find(
+        (p) => p.id === rank.id
+      );
+
+    return {
+      ...rank,
+      title:
+        product?.title ||
+        "Produto",
+      price:
+        product?.price || 0,
+    };
+
+  });
+
+  setViralProducts(finalRanking);
+
+  setTopProducts(finalRanking);
 
   console.log(ranking);
 
@@ -114,15 +146,14 @@ setChartData(formattedChart);
   ? "🔥 Seus produtos estão começando a ganhar tráfego."
   : "📈 Continue divulgando seus produtos para aumentar as visualizações.";
 
-const links = [
-  1, 2, 3, 4, 5
-];
+const [viralProducts, setViralProducts] =
+  useState<any[]>([]);
 
 const scoreIA =
   Math.min(
     100,
     (
-      links.length * 12 +
+      viralProducts.length * 12 +
       views * 2
     )
   );
@@ -283,13 +314,12 @@ return (
           </p>
 
           <h3 className="font-bold">
-            Produto ID:
-            {product.id}
+            {product.title}
           </h3>
         </div>
 
         <div className="text-green-400 font-black text-2xl">
-          {product.total}
+          {product.total} views
         </div>
 
       </div>
