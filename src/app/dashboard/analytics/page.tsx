@@ -31,12 +31,6 @@ export default function AnalyticsPage() {
 
   async function fetchAnalytics() {
 
-    useEffect(() => {
-
-  fetchAnalytics();
-
-}, []);
-
   const { data: userData } =
     await supabase.auth.getUser();
 
@@ -250,15 +244,16 @@ if (finalRanking.length > 0) {
 
   setTopProducts(finalRanking);
 
-  console.log(ranking);
+  console.log(ranking)
 
-  useEffect(() => {
+  }
+  
+useEffect(() => {
 
   fetchAnalytics();
 
 }, []);
 
-}
   const [chartData, setChartData] =
   useState<any[]>([]);
 
@@ -343,56 +338,45 @@ const [chatMessages, setChatMessages] =
     },
   ]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
 
   if (!message) return;
 
-  const userMessage = {
-    role: "user",
-    text: message,
-  };
+  try {
 
-  let aiResponse =
-    "🚀 Continue postando links diariamente.";
+    const response =
+      await fetch(
+        "/api/ai/chat",
+        {
+          method: "POST",
 
-  // IA SIMULADA
-  if (
-    message.toLowerCase().includes("produto")
-  ) {
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
 
-    aiResponse =
-      "🔥 Produtos fitness e tecnologia estão em alta hoje.";
+          body: JSON.stringify({
+            message,
+          }),
+        }
+      );
+
+    const data =
+      await response.json();
+
+    setAiResponse(
+      data.message
+    );
+
+  } catch (error) {
+
+    console.log(error);
+
+    setAiResponse(
+      "Erro ao responder IA"
+    );
 
   }
-
-  if (
-    message.toLowerCase().includes("titulo")
-  ) {
-
-    aiResponse =
-      "📈 Títulos curtos convertem mais. Use até 45 caracteres.";
-
-  }
-
-  if (
-    message.toLowerCase().includes("vender")
-  ) {
-
-    aiResponse =
-      "💰 Poste seus links entre 19h e 22h para maior conversão.";
-
-  }
-
-  setChatMessages((prev) => [
-    ...prev,
-    userMessage,
-    {
-      role: "assistant",
-      text: aiResponse,
-    },
-  ]);
-
-  setMessage("");
 
 };
 
@@ -834,10 +818,6 @@ return (
     </div>
 
   </div>
-
-  <div className="mt-6 flex gap-3">
-
-</div>
 
 {/* RESPOSTA IA */}
 
