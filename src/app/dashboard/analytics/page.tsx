@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Sidebar from "@/components/Sidebar";
 import {
   LineChart,
   Line,
@@ -170,9 +169,7 @@ const [chatMessages, setChatMessages] =
 return (
 
     <div className="flex bg-black text-white min-h-screen">
-
-      <Sidebar />
-
+         
       <div className="flex-1 p-8">
 
         {/* HEADER */}
