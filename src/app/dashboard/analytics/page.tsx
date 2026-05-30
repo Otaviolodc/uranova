@@ -44,6 +44,36 @@ export default function AnalyticsPage() {
     analyticsData?.length || 0
   );
 
+  // AGRUPAR VIEWS POR DIA
+
+const groupedDays: any = {};
+
+analyticsData?.forEach((item) => {
+
+  const date =
+    new Date(item.created_at)
+      .toLocaleDateString("pt-BR", {
+        weekday: "short",
+      });
+
+  if (!groupedDays[date]) {
+    groupedDays[date] = 0;
+  }
+
+  groupedDays[date]++;
+
+});
+
+const formattedChart =
+  Object.entries(groupedDays).map(
+    ([day, clicks]) => ({
+      day,
+      clicks,
+    })
+  );
+
+setChartData(formattedChart);
+
   // AGRUPAR PRODUTOS
   const grouped: any = {};
 
@@ -75,16 +105,9 @@ export default function AnalyticsPage() {
 }, []);
 
 }
-  
-  const chartData = [
-  { day: "Seg", clicks: 12 },
-  { day: "Ter", clicks: 18 },
-  { day: "Qua", clicks: 22 },
-  { day: "Qui", clicks: 35 },
-  { day: "Sex", clicks: 49 },
-  { day: "Sáb", clicks: 41 },
-  { day: "Dom", clicks: 67 },
-];
+  const [chartData, setChartData] =
+  useState<any[]>([]);
+
   const aiMessage = views > 50
   ? "🚀 Seu perfil está crescendo acima da média hoje."
   : views > 20
