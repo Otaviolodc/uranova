@@ -43,6 +43,8 @@ export default function ProductPage() {
     page: "product",
   });
 
+  console.log("Analytics salvo");
+
     if (data) {
 
       const { data: related } =

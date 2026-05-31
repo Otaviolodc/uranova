@@ -16,6 +16,12 @@ export default function Sidebar() {
   };
 
   const menu = [
+
+    {
+      name: "Financeiro",
+      href: "/dashboard/home",
+    },
+
     {
       name: "Links",
       href: "/dashboard/links",

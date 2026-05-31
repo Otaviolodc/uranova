@@ -17,7 +17,10 @@ export default function LinksPage() {
 
 // 🚀 produtos do banco
   const [clicks, setClicks] =
-  useState<any[]>([]);
+    useState<any[]>([]);
+
+  const [dailyClicks, setDailyClicks] =
+    useState<any[]>([]);
 
   const [showModal, setShowModal] =
     useState(false);
@@ -58,6 +61,18 @@ export default function LinksPage() {
       });
 
     setLinks(linksData || []);
+
+    // 📈 clicks diários
+
+const { data: dailyData } =
+  await supabase
+    .from("link_clicks_daily")
+    .select("*")
+    .order("date", {
+      ascending: true,
+    });
+
+    setDailyClicks(dailyData || []);
 
     };
 
@@ -465,6 +480,90 @@ const totalClicks = links.reduce(
     <p className="text-gray-400 text-sm mt-2">
       Valor médio por venda
     </p>
+
+  </div>
+
+</div>
+
+{/* 📈 TRÁFEGO */}
+
+<div className="
+  bg-zinc-900
+  border
+  border-zinc-800
+  rounded-3xl
+  p-6
+  mb-10
+">
+
+  <div className="
+    flex
+    items-center
+    justify-between
+    mb-6
+  ">
+
+    <div>
+
+      <h2 className="
+        text-2xl
+        font-bold
+      ">
+        📈 Tráfego
+      </h2>
+
+      <p className="text-gray-400 mt-1">
+        Analytics em tempo real
+      </p>
+
+    </div>
+
+  </div>
+
+  <div className="
+    grid
+    grid-cols-2
+    md:grid-cols-4
+    gap-4
+  ">
+
+    {dailyClicks
+      .slice(-4)
+      .map((item) => (
+
+      <div
+        key={item.id}
+        className="
+          bg-black
+          border
+          border-zinc-800
+          rounded-2xl
+          p-5
+        "
+      >
+
+        <p className="text-gray-400 text-sm">
+          {item.date}
+        </p>
+
+        <h2 className="
+          text-4xl
+          font-black
+          mt-3
+          text-green-400
+        ">
+
+          {item.clicks}
+
+        </h2>
+
+        <p className="text-gray-500 text-sm mt-2">
+          cliques
+        </p>
+
+      </div>
+
+    ))}
 
   </div>
 

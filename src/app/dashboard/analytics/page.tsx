@@ -27,6 +27,9 @@ export default function AnalyticsPage() {
   const [viralProduct, setViralProduct] =
     useState<any>(null);
 
+  const [aiInsights, setAiInsights] =
+    useState<string[]>([]);
+
   const [topProducts, setTopProducts] = useState<any[]>([]);
 
   async function fetchAnalytics() {
@@ -199,6 +202,55 @@ setHeatmapData(formattedHeatmap);
       total,
     }))
     .sort((a: any, b: any) => b.total - a.total);
+
+    // 🤖 gerar insights IA
+
+const insights = [];
+
+// crescimento
+if (growth > 20) {
+
+  insights.push(
+    `🔥 Seu tráfego cresceu ${growth}% hoje.`
+  );
+
+}
+
+// produto viral
+if (ranking[0]) {
+
+  insights.push(
+    `🚀 ${ranking[0][0]} é seu link mais acessado hoje.`
+  );
+
+}
+
+// total clicks
+if (views > 50) {
+
+  insights.push(
+    `📈 Sua página está recebendo bastante tráfego hoje.`
+  );
+
+}
+
+// horário
+if (heatmapData.length > 0) {
+
+  const bestHour =
+    heatmapData.sort(
+      (a, b) =>
+        b.total - a.total
+    )[0];
+
+  insights.push(
+    `⏰ Seu melhor horário atual é ${bestHour.hour}.`
+  );
+
+}
+
+setAiInsights(insights);
+
 
     // PEGAR PRODUTOS REAIS
 
@@ -762,32 +814,57 @@ return (
 
             <div className="space-y-4">
 
-  <div className="bg-zinc-800 rounded-2xl p-5 border border-green-500/20">
+  {aiInsights.map(
+    (insight, index) => (
 
-    <p className="text-green-400 font-semibold mb-2">
-      IA ANALISANDO PERFORMANCE
+    <div
+      key={index}
+      className="
+        bg-zinc-900
+        border
+        border-green-500/20
+        rounded-3xl
+        p-5
+      "
+    >
+
+      <p className="
+        text-lg
+        text-white
+      ">
+
+        {insight}
+
+      </p>
+
+    </div>
+
+  ))}
+
+</div>
+
+  {/* MELHOR HORÁRIO */}
+
+  <div className="
+    bg-zinc-800
+    rounded-2xl
+    p-5
+  ">
+
+    <p className="
+      text-green-400
+      font-semibold
+      mb-2
+    ">
+      ⏰ Melhor Horário
     </p>
 
     <p className="text-lg">
-      {aiMessage}
-    </p>
 
-  </div>
+      {heatmapData.length > 0
+        ? `Seu horário mais forte é ${heatmapData.sort((a, b) => b.total - a.total)[0]?.hour}.`
+        : "Ainda analisando horários."}
 
-  <div className="bg-zinc-800 rounded-2xl p-5">
-
-    <p>
-      📊 Seus links tiveram aumento
-      de 32% nas últimas 24h.
-    </p>
-
-  </div>
-
-  <div className="bg-zinc-800 rounded-2xl p-5">
-
-    <p>
-      🎯 Produtos com imagem estão
-      recebendo mais cliques.
     </p>
 
   </div>
@@ -950,8 +1027,6 @@ return (
         </div>
 
       </div>
-
-    </div>
 
   );
 

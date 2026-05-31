@@ -35,6 +35,30 @@ export async function POST(req: Request) {
 
       console.log("LIBERANDO PRO:", userId);
 
+    // =========================
+    // SALVAR VENDA
+    // =========================
+
+      await supabase
+        .from("orders")
+        .insert({
+
+          user_id: userId,
+
+          product_id: payment.description,
+
+          amount: payment.value,
+
+          customer_name: payment.customer,
+
+          customer_email: "",
+
+          status: "paid",
+
+          payment_id: payment.id,
+
+        });
+
       const { error } = await supabase
         .from("profiles")
         .update({

@@ -69,6 +69,22 @@ export async function GET(
         ]);
     }
 
+    // 🤖 analytics IA
+
+await supabase
+  .from("analytics")
+  .insert({
+
+    user_id: link.user_id,
+
+    product_id: link.id,
+
+    event_type: "link_click",
+
+    page: "go",
+
+  });
+
     // 🚀 redirecionar
     return NextResponse.redirect(link.affiliate_url);
 
