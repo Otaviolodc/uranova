@@ -8,7 +8,12 @@ export async function POST(req: Request) {
 
   try {
 
-    const body = await req.json();
+    const {
+      message,
+      views,
+      growth,
+      viralProduct,
+    } = await req.json();
 
     const completion =
       await openai.chat.completions.create({
@@ -40,7 +45,31 @@ export async function POST(req: Request) {
 
           {
             role: "user",
-            content: body.message,
+
+            content: `
+            Usuário do PromoLink.
+
+            Views totais:
+            ${views}
+
+            Crescimento:
+            ${growth}%
+
+            Produto viral:
+            ${viralProduct?.title || "Nenhum"}
+
+            Pergunta do usuário:
+            ${message}
+
+            Responda como especialista em:
+            marketing digital,
+            conversão,
+            tráfego,
+            copywriting,
+            vendas,
+            produtos virais,
+            crescimento de links.
+             `,
           },
 
         ],
