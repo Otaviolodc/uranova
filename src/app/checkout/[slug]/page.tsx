@@ -1,4 +1,5 @@
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
+import Image from "next/image";
 
 interface Props {
   params: {
@@ -10,7 +11,13 @@ export default async function CheckoutPage({
   params,
 }: Props) {
 
-  const { data: product } =
+  const supabase = await createClient();
+
+  const {
+    data: product,
+    error,
+  } =
+
     await supabase
       .from("products_checkout")
       .select("*")
@@ -18,7 +25,24 @@ export default async function CheckoutPage({
         "checkout_slug",
         params.slug
       )
-      .single();
+      .maybeSingle();
+
+  if (error) {
+
+  return (
+    <div className="
+      min-h-screen
+      bg-black
+      text-white
+      flex
+      items-center
+      justify-center
+    ">
+      Erro ao carregar produto
+    </div>
+  );
+
+}
 
   if (!product) {
 
@@ -46,8 +70,12 @@ export default async function CheckoutPage({
           {/* IMAGEM */}
           <div>
 
-            <img
-              src={product.image_url}
+            <Image
+              src={product.image_url || "/placeholder.png"}
+              alt={product.title}
+              width={800}
+              height={800}
+              unoptimized
               className="
                 w-full
                 rounded-3xl
@@ -76,10 +104,6 @@ export default async function CheckoutPage({
 
             {/* PREÇO */}
             <div className="mt-10">
-
-              <span className="text-zinc-500 line-through text-2xl">
-                R$ 197
-              </span>
 
               <div className="text-6xl font-black text-green-400 mt-2">
                 R$ {product.price}

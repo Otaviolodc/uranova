@@ -1,10 +1,12 @@
 "use client";
 
+import { supabase } from "@/lib/supabase/client";
 import { useState } from "react";
-
-import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function AuthPage() {
+
+  const router = useRouter();
 
   const [email, setEmail] =
     useState("");
@@ -22,6 +24,22 @@ export default function AuthPage() {
   const handleLogin = async () => {
 
     try {
+
+      if (!email || !password) {
+
+  alert("Preencha email e senha");
+
+  return;
+
+}
+
+if (password.length < 6) {
+
+  alert("Senha muito curta");
+
+  return;
+
+}
 
       setLoading(true);
 
@@ -43,11 +61,14 @@ export default function AuthPage() {
 
       }
 
-      window.location.href = "/dashboard";
+      router.push("/dashboard");
 
     } catch (error) {
 
-      console.log(error);
+      console.error(
+        "AUTH ERROR:",
+        error
+      );
 
       alert("Erro ao fazer login");
 
@@ -61,6 +82,22 @@ export default function AuthPage() {
   const handleSignup = async () => {
 
     try {
+
+      if (!email || !password) {
+
+  alert("Preencha email e senha");
+
+  return;
+
+}
+
+if (password.length < 6) {
+
+  alert("Senha muito curta");
+
+  return;
+
+}
 
       setLoading(true);
 
@@ -84,11 +121,14 @@ export default function AuthPage() {
 
       alert("Conta criada com sucesso!");
 
-      window.location.href = "/dashboard";
+      router.push("/dashboard");
 
     } catch (error) {
 
-      console.log(error);
+      console.error(
+        "AUTH ERROR:",
+        error
+      );
 
       alert("Erro ao criar conta");
 
@@ -173,6 +213,7 @@ export default function AuthPage() {
           </button>
 
         </div>
+
 
         {/* TOGGLE LOGIN/SIGNUP */}
         <div className="text-center mt-8">

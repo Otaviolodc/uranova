@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 
 export default function PixCheckout() {
 
@@ -32,9 +33,17 @@ export default function PixCheckout() {
         }),
       })
 
+      if (!response.ok) {
+
+        alert("Erro ao gerar pagamento")
+
+        return
+
+      }
+
       const data = await response.json()
 
-      console.log(data)
+
 
       if (data.encodedImage) {
 
@@ -52,7 +61,12 @@ export default function PixCheckout() {
 
     } catch (error) {
 
-      console.log(error)
+      console.error(
+        "PIX CHECKOUT ERROR:",
+         error
+      )
+
+      alert("Erro ao gerar PIX")
 
     } finally {
 
@@ -63,6 +77,8 @@ export default function PixCheckout() {
   }
 
   async function copyPix() {
+
+    if (!pixCode) return
 
     await navigator.clipboard.writeText(pixCode)
 
@@ -85,16 +101,26 @@ export default function PixCheckout() {
       {qrCode && (
 
         <>
-          <img
+          <Image
             src={qrCode}
             alt="QR Code PIX"
+            width={256}
+            height={256}
+            unoptimized
             className="w-64 h-64 bg-white p-2 rounded"
           />
 
           <textarea
             value={pixCode}
             readOnly
-            className="w-64 h-20 text-black p-2"
+            className="
+              w-64
+              h-24
+              text-black
+              p-2
+              rounded
+              resize-none
+            "
           />
 
           <button

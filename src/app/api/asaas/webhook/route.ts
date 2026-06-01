@@ -1,26 +1,56 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
+export async function POST(req: Request) {
+  try {
+
+    const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export async function POST(req: Request) {
-  try {
+
     const body = await req.json();
 
-    console.log(
-      "WEBHOOK RECEBIDO:",
-      JSON.stringify(body, null, 2)
-    );
+    
 
     const payment = body.payment;
 
+    if (!body.event) {
+
+  return NextResponse.json(
+    {
+      error: "Evento inválido",
+    },
+    {
+      status: 400,
+    }
+  );
+
+}
+
+  if (!payment?.id) {
+
+  return NextResponse.json(
+    {
+      error: "Pagamento inválido",
+    },
+    {
+      status: 400,
+    }
+  );
+
+}
+
     if (!payment?.externalReference) {
-      return NextResponse.json({
-        error: "Sem externalReference",
-      });
+      return NextResponse.json(
+        {
+          error: "Sem externalReference",
+        },
+        {
+          status: 400,
+        }
+      );
     }
 
     const userId = payment.externalReference;
@@ -33,31 +63,43 @@ export async function POST(req: Request) {
       body.event === "PAYMENT_CONFIRMED"
     ) {
 
-      console.log("LIBERANDO PRO:", userId);
+
 
     // =========================
     // SALVAR VENDA
     // =========================
 
-      await supabase
-        .from("orders")
-        .insert({
+      
+      const { data: existingOrder } =
+  await supabase
+    .from("orders")
+    .select("id")
+    .eq("payment_id", payment.id)
+    .maybeSingle();
 
-          user_id: userId,
+if (!existingOrder) {
 
-          product_id: payment.description,
+  await supabase
+    .from("orders")
+    .insert({
 
-          amount: payment.value,
+      user_id: userId,
 
-          customer_name: payment.customer,
+      product_id: payment.description,
 
-          customer_email: "",
+      amount: payment.value,
 
-          status: "paid",
+      customer_name: payment.customer,
 
-          payment_id: payment.id,
+      customer_email: "",
 
-        });
+      status: "paid",
+
+      payment_id: payment.id,
+
+    });
+
+}
 
       const { error } = await supabase
         .from("profiles")
@@ -70,14 +112,22 @@ export async function POST(req: Request) {
         .eq("id", userId);
 
       if (error) {
-        console.log(error);
+        console.error(
+          "ASAAS WEBHOOK ERROR:",
+          error
+      );
 
-        return NextResponse.json({
-          error: error.message,
-        });
+        return NextResponse.json(
+          {
+            error: "Webhook error",
+          },
+          {
+            status: 500,
+          }
+        );
       }
 
-      console.log("USUÁRIO LIBERADO");
+      
     }
 
     // =========================
@@ -88,7 +138,7 @@ export async function POST(req: Request) {
       body.event === "PAYMENT_OVERDUE"
     ) {
 
-      console.log("REMOVENDO PRO:", userId);
+      
 
       const { error } = await supabase
         .from("profiles")
@@ -100,14 +150,22 @@ export async function POST(req: Request) {
         .eq("id", userId);
 
       if (error) {
-        console.log(error);
+        console.error(
+          "ASAAS WEBHOOK ERROR:",
+          error
+      );
 
-        return NextResponse.json({
-          error: error.message,
-        });
+        return NextResponse.json(
+          {
+            error: error.message,
+          },
+          {
+            status: 500,
+          }
+        );
       }
 
-      console.log("PRO REMOVIDO");
+      
     }
 
     return NextResponse.json({
@@ -115,10 +173,18 @@ export async function POST(req: Request) {
     });
 
   } catch (error) {
-    console.log(error);
+    console.error(
+      "ASAAS WEBHOOK ERROR:",
+      error
+    );
 
-    return NextResponse.json({
-      error: "Webhook error",
-    });
+    return NextResponse.json(
+      {
+        error: "Webhook error",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }
