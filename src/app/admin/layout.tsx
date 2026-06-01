@@ -162,6 +162,30 @@ export default async function AdminLayout({
 
         </nav>
 
+<form action="/auth/logout" method="post">
+
+  <button
+    className="
+      w-full
+      mt-6
+      bg-red-500
+      hover:bg-red-400
+      transition-all
+      duration-200
+      px-4
+      py-3
+      rounded-xl
+      font-medium
+      text-white
+    "
+  >
+
+    Sair da Conta
+
+  </button>
+
+</form>
+
       </aside>
 
       {/* MAIN */}
