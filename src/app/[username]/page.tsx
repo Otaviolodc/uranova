@@ -1,22 +1,43 @@
-import { supabase } from "@/lib/supabase";
+import Image from "next/image";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function PublicPage({
   params,
 }: {
-  params: Promise<{ username: string }>;
+  params: { username: string };
 }) {
 
-  const { username } = await params;
+  const supabase = await createClient();
+
+  const { username } = params;
 
   // PROFILE
-  const { data: profile } =
-    await supabase
+  const {
+    data: profile,
+    error: profileError
+  } = await supabase
       .from("profiles")
-      .select("*")
+      .select(`
+        id,
+        username,
+        bio,
+        avatar_url,
+        theme_color,
+        background_style,
+        card_style,
+        button_style,
+        featured_url,
+        featured_text,
+        instagram,
+        telegram,
+        whatsapp,
+        subscription_status,
+        product_text_color
+      `)
       .eq("username", username)
-      .single();
+      .maybeSingle();
 
-  if (!profile) {
+  if (profileError || !profile) {
 
     return (
 
@@ -34,7 +55,13 @@ export default async function PublicPage({
   const { data } =
     await supabase
       .from("links")
-      .select("*")
+      .select(`
+        id,
+        title,
+        slug,
+        image_url,
+        clicks
+     `)
       .eq("user_id", profile.id)
       .order("created_at", {
         ascending: true,
@@ -116,8 +143,12 @@ export default async function PublicPage({
           {/* AVATAR */}
           {profile.avatar_url ? (
 
-            <img
+            <Image
               src={profile.avatar_url}
+              alt={profile.username}
+              width={128}
+              height={128}
+              unoptimized
               className="
                 w-32
                 h-32
@@ -213,6 +244,7 @@ export default async function PublicPage({
         <a
           href={profile.featured_url}
           target="_blank"
+          rel="noopener noreferrer"
           className={`
             mb-8
             px-8
@@ -226,7 +258,7 @@ export default async function PublicPage({
             ${buttonRadius}
           `}
         >
-
+            
           {profile.featured_text ||
             "🔥 Oferta Especial"}
 
@@ -242,6 +274,7 @@ export default async function PublicPage({
           <a
             href={profile.instagram}
             target="_blank"
+            rel="noopener noreferrer"
             className={`
               px-4
               py-2
@@ -251,7 +284,7 @@ export default async function PublicPage({
               ${buttonRadius}
             `}
           >
-
+            
             Instagram
 
           </a>
@@ -263,6 +296,7 @@ export default async function PublicPage({
           <a
             href={profile.telegram}
             target="_blank"
+            rel="noopener noreferrer"
             className={`
               px-4
               py-2
@@ -284,6 +318,7 @@ export default async function PublicPage({
           <a
             href={profile.whatsapp}
             target="_blank"
+            rel="noopener noreferrer"
             className={`
               px-4
               py-2
@@ -363,8 +398,12 @@ export default async function PublicPage({
 
                   <div className="relative">
 
-                    <img
+                    <Image
                       src={link.image_url}
+                      alt={link.title}
+                      width={800}
+                      height={500}
+                      unoptimized
                       className="
                         w-full
                         h-64
@@ -373,7 +412,7 @@ export default async function PublicPage({
                         duration-500
                         group-hover:scale-105
                       "
-                    />
+                  />
 
                     {/* OVERLAY */}
                     <div className="

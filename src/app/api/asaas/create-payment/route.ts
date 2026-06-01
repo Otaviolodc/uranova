@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { ASAAS_URL } from "@/lib/asaas";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 export async function POST(req: Request) {
 
   try {
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 
     const body = await req.json();
 
@@ -27,16 +27,62 @@ export async function POST(req: Request) {
 
     if (!userId) {
 
-      return NextResponse.json(
-        {
-          error: "userId obrigatório",
-        },
-        {
-          status: 400,
-        }
-      );
-
+  return NextResponse.json(
+    {
+      error: "userId obrigatório",
+    },
+    {
+      status: 400,
     }
+  );
+
+}
+
+if (!name || !email || !cpfCnpj || !value) {
+
+  return NextResponse.json(
+    {
+      error: "Dados obrigatórios ausentes",
+    },
+    {
+      status: 400,
+    }
+  );
+
+}
+
+if (
+  typeof name !== "string" ||
+  typeof email !== "string" ||
+  typeof cpfCnpj !== "string"
+) {
+
+  return NextResponse.json(
+    {
+      error: "Dados inválidos",
+    },
+    {
+      status: 400,
+    }
+  );
+
+}
+
+if (
+  typeof value !== "number" ||
+  value <= 0
+) {
+
+  return NextResponse.json(
+    {
+      error: "Valor inválido",
+    },
+    {
+      status: 400,
+    }
+  );
+
+}
 
     const headers = {
       accept: "application/json",
@@ -72,11 +118,18 @@ export async function POST(req: Request) {
     const customerData =
       await customerResponse.json();
 
-    console.log(
-      "CUSTOMER:"
-    );
+    if (!customerResponse.ok) {
 
-    console.log(customerData);
+  return NextResponse.json(
+    {
+      error: "Erro ao criar customer",
+    },
+    {
+      status: customerResponse.status,
+    }
+  );
+
+}
 
     // =========================
     // CRIAR ASSINATURA
@@ -116,16 +169,22 @@ export async function POST(req: Request) {
         }
       );
 
+      if (!subscriptionResponse.ok) {
+
+  return NextResponse.json(
+    {
+      error: "Erro ao criar assinatura",
+    },
+    {
+      status: subscriptionResponse.status,
+    }
+  );
+
+}
+
     const subscriptionData =
       await subscriptionResponse.json();
 
-    console.log(
-      "SUBSCRIPTION:"
-    );
-
-    console.log(
-      subscriptionData
-    );
 
     // =========================
     // SALVAR ASSINATURA
@@ -157,20 +216,37 @@ export async function POST(req: Request) {
         }
       );
 
-    const qrData =
-      await qrResponse.json();
+    if (!qrResponse.ok) {
 
-    const firstPayment =
-      qrData.data?.[0];
-
-    if (!firstPayment) {
-
-      return NextResponse.json({
-        error:
-          "Pagamento não encontrado",
-      });
-
+  return NextResponse.json(
+    {
+      error: "Erro ao buscar pagamentos",
+    },
+    {
+      status: qrResponse.status,
     }
+  );
+
+}
+
+const qrData =
+  await qrResponse.json();
+
+const firstPayment =
+  qrData.data?.[0];
+
+if (!firstPayment) {
+
+  return NextResponse.json(
+    {
+      error: "Pagamento não encontrado",
+    },
+    {
+      status: 404,
+    }
+  );
+
+}
 
     // =========================
     // PEGAR QR CODE DO PIX
@@ -185,6 +261,19 @@ export async function POST(req: Request) {
           headers,
         }
       );
+
+      if (!pixResponse.ok) {
+
+  return NextResponse.json(
+    {
+      error: "Erro ao gerar PIX",
+    },
+    {
+      status: pixResponse.status,
+    }
+  );
+
+}
 
     const pixData =
       await pixResponse.json();
@@ -210,7 +299,10 @@ export async function POST(req: Request) {
 
   } catch (error) {
 
-    console.log(error);
+    console.error(
+      "ASAAS CREATE PAYMENT ERROR:",
+      error
+    );
 
     return NextResponse.json(
       {

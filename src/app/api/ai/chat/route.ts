@@ -15,10 +15,55 @@ export async function POST(req: Request) {
       viralProduct,
     } = await req.json();
 
+    if (!message) {
+
+  return Response.json(
+    {
+      message: "Mensagem obrigatória",
+    },
+    {
+      status: 400,
+    }
+  );
+
+}
+
+if (typeof message !== "string") {
+
+  return Response.json(
+    {
+      message: "Mensagem inválida",
+    },
+    {
+      status: 400,
+    }
+  );
+
+}
+
+   if (message.length > 1000) {
+
+  return Response.json(
+    {
+      message: "Mensagem muito longa",
+    },
+    {
+      status: 400,
+    }
+  );
+
+}
+
+    const cleanMessage = message.trim();
+
     const completion =
       await openai.chat.completions.create({
 
         model: "gpt-4o-mini",
+
+        max_tokens: 300,
+
+        temperature: 0.7,
 
         messages: [
 
@@ -59,7 +104,7 @@ export async function POST(req: Request) {
             ${viralProduct?.title || "Nenhum"}
 
             Pergunta do usuário:
-            ${message}
+            ${cleanMessage}
 
             Responda como especialista em:
             marketing digital,
@@ -84,12 +129,16 @@ export async function POST(req: Request) {
 
   } catch (error) {
 
-    console.log(error);
+    console.error("OPENAI ERROR:", error);
 
-    return Response.json({
-      message:
-        "Erro ao conectar IA",
-    });
+    return Response.json(
+      {
+        message: "Erro ao conectar IA",
+      },
+      {
+        status: 500,
+      }
+    );
 
   }
 

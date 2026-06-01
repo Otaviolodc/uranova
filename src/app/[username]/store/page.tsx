@@ -1,76 +1,63 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import Image from "next/image";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function StorePage({
   params,
 }: {
-  params: Promise<{ username: string }>;
+  params: { username: string };
 }) {
 
-  const resolvedParams = await params;
-  const [profile, setProfile] = useState<any>(null);
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { username } = params;
 
-  useEffect(() => {
+  const supabase = await createClient();
 
-  if (resolvedParams?.username) {
-    loadStore();
-  }
+  // PROFILE
+const {
+  data: profile,
+  error: profileError,
+} = await supabase
+  .from("profiles")
+  .select(`
+    id,
+    username,
+    bio,
+    avatar_url
+  `)
+  .eq("username", username)
+  .maybeSingle();
 
-}, [resolvedParams?.username]);
+  if (profileError || !profile) {
 
-  async function loadStore() {
-
-  try {
-
-    console.log("USERNAME:", resolvedParams.username);
-
-    // PROFILE
-    const { data: profileData, error: profileError } =
-      await supabase
-        .from("profiles")
-        .select("*")
-        .eq("username", resolvedParams.username)
-        .single();
-
-    console.log(profileData);
-    console.log(profileError);
-
-    if (profileError || !profileData) {
-      setLoading(false);
-      return;
-    }
-
-    setProfile(profileData);
-
-    // PRODUCTS
-    const {
-      data: productsData,
-      error: productsError,
-    } = await supabase
-      .from("products")
-      .select("*")
-      .eq("user_id", profileData.id);
-
-    console.log(productsData);
-    console.log(productsError);
-
-    setProducts(productsData || []);
-
-  } catch (err) {
-
-    console.log(err);
-
-  } finally {
-
-    setLoading(false);
-
-  }
+  return (
+    <div className="
+      min-h-screen
+      bg-black
+      text-white
+      flex
+      items-center
+      justify-center
+    ">
+      Loja não encontrada
+    </div>
+  );
 
 }
+  
+  // PRODUCTS
+const {
+  data: products,
+} = await supabase
+  .from("products")
+  .select(`
+    id,
+    title,
+    price,
+    image_url,
+    affiliate_url
+  `)
+  .eq("user_id", profile.id);
+
+  const safeProducts = products || [];
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -84,11 +71,15 @@ export default async function StorePage({
 
           <div className="flex flex-col md:flex-row items-center gap-8">
 
-            <img
+            <Image
               src={
-                profile?.avatar_url ||
+                profile.avatar_url ||
                 "/avatar.png"
               }
+              alt={profile.username}
+              width={128}
+              height={128}
+              unoptimized
               className="
                 w-32
                 h-32
@@ -201,87 +192,107 @@ export default async function StorePage({
         "
       >
 
-        {products.map((product) => (
+        {safeProducts.length === 0 ? (
 
-          <div
-            key={product.id}
-            className="
-              bg-zinc-900
-              border
-              border-zinc-800
-              rounded-3xl
-              overflow-hidden
-              hover:border-green-500
-              hover:-translate-y-2
-              transition-all
-              duration-300
-            "
-          >
+  <div className="
+    col-span-full
+    text-center
+    text-zinc-400
+    py-20
+  ">
+    Nenhum produto encontrado
+  </div>
 
-            {/* IMAGE */}
-            <div className="relative">
+) : (
 
-              <img
-                src={
-                  product.image_url ||
-                  "/placeholder.png"
-                }
-                className="
-                  w-full
-                  h-72
-                  object-cover
-                "
-              />
+  safeProducts.map((product) => (
 
-              <div className="absolute top-4 left-4 bg-green-500 text-black text-xs font-black px-3 py-1 rounded-full">
-                PROMO
-              </div>
+    <div
+      key={product.id}
+      className="
+        bg-zinc-900
+        border
+        border-zinc-800
+        rounded-3xl
+        overflow-hidden
+        hover:border-green-500
+        hover:-translate-y-2
+        transition-all
+        duration-300
+      "
+    >
 
-            </div>
+      {/* IMAGE */}
+      <div className="relative">
 
-            {/* CONTENT */}
-            <div className="p-5">
+        <Image
+          src={
+            product.image_url ||
+            "/placeholder.png"
+          }
+          alt={product.title}
+          width={500}
+          height={500}
+          unoptimized
+          className="
+            w-full
+            h-72
+            object-cover
+          "
+        />
 
-              <h3 className="font-bold text-xl line-clamp-2 min-h-[60px]">
-                {product.title}
-              </h3>
+        <div className="absolute top-4 left-4 bg-green-500 text-black text-xs font-black px-3 py-1 rounded-full">
+          PROMO
+        </div>
 
-              <div className="mt-4">
+      </div>
 
-                <span className="text-4xl font-black text-green-400">
-                  R$ {product.price}
-                </span>
+      {/* CONTENT */}
+      <div className="p-5">
 
-              </div>
+        <h3 className="font-bold text-xl line-clamp-2 min-h-[60px]">
+          {product.title}
+        </h3>
 
-              <button
-                onClick={() =>
-                  window.open(
-                    product.affiliate_url,
-                    "_blank"
-                  )
-                }
-                className="
-                  w-full
-                  mt-5
-                  bg-green-500
-                  hover:bg-green-400
-                  transition
-                  text-black
-                  py-4
-                  rounded-2xl
-                  font-black
-                  text-lg
-                "
-              >
-                Comprar Agora
-              </button>
+        <div className="mt-4">
 
-            </div>
+          <span className="text-4xl font-black text-green-400">
+            R$ {product.price}
+          </span>
 
-          </div>
+        </div>
 
-        ))}
+        <a
+          href={product.affiliate_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="
+            block
+            w-full
+            mt-5
+            bg-green-500
+            hover:bg-green-400
+            transition
+            text-black
+            py-4
+            rounded-2xl
+            font-black
+            text-lg
+            text-center
+          "
+        >
+
+          Comprar Agora
+
+        </a>
+
+      </div>
+
+    </div>
+
+  ))
+
+)}
 
       </div>
 

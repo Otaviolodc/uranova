@@ -9,6 +9,32 @@ export async function POST(req: Request) {
 
     const { subscriptionId } = body
 
+    if (!subscriptionId) {
+
+  return NextResponse.json(
+    {
+      error: "Subscription ID obrigatório",
+    },
+    {
+      status: 400,
+    }
+  )
+
+}
+
+  if (typeof subscriptionId !== "string") {
+
+  return NextResponse.json(
+    {
+      error: "Subscription ID inválido",
+    },
+    {
+      status: 400,
+    }
+  )
+
+}
+
     const response = await fetch(
       `${ASAAS_URL}/subscriptions/${subscriptionId}`,
       {
@@ -17,11 +43,29 @@ export async function POST(req: Request) {
       }
     )
 
+    if (!response.ok) {
+
+  return NextResponse.json(
+    {
+      error: "Erro ao cancelar assinatura",
+    },
+    {
+      status: response.status,
+    }
+  )
+
+}
+
     const data = await response.json()
 
     return NextResponse.json(data)
 
-  } catch (error) {
+      } catch (error) {
+
+    console.error(
+      "ASAAS CANCEL ERROR:",
+      error
+    )
 
     return NextResponse.json(
       {
