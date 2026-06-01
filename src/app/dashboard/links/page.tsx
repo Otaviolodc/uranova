@@ -16,9 +16,6 @@ export default function LinksPage() {
   const [profile, setProfile] = useState<any>(null);
 
 // 🚀 produtos do banco
-  const [clicks, setClicks] =
-    useState<any[]>([]);
-
   const [dailyClicks, setDailyClicks] =
     useState<any[]>([]);
 
@@ -30,6 +27,18 @@ export default function LinksPage() {
 
   // FORM
   const [title, setTitle] = useState("");
+  const [loadingAI, setLoadingAI] =
+    useState(false);
+
+  const [description, setDescription] =
+    useState("");
+
+  const [hashtags, setHashtags] =
+    useState("");
+
+  const [cta, setCta] =
+    useState("");
+
   const [url, setUrl] = useState("");
   const [imageUrl, setImageUrl] =
     useState("");
@@ -121,6 +130,238 @@ const handleImageUpload = async (
   setImageUrl(data.publicUrl);
 };
 
+// 🤖 gerar título IA
+
+const handleGenerateTitle =
+  async () => {
+
+    if (!title) {
+
+      alert(
+        "Digite um nome base"
+      );
+
+      return;
+
+    }
+
+    try {
+
+      setLoadingAI(true);
+
+      const response =
+        await fetch(
+          "/api/ai/chat",
+          {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+
+              message: `
+              Crie um título altamente persuasivo e curto para:
+
+              ${title}
+
+              focado em:
+              vendas,
+              cliques,
+              conversão,
+              marketing digital.
+              `,
+
+            }),
+
+          }
+        );
+
+      const data =
+        await response.json();
+
+      setTitle(data.message);
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Erro IA");
+
+    } finally {
+
+      setLoadingAI(false);
+
+    }
+
+};
+
+const handleGenerateDescription =
+  async () => {
+
+    if (!title) {
+
+      alert(
+        "Digite um título"
+      );
+
+      return;
+
+    }
+
+    try {
+
+      setLoadingAI(true);
+
+      const response =
+        await fetch(
+          "/api/ai/chat",
+          {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+
+              message: `
+              Crie uma descrição altamente persuasiva para:
+
+              ${title}
+
+              focada em:
+              conversão,
+              vendas,
+              marketing digital,
+              tráfego,
+              gatilhos mentais.
+
+              Máximo 2 frases.
+              `,
+
+            }),
+
+          }
+        );
+
+      const data =
+        await response.json();
+
+      setDescription(
+        data.message
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Erro IA");
+
+    } finally {
+
+      setLoadingAI(false);
+
+    }
+
+};
+
+// 🤖 gerar CTA + hashtags
+
+const handleGenerateMarketing =
+  async () => {
+
+    if (!title) {
+
+      alert(
+        "Digite um título"
+      );
+
+      return;
+
+    }
+
+    try {
+
+      setLoadingAI(true);
+
+      const response =
+        await fetch(
+          "/api/ai/chat",
+          {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+
+              message: `
+              Produto:
+
+              ${title}
+
+              Crie:
+
+              1 CTA altamente persuasivo
+
+              +
+              
+              5 hashtags virais
+
+              focado em:
+              vendas,
+              conversão,
+              Instagram,
+              TikTok,
+              marketing digital.
+              `,
+
+            }),
+
+          }
+        );
+
+      const data =
+        await response.json();
+
+      const text =
+        data.message;
+
+      const parts =
+        text.split("#");
+
+      setCta(parts[0]);
+
+      setHashtags(
+        "#" +
+        parts
+          .slice(1)
+          .join("#")
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Erro IA");
+
+    } finally {
+
+      setLoadingAI(false);
+
+    }
+
+};
+
   // 🚀 criar link
   const handleCreate = async () => {
     const {
@@ -160,6 +401,7 @@ const handleImageUpload = async (
       .insert([
         {
           title,
+          description,
           affiliate_url: url,
           image_url: imageUrl,
           slug,
@@ -190,6 +432,7 @@ const handleImageUpload = async (
     setTitle(link.title);
     setUrl(link.affiliate_url);
     setImageUrl(link.image_url || "");
+    setDescription(link.description || "");
 
     setShowModal(true);
   };
@@ -202,6 +445,7 @@ const handleImageUpload = async (
       .from("links")
       .update({
         title,
+        description,
         affiliate_url: url,
         image_url: imageUrl,
       })
@@ -220,6 +464,7 @@ const handleImageUpload = async (
     setTitle("");
     setUrl("");
     setImageUrl("");
+    setDescription("");
 
     fetchData();
   };
@@ -875,6 +1120,131 @@ const totalClicks = links.reduce(
                 }
                 className="w-full bg-zinc-800 p-4 rounded-2xl mb-4"
               />
+
+              <button
+                onClick={handleGenerateTitle}
+                className="
+                  mb-4
+                  bg-green-500
+                  hover:bg-green-400
+                  transition
+                  text-black
+                  px-4
+                  py-2
+                  rounded-2xl
+                  font-semibold
+                "
+              >
+
+                {loadingAI
+                  ? "Gerando..."
+                  : "🤖 Gerar título IA"}
+
+              </button>
+
+              {/* DESCRIÇÃO */}
+
+              <textarea
+                placeholder="Descrição"
+                value={description}
+                onChange={(e) =>
+                  setDescription(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
+                  bg-zinc-800
+                  p-4
+                  rounded-2xl
+                  mb-4
+                  h-32
+                "
+              />
+
+              <button
+                onClick={
+                  handleGenerateDescription
+                }
+                className="
+                  mb-4
+                  bg-purple-500
+                  hover:bg-purple-400
+                  transition
+                  text-white
+                  px-4
+                  py-2
+                  rounded-2xl
+                  font-semibold
+                "
+              >
+
+                {loadingAI
+                  ? "Gerando..."
+                  : "🤖 Gerar descrição IA"}
+
+              </button>
+
+              {/* CTA */}
+
+<textarea
+  placeholder="CTA"
+  value={cta}
+  onChange={(e) =>
+    setCta(e.target.value)
+  }
+  className="
+    w-full
+    bg-zinc-800
+    p-4
+    rounded-2xl
+    mb-4
+    h-24
+  "
+/>
+
+{/* HASHTAGS */}
+
+<textarea
+  placeholder="Hashtags"
+  value={hashtags}
+  onChange={(e) =>
+    setHashtags(
+      e.target.value
+    )
+  }
+  className="
+    w-full
+    bg-zinc-800
+    p-4
+    rounded-2xl
+    mb-4
+    h-24
+  "
+/>
+
+<button
+  onClick={
+    handleGenerateMarketing
+  }
+  className="
+    mb-4
+    bg-pink-500
+    hover:bg-pink-400
+    transition
+    text-white
+    px-4
+    py-2
+    rounded-2xl
+    font-semibold
+  "
+>
+
+  {loadingAI
+    ? "Gerando..."
+    : "🤖 Gerar CTA + Hashtags"}
+
+</button>
 
               {/* URL */}
               <input
