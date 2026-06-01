@@ -4,12 +4,14 @@ import { createClient } from "@/lib/supabase/server";
 export default async function PublicPage({
   params,
 }: {
-  params: { username: string };
+  params: Promise<{
+    username: string;
+  }>;
 }) {
 
   const supabase = await createClient();
 
-  const { username } = params;
+  const { username } = await params;
 
   // PROFILE
   const {

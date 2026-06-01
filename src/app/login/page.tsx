@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
+
+  const supabase = createClient();
 
   const [isLogin, setIsLogin] = useState(true);
 
@@ -18,22 +20,47 @@ export default function LoginPage() {
 
   // 🚀 LOGIN
   const handleLogin = async () => {
-    setLoading(true);
 
-    const { error } =
-      await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+  setLoading(true);
 
-    if (error) {
-      alert(error.message);
-      setLoading(false);
-      return;
-    }
+  const { error } =
+    await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+  if (error) {
+    alert(error.message);
+    setLoading(false);
+    return;
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    setLoading(false);
+    return;
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role === "admin") {
+
+    router.push("/admin");
+
+  } else {
 
     router.push("/dashboard/links");
-  };
+
+  }
+
+};
 
   // 🚀 CADASTRO
   const handleSignup = async () => {
