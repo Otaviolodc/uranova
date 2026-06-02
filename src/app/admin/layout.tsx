@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient }
+from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export default async function AdminLayout({
@@ -7,7 +8,8 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
 
-  const supabase = await createClient();
+  const supabase =
+    await createClient();
 
   // SESSION
   const {

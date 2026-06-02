@@ -1,8 +1,9 @@
 "use client";
 
+import { supabase }
+from "@/lib/supabase/client";
 import Sidebar from "@/components/Sidebar";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
 
 export default function MarketplacePage() {
 

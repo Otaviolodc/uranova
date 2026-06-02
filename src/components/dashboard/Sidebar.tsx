@@ -1,8 +1,9 @@
 "use client";
 
+import { supabase }
+from "@/lib/supabase/client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 
 export default function Sidebar() {
   const pathname = usePathname();

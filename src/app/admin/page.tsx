@@ -1,8 +1,10 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient }
+from "@/lib/supabase/server";
 
 export default async function AdminPage() {
 
-  const supabase = await createClient();
+  const supabase =
+    await createClient();
 
   // USERS
   const { count: users } = await supabase

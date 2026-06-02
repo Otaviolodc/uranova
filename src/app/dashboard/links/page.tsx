@@ -6,8 +6,9 @@ import {
   Draggable,
 } from "@hello-pangea/dnd";
 
+import { supabase }
+from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
 import MobilePreview from "@/components/dashboard/MobilePreview";
 import { isProUser } from "@/lib/isPro";
 

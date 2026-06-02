@@ -1,8 +1,10 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient }
+from "@/lib/supabase/server";
 
 export default async function ProductsPage() {
 
-  const supabase = await createClient();
+  const supabase =
+    await createClient();
 
   const { data: links } = await supabase
     .from("links")

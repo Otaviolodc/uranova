@@ -1,5 +1,6 @@
+import { createClient }
+from "@/lib/supabase/server";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/server";
 
 export default async function PublicPage({
   params,
@@ -9,7 +10,8 @@ export default async function PublicPage({
   }>;
 }) {
 
-  const supabase = await createClient();
+  const supabase =
+    await createClient();
 
   const { username } = await params;
 
@@ -150,6 +152,7 @@ export default async function PublicPage({
               alt={profile.username}
               width={128}
               height={128}
+              loading="eager"
               unoptimized
               className="
                 w-32

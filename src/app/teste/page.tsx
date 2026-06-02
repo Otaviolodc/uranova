@@ -1,5 +1,8 @@
 "use client";
 
+import { supabase }
+from "@/lib/supabase/client";
+
 export default function TestePage() {
   async function createProduct() {
     try {

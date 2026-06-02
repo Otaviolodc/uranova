@@ -1,5 +1,7 @@
 "use client"
 
+import { supabase }
+from "@/lib/supabase/client";
 import { useState } from "react"
 import Image from "next/image"
 

@@ -1,17 +1,29 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import { ASAAS_URL } from "@/lib/asaas";
 
-export async function POST(req: Request) {
+import { createClient }
+from "@supabase/supabase-js";
+
+import { ASAAS_URL }
+from "@/lib/asaas";
+
+const supabase = createClient(
+
+  process.env
+    .NEXT_PUBLIC_SUPABASE_URL!,
+
+  process.env
+    .SUPABASE_SERVICE_ROLE_KEY!
+
+);
+
+export async function POST(
+  req: Request
+) {
 
   try {
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-
-    const body = await req.json();
+    const body =
+      await req.json();
 
     const {
       name,

@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient }
+from "@/lib/supabase/server";
 import Image from "next/image";
 
 interface Props {
@@ -11,7 +12,8 @@ export default async function CheckoutPage({
   params,
 }: Props) {
 
-  const supabase = await createClient();
+  const supabase =
+    await createClient();
 
   const {
     data: product,
