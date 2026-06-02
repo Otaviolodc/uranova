@@ -22,45 +22,6 @@ export default function ProfilePage() {
   const [profile, setProfile] =
     useState<any>(null);
 
-  // USE EFFECT
-    useEffect(() => {
-
-  async function loadData() {
-
-    await Promise.all([
-      loadProfile(),
-    ]);
-
-  }
-
-  loadData();
-
-}, []);
-
-  // FUNÇÃO LOAD PROFILE
-async function loadProfile() {
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return;
-
-  const { data } =
-    await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single();
-
-  setProfile(data);
-
-  setTemplate(
-  data?.template || "default"
-);
-
-}
-
   // PERFIL
   const [username, setUsername] =
     useState("");
@@ -109,9 +70,11 @@ async function loadProfile() {
       .single();
 
     if (data) {
+
+      setProfile(data);
       
       setTemplate(
-  data.template || "dark"
+  data.template || "default"
 );
       setUsername(data.username || "");
 
@@ -200,42 +163,75 @@ setAvatarUrl(data.publicUrl);
 
   // 💾 salvar
   const handleSave = async () => {
+
+  try {
+
     setLoading(true);
 
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) return;
-
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        username,
-        bio,
-        template,
-        avatar_url: avatarUrl,
-        instagram,
-        telegram,
-        whatsapp,
-        featured_text: featuredText,
-        featured_url: featuredUrl,
-        theme_color: themeColor,
-        product_text_color:
-          productTextColor,
-      })
-      .eq("id", user.id);
-
-    setLoading(false);
-
-    if (error) {
-      alert(error.message);
-      console.log(error);
-      return;
+    if (!user) {
+      throw new Error(
+        "Usuário não encontrado"
+     );
     }
 
-    alert("Perfil atualizado 🚀");
-  };
+    const { error } =
+      await supabase
+        .from("profiles")
+        .update({
+
+          username,
+          bio,
+          template,
+          avatar_url: avatarUrl,
+          instagram,
+          telegram,
+          whatsapp,
+          featured_text:
+            featuredText,
+          featured_url:
+            featuredUrl,
+          theme_color:
+            themeColor,
+          product_text_color:
+            productTextColor,
+
+        })
+        .eq("id", user.id);
+
+    if (error) {
+
+      console.log(error);
+
+      alert(error.message);
+
+      return;
+
+    }
+
+    alert(
+      "Perfil atualizado 🚀"
+    );
+
+  } catch (error) {
+
+    console.log(error);
+
+    alert(
+      "Erro ao salvar perfil"
+    );
+
+  } finally {
+
+    // 🔥 ESSENCIAL
+    setLoading(false);
+
+  }
+
+};
 
   return (
 
@@ -539,7 +535,7 @@ setAvatarUrl(data.publicUrl);
 
       <ThemeCustomizer
   profile={profile}
-  reloadProfile={loadProfile}
+  reloadProfile={fetchProfile}
 />
     </div>
 
@@ -547,4 +543,5 @@ setAvatarUrl(data.publicUrl);
 
 </div>
 );
+
 }
