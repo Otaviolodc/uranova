@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient }
+from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
+
+    const supabase =
+      await createClient();
+      
     const body = await req.json();
 
     const {
@@ -44,15 +49,24 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .order("created_at", {
-      ascending: false,
-    });
+
+  const supabase =
+    await createClient();
+
+  const { data, error } =
+    await supabase
+
+      .from("products")
+
+      .select("*")
+
+      .order("created_at", {
+        ascending: false,
+      });
 
   return NextResponse.json({
     data,
     error,
   });
+
 }

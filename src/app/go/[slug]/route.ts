@@ -1,11 +1,18 @@
-import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { NextResponse } 
+from "next/server";
+
+import { createClient }
+from "@/lib/supabase/server";
 
 export async function GET(
   req: Request,
   context: { params: Promise<{ slug: string }> }
 ) {
   try {
+
+    const supabase =
+      await createClient();
+
     const { slug } = await context.params;
 
     if (!slug) {

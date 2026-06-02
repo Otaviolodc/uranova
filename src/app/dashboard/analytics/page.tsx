@@ -589,7 +589,7 @@ return (
           {/* BARRAS */}
           <div className="h-72">
 
-  <ResponsiveContainer width="100%" height="100%">
+  <ResponsiveContainer width="100%" height={300}>
 
     <LineChart data={chartData}>
 
