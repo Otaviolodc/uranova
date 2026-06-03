@@ -1102,9 +1102,31 @@ const totalClicks = links.reduce(
 
         {/* MODAL */}
         {showModal && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div
+            className="
+              fixed
+              inset-0
+              bg-black/70
+              backdrop-blur-sm
+              z-50
+              overflow-y-auto
+              p-6
+            "
+          >
 
-            <div className="bg-zinc-900 border border-zinc-800 w-full max-w-lg rounded-3xl p-8">
+          <div
+            className="
+              bg-zinc-900
+              border
+              border-zinc-800
+              w-full
+              max-w-lg
+              rounded-3xl
+              p-8
+              mx-auto
+              my-10
+            "
+          >
 
               <h2 className="text-2xl font-bold mb-6">
                 {editingLink
@@ -1284,7 +1306,13 @@ const totalClicks = links.reduce(
               {imageUrl && (
                 <img
                   src={imageUrl}
-                  className="w-full h-52 object-cover rounded-2xl mb-5"
+                  className="
+                    w-full
+                    max-h-72
+                    object-contain
+                    rounded-2xl
+                    mb-5
+                  "
                 />
               )}
 
