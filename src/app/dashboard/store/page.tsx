@@ -118,42 +118,83 @@ useEffect(() => {
         "-" +
         Date.now();
 
-      const { error } =
-        await supabase
-          .from("products_checkout")
-          .insert([
-            {
-              user_id: user.id,
+      let error;
 
-              title,
-              description,
-              price,
+if (editingId) {
 
-              product_type: productType,
+  const result =
+    await supabase
+      .from("products_checkout")
+      .update({
+        title,
+        description,
+        price,
 
-              status: "active",
+        product_type: productType,
 
-              is_marketplace: isMarketplace,
+        is_marketplace:
+          isMarketplace,
 
-              image_url: imageUrl,
+        image_url: imageUrl,
+      })
+      .eq("id", editingId);
 
-              checkout_slug: slug,
-            }
-          ]);
+  error = result.error;
+
+} else {
+
+  const result =
+    await supabase
+      .from("products_checkout")
+      .insert([
+        {
+          user_id: user.id,
+
+          title,
+          description,
+          price,
+
+          product_type:
+            productType,
+
+          status: "active",
+
+          is_marketplace:
+            isMarketplace,
+
+          image_url:
+            imageUrl,
+
+          checkout_slug:
+            slug,
+        },
+      ]);
+
+  error = result.error;
+
+}
 
       if (error) {
         alert(error.message);
         return;
       }
 
-      alert("Produto criado 🚀");
+      alert(
+  editingId
+    ? "Produto atualizado ✅"
+    : "Produto criado 🚀"
+);
 
       setTitle("");
       setDescription("");
       setPrice("");
+
       setProductType("ebook");
       setIsMarketplace(false);
+
       setImageUrl("");
+
+      setEditingId(null);
 
       fetchProducts();
 
@@ -166,12 +207,20 @@ useEffect(() => {
   }
 
   function editProduct(product: any) {
+  setEditingId(product.id);
 
   setTitle(product.title);
   setDescription(product.description);
   setPrice(product.price);
   setImageUrl(product.image_url);
 
+  setProductType(
+    product.product_type || "ebook"
+  );
+
+  setIsMarketplace(
+    product.is_marketplace || false
+  );
 }
 
 async function deleteProduct(id: string) {
@@ -208,6 +257,48 @@ async function deleteProduct(id: string) {
         </p>
 
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+
+  <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+    <p className="text-zinc-400 text-sm">
+      Produtos
+    </p>
+
+    <h2 className="text-3xl font-bold mt-2">
+      {products.length}
+    </h2>
+  </div>
+
+  <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+    <p className="text-zinc-400 text-sm">
+      Marketplace
+    </p>
+
+    <h2 className="text-3xl font-bold mt-2">
+      {
+        products.filter(
+          (p) => p.is_marketplace
+        ).length
+      }
+    </h2>
+  </div>
+
+  <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+    <p className="text-zinc-400 text-sm">
+      Ativos
+    </p>
+
+    <h2 className="text-3xl font-bold mt-2">
+      {
+        products.filter(
+          (p) => p.status === "active"
+        ).length
+      }
+    </h2>
+  </div>
+
+</div>
 
       {/* FORM */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
@@ -364,8 +455,10 @@ async function deleteProduct(id: string) {
 >
 
   {loading
-    ? "Criando..."
-    : "Criar Produto 🚀"}
+  ? "Salvando..."
+  : editingId
+  ? "Atualizar Produto ✅"
+  : "Criar Produto 🚀"}
 
 </button>
 
@@ -500,6 +593,40 @@ async function deleteProduct(id: string) {
             {product.title}
           </h3>
 
+          <div className="flex flex-wrap gap-2 mt-3">
+
+            <span
+              className="
+                px-3
+                py-1
+                rounded-full
+                bg-blue-500/10
+                text-blue-400
+                text-xs
+                font-bold
+              "
+            >
+              {product.product_type}
+            </span>
+
+            {product.is_marketplace && (
+              <span
+                className="
+                  px-3
+                  py-1
+                  rounded-full
+                  bg-purple-500/10
+                  text-purple-400
+                  text-xs
+                  font-bold
+                "
+              >
+                Marketplace
+              </span>
+            )}
+
+          </div>
+
           <div
             className="
               inline-flex
@@ -513,8 +640,8 @@ async function deleteProduct(id: string) {
               font-bold
             "
           >
-
-            ● Ativo
+            ● {product.status}
+          </div>
 
           </div>
 
@@ -559,8 +686,6 @@ async function deleteProduct(id: string) {
           </a>
 
         </div>
-
-      </div>
 
     ))}
 
