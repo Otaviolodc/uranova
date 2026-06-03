@@ -41,11 +41,19 @@ useEffect(() => {
   const [price, setPrice] =
     useState("");
 
+  const [productType, setProductType] =
+    useState("ebook");
+
   const [imageUrl, setImageUrl] =
     useState("");
 
   const [loading, setLoading] =
     useState(false);
+
+  const [
+  editingId,
+  setEditingId
+] = useState<string | null>(null);
 
   async function handleUpload(
     e: any
@@ -116,10 +124,14 @@ useEffect(() => {
               description,
               price,
 
+              product_type: productType,
+
+              status: "active",
+
               image_url: imageUrl,
 
               checkout_slug: slug,
-            },
+            }
           ]);
 
       if (error) {
@@ -132,6 +144,7 @@ useEffect(() => {
       setTitle("");
       setDescription("");
       setPrice("");
+      setProductType("ebook");
       setImageUrl("");
 
       fetchProducts();
@@ -234,20 +247,38 @@ async function deleteProduct(id: string) {
     className="w-full bg-zinc-800 p-4 rounded-2xl"
   />
 
-  <select
-    className="
-      w-full
-      bg-zinc-800
-      p-4
-      rounded-2xl
-    "
-  >
-    <option>Ebook</option>
-    <option>Curso</option>
-    <option>PDF</option>
-    <option>Ferramenta</option>
-    <option>Mentoria</option>
-  </select>
+    <select
+  value={productType}
+  onChange={(e) =>
+    setProductType(e.target.value)
+  }
+  className="
+    w-full
+    bg-zinc-800
+    p-4
+    rounded-2xl
+  "
+>
+  <option value="ebook">
+    Ebook
+  </option>
+
+  <option value="curso">
+    Curso
+  </option>
+
+  <option value="pdf">
+    PDF
+  </option>
+
+  <option value="ferramenta">
+    Ferramenta
+  </option>
+
+  <option value="mentoria">
+    Mentoria
+  </option>
+</select>
 
             <label
               className="
