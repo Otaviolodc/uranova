@@ -31,7 +31,11 @@ export default function AnalyticsPage() {
   const [aiInsights, setAiInsights] =
     useState<string[]>([]);
 
-  const [topProducts, setTopProducts] = useState<any[]>([]);
+  const [topProducts, setTopProducts] =
+  useState<any[]>([]);
+
+  const [heatmapData, setHeatmapData] =
+  useState<any[]>([]);
 
   async function fetchAnalytics() {
 
@@ -208,6 +212,22 @@ setHeatmapData(formattedHeatmap);
 
 const insights = [];
 
+if (views < 10) {
+
+  insights.push(
+    "📢 Compartilhe seus links no Instagram e TikTok para aumentar alcance."
+  );
+
+}
+
+if (viralProducts.length === 0) {
+
+  insights.push(
+    "🖼️ Links com imagem tendem a gerar mais cliques."
+  );
+
+}
+
 // crescimento
 if (growth > 20) {
 
@@ -221,7 +241,7 @@ if (growth > 20) {
 if (ranking[0]) {
 
   insights.push(
-    `🚀 ${ranking[0][0]} é seu link mais acessado hoje.`
+    `🚀 Seu link mais acessado está ganhando destaque hoje.`
   );
 
 }
@@ -310,86 +330,83 @@ useEffect(() => {
   const [chartData, setChartData] =
   useState<any[]>([]);
 
-  let aiMessage = "";
-
-if (growth > 40) {
-
-  aiMessage =
-    "🚀 Seu tráfego cresceu muito hoje. Continue divulgando agora.";
-
-} else if (growth > 20) {
-
-  aiMessage =
-    "📈 Seu perfil está crescendo acima da média.";
-
-} else if (views > 50) {
-
-  aiMessage =
-    "🔥 Seus produtos estão recebendo bastante tráfego.";
-
-} else if (viralProduct) {
-
-  aiMessage =
-    `🔥 Produto viral do dia: ${viralProduct.title}`;
-
-} else {
-
-  aiMessage =
-    "📊 Continue divulgando seus produtos para crescer.";
-
-}
-
 const [viralProducts, setViralProducts] =
   useState<any[]>([]);
 
-const scoreIA =
-  Math.min(
-    100,
-    (
-      viralProducts.length * 12 +
-      views * 2
-    )
+const conversionRate =
+  views > 0
+    ? (
+        (
+          viralProducts.length /
+          views
+        ) * 100
+      ).toFixed(1)
+    : "0";
+
+const estimatedRevenue =
+  Math.floor(
+    views * 0.08 * 69
   );
 
-const [heatmapData, setHeatmapData] =
-  useState<any[]>([]);
+let scoreIA = 0;
+
+if (views >= 10)
+  scoreIA += 20;
+
+if (views >= 50)
+  scoreIA += 20;
+
+if (viralProducts.length >= 1)
+  scoreIA += 20;
+
+if (growth > 0)
+  scoreIA += 20;
+
+if (heatmapData.length > 5)
+  scoreIA += 20;
 
 const radarData = [
 
   {
     name: "Conversão",
-    value: 82,
+    value: Math.min(
+      100,
+      Math.floor(
+        Number(conversionRate) * 20
+      )
+    ),
   },
 
   {
     name: "Engajamento",
-    value: 74,
+    value: Math.min(
+      100,
+      views
+    ),
   },
 
   {
     name: "CTR",
-    value: 91,
+    value: Math.min(
+      100,
+      growth + 50
+    ),
   },
 
   {
     name: "Potencial Viral",
-    value: 88,
+    value: Math.min(
+      100,
+      viralProducts.length * 25
+    ),
   },
 
   {
     name: "Performance",
-    value: 79,
+    value: scoreIA,
   },
 
 ];
-
-const [chatMessages, setChatMessages] =
-  useState([
-    {
-      role: "assistant",
-      text: "🚀 Olá! Sou a IA do PromoLink. Posso ajudar na sua conversão.",
-    },
-  ]);
 
   const handleSendMessage = async () => {
 
@@ -447,7 +464,7 @@ return (
           </h1>
 
           <p className="text-gray-400 mt-2 text-lg">
-            IA analisando seus links em tempo real
+            Analytics inteligente para aumentar cliques e conversões
           </p>
 
         </div>
@@ -500,11 +517,13 @@ return (
             </p>
 
             <h2 className="text-4xl font-black text-green-400 mt-3">
-              R$ 2.450
+              R$ {estimatedRevenue}
             </h2>
 
             <p className="text-green-400 text-sm mt-2">
-              +18% hoje
+              {growth > 0
+                ? `+${growth}% hoje`
+                : "Sem crescimento hoje"}
             </p>
 
           </div>
@@ -517,7 +536,7 @@ return (
             </p>
 
             <h2 className="text-4xl font-black mt-3">
-              1.284
+              {views}
             </h2>
 
             <p className="text-gray-400 text-sm mt-2">
@@ -534,7 +553,7 @@ return (
             </p>
 
             <h2 className="text-4xl font-black mt-3">
-              4.8%
+              {conversionRate}%
             </h2>
 
             <p className="text-green-400 text-sm mt-2">
@@ -645,7 +664,7 @@ return (
       </h2>
 
       <p className="text-zinc-400 mt-2">
-        Produto com maior tráfego hoje
+        Link com maior volume de acessos e potencial de conversão
       </p>
 
     </div>
@@ -886,7 +905,7 @@ return (
       </h2>
 
       <p className="text-gray-400 mt-1">
-        Seu assistente de vendas inteligente
+        Assistente inteligente de performance e conversão
       </p>
 
     </div>
@@ -965,61 +984,45 @@ return (
               🏆 Ranking de Links
             </h2>
 
-            <div className="space-y-4">
+          <div className="space-y-4">
 
-              <div className="bg-zinc-800 rounded-2xl p-5 flex items-center justify-between">
+              {topProducts
+                .slice(0, 5)
+                .map((product: any, index) => (
 
-                <div>
-                  <p className="font-bold">
-                    Bolsa Nike
-                  </p>
+          <div
+            key={product.id}
+            className="
+              bg-zinc-800
+              rounded-2xl
+              p-5
+              flex
+              items-center
+              justify-between
+            "
+          >
 
-                  <p className="text-sm text-gray-400">
-                    245 cliques
-                  </p>
-                </div>
+          <div>
 
-                <div className="text-green-400 font-bold">
-                  +32%
-                </div>
+           <p className="font-bold">
+             #{index + 1} {product.title}
+           </p>
 
-              </div>
+           <p className="text-sm text-gray-400">
+             {product.total} cliques
+           </p>
 
-              <div className="bg-zinc-800 rounded-2xl p-5 flex items-center justify-between">
+          </div>
 
-                <div>
-                  <p className="font-bold">
-                    Creatina Growth
-                  </p>
+          <div className="text-green-400 font-bold">
+            +{Math.floor(
+              product.total * 0.12
+            )}%
+          </div>
 
-                  <p className="text-sm text-gray-400">
-                    182 cliques
-                  </p>
-                </div>
+        </div>
 
-                <div className="text-green-400 font-bold">
-                  +21%
-                </div>
-
-              </div>
-
-              <div className="bg-zinc-800 rounded-2xl p-5 flex items-center justify-between">
-
-                <div>
-                  <p className="font-bold">
-                    Starlink Mini
-                  </p>
-
-                  <p className="text-sm text-gray-400">
-                    120 cliques
-                  </p>
-                </div>
-
-                <div className="text-green-400 font-bold">
-                  +12%
-                </div>
-
-              </div>
+    ))}
 
             </div>
 
