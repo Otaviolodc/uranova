@@ -413,7 +413,7 @@ const handleGenerateMarketing =
 
     if (error) {
       console.log(error);
-      alert("Erro ao criar");
+      alert(error.message);
       return;
     }
 
