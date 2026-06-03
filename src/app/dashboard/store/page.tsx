@@ -307,10 +307,15 @@ async function deleteProduct(id: string) {
     : "Criar Produto 🚀"}
 
 </button>
-    
-          </div>
 
-          <div
+</div>
+    
+</div>
+
+<div>
+
+{/* PREVIEW */}
+<div
   className="
     bg-zinc-900
     border
@@ -392,8 +397,11 @@ async function deleteProduct(id: string) {
 
 </div>
 
-        <div className="mt-14">
+</div>
 
+     {/* MEUS PRODUTOS */}
+        <div className="mt-14">
+ 
   <h2 className="text-3xl font-bold mb-8">
     📦 Meus Produtos
   </h2>
@@ -496,8 +504,6 @@ async function deleteProduct(id: string) {
     ))}
 
   </div>
-
-</div>
 
 </div>
 
