@@ -959,7 +959,7 @@ return (
 </div>
 
           {/* RANKING */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
+          <div className="mt-10 bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
 
             <h2 className="text-2xl font-bold mb-6">
               🏆 Ranking de Links
