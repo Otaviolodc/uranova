@@ -51,6 +51,11 @@ useEffect(() => {
     useState(false);
 
   const [
+  isMarketplace,
+  setIsMarketplace
+] = useState(false);
+
+  const [
   editingId,
   setEditingId
 ] = useState<string | null>(null);
@@ -128,6 +133,8 @@ useEffect(() => {
 
               status: "active",
 
+              is_marketplace: isMarketplace,
+
               image_url: imageUrl,
 
               checkout_slug: slug,
@@ -145,6 +152,7 @@ useEffect(() => {
       setDescription("");
       setPrice("");
       setProductType("ebook");
+      setIsMarketplace(false);
       setImageUrl("");
 
       fetchProducts();
@@ -279,6 +287,28 @@ async function deleteProduct(id: string) {
     Mentoria
   </option>
 </select>
+
+<label
+  className="
+    flex
+    items-center
+    gap-3
+    text-sm
+    text-zinc-300
+  "
+>
+  <input
+    type="checkbox"
+    checked={isMarketplace}
+    onChange={(e) =>
+      setIsMarketplace(
+        e.target.checked
+      )
+    }
+  />
+
+  Publicar no Marketplace
+</label>
 
             <label
               className="
