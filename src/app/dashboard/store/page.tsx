@@ -149,7 +149,7 @@ useEffect(() => {
   setTitle(product.title);
   setDescription(product.description);
   setPrice(product.price);
-  setImageUrl(product.image);
+  setImageUrl(product.image_url);
 
 }
 
@@ -171,66 +171,111 @@ async function deleteProduct(id: string) {
 
   return (
 
-    <div className="flex bg-black text-white min-h-screen">
+  <div className="flex bg-black text-white min-h-screen">
 
-      <div className="flex-1 p-8">
+    <div className="flex-1 p-8">
 
-        {/* HEADER */}
-        <div className="mb-10">
+      {/* HEADER */}
+      <div className="mb-10">
 
-          <h1 className="text-4xl font-bold">
-            🚀 Criar Produtos
-          </h1>
+        <h1 className="text-4xl font-bold">
+          🚀 Crie e venda produtos digitais
+        </h1>
 
-          <p className="text-gray-400 mt-2 text-lg">
-            Crie ebooks, cursos, PDFs, ferramentas e monetize no marketplace.
-          </p>
+        <p className="text-gray-400 mt-2 text-lg">
+          Monte ofertas profissionais para compartilhar e vender online.
+        </p>
 
-        </div>
+      </div>
 
-        {/* FORM */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 mb-10">
+      {/* FORM */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+
+        <div
+          className="
+            bg-zinc-900
+            border
+            border-zinc-800
+            rounded-3xl
+            p-8
+          "
+        >
 
           <h2 className="text-2xl font-bold mb-6">
-            Novo Produto
+             Novo Produto
           </h2>
 
           <div className="space-y-4">
 
-            <input
-              placeholder="Título"
-              value={title}
-              onChange={(e) =>
-                setTitle(e.target.value)
-              }
-              className="w-full bg-zinc-800 p-4 rounded-2xl"
-            />
+  <input
+    placeholder="Título"
+    value={title}
+    onChange={(e) =>
+      setTitle(e.target.value)
+    }
+    className="w-full bg-zinc-800 p-4 rounded-2xl"
+  />
 
-            <textarea
-              placeholder="Descrição"
-              value={description}
-              onChange={(e) =>
-                setDescription(e.target.value)
-              }
-              className="w-full bg-zinc-800 p-4 rounded-2xl h-32"
-            />
+  <textarea
+    placeholder="Descrição"
+    value={description}
+    onChange={(e) =>
+      setDescription(e.target.value)
+    }
+    className="w-full bg-zinc-800 p-4 rounded-2xl h-32"
+  />
 
-            <input
-              placeholder="Preço"
-              value={price}
-              onChange={(e) =>
-                setPrice(e.target.value)
-              }
-              className="w-full bg-zinc-800 p-4 rounded-2xl"
-            />
+  <input
+    placeholder="Preço"
+    value={price}
+    onChange={(e) =>
+      setPrice(e.target.value)
+    }
+    className="w-full bg-zinc-800 p-4 rounded-2xl"
+  />
 
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleUpload}
-              className="w-full bg-zinc-800 p-4 rounded-2xl"
-            />
+  <select
+    className="
+      w-full
+      bg-zinc-800
+      p-4
+      rounded-2xl
+    "
+  >
+    <option>Ebook</option>
+    <option>Curso</option>
+    <option>PDF</option>
+    <option>Ferramenta</option>
+    <option>Mentoria</option>
+  </select>
 
+            <label
+              className="
+                border-2
+                border-dashed
+                border-zinc-700
+                rounded-2xl
+                p-8
+                flex
+                justify-center
+                items-center
+                cursor-pointer
+                hover:border-green-500
+                transition-all
+              "
+            >
+
+              📸 Upload da capa
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleUpload}
+                className="hidden"
+             />
+
+            </label>
+            
             {imageUrl && (
 
               <img
@@ -238,32 +283,114 @@ async function deleteProduct(id: string) {
                 className="w-48 rounded-2xl"
               />
 
+
             )}
 
             <button
-              onClick={handleCreate}
-              disabled={loading}
-              className="
-                bg-green-500
-                hover:bg-green-400
-                transition
-                text-black
-                px-8
-                py-4
-                rounded-2xl
-                font-bold
-              "
-            >
+  onClick={handleCreate}
+  disabled={loading}
+  className="
+    w-full
+    bg-green-500
+    hover:bg-green-400
+    transition
+    text-black
+    px-8
+    py-4
+    rounded-2xl
+    font-bold
+  "
+>
 
-              {loading
-                ? "Criando..."
-                : "Criar Produto 🚀"}
+  {loading
+    ? "Criando..."
+    : "Criar Produto 🚀"}
 
-            </button>
-
+</button>
+    
           </div>
 
-        </div>
+          <div
+  className="
+    bg-zinc-900
+    border
+    border-zinc-800
+    rounded-3xl
+    p-8
+    sticky
+    top-8
+    h-fit
+  "
+>
+
+  <h2 className="text-2xl font-bold mb-6">
+    👀 Preview
+  </h2>
+
+  <div className="bg-zinc-800 rounded-2xl overflow-hidden">
+
+    {imageUrl ? (
+
+      <img
+        src={imageUrl}
+        className="
+          w-full
+          h-72
+          object-cover
+        "
+      />
+
+    ) : (
+
+      <div
+        className="
+          h-72
+          flex
+          items-center
+          justify-center
+          text-zinc-500
+        "
+      >
+        Sem imagem
+      </div>
+
+    )}
+
+  </div>
+
+  <h3 className="text-2xl font-black mt-6">
+    {title || "Seu produto"}
+  </h3>
+
+  <p className="text-zinc-400 mt-3">
+    {description ||
+      "A descrição aparecerá aqui."}
+  </p>
+
+  <p className="text-4xl font-black text-green-400 mt-6">
+    R$ {price || "0,00"}
+  </p>
+
+  <button
+    type="button"
+    className="
+      mt-6
+      w-full
+      bg-gradient-to-r
+      from-green-500
+      to-emerald-400
+      text-black
+      py-4
+      rounded-2xl
+      font-black
+    "
+  >
+    Comprar Agora
+  </button>
+
+</div>
+
+</div>
 
         <div className="mt-14">
 
@@ -277,19 +404,50 @@ async function deleteProduct(id: string) {
 
       <div
         key={product.id}
-        className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden"
+        className="
+          bg-zinc-900
+          border
+          border-zinc-800
+          hover:border-green-500/30
+          transition-all
+          rounded-3xl
+          p-8
+        "
       >
 
         <img
           src={product.image_url}
-          className="w-full h-52 object-cover"
-        />
+          className="
+            w-full
+            h-56
+            object-cover
+            rounded-2xl
+          "
+       />
 
         <div className="p-5">
 
           <h3 className="text-xl font-bold">
             {product.title}
           </h3>
+
+          <div
+            className="
+              inline-flex
+              mt-3
+              px-3
+              py-1
+              rounded-full
+              bg-green-500/10
+              text-green-400
+              text-xs
+              font-bold
+            "
+          >
+
+            ● Ativo
+
+          </div>
 
           <p className="text-green-400 text-3xl font-black mt-4">
             R$ {product.price}
@@ -338,6 +496,8 @@ async function deleteProduct(id: string) {
     ))}
 
   </div>
+
+</div>
 
 </div>
 
