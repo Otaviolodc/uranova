@@ -454,12 +454,12 @@ return (
 
     <div className="flex bg-black text-white min-h-screen">
          
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-4 md:p-8 pt-20 md:pt-8">
 
         {/* HEADER */}
         <div className="mb-10">
 
-          <h1 className="text-4xl font-black">
+          <h1 className="text-2xl md:text-4xl font-black">
             ⚡ Centro de IA e Performance
           </h1>
 
@@ -470,7 +470,7 @@ return (
         </div>
 
         {/* CARDS */}
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mb-10">
 
           <div className="mt-10 bg-zinc-900 p-6 rounded-3xl">
 
@@ -516,7 +516,7 @@ return (
               💰 Receita Estimada
             </p>
 
-            <h2 className="text-4xl font-black text-green-400 mt-3">
+            <h2 className="text-2xl md:text-4xl font-black text-green-400 mt-3">
               R$ {estimatedRevenue}
             </h2>
 
@@ -535,7 +535,7 @@ return (
               👀 Visitantes Hoje
             </p>
 
-            <h2 className="text-4xl font-black mt-3">
+            <h2 className="text-2xl md:text-4xl font-black mt-3">
               {views}
             </h2>
 
@@ -552,7 +552,7 @@ return (
               📈 Conversão
             </p>
 
-            <h2 className="text-4xl font-black mt-3">
+            <h2 className="text-2xl md:text-4xl font-black mt-3">
               {conversionRate}%
             </h2>
 
@@ -569,7 +569,7 @@ return (
               🧠 Score IA
             </p>
 
-            <h2 className="text-4xl font-black mt-3 text-green-400">
+            <h2 className="text-2xl md:text-4xl font-black mt-3 text-green-400">
               {scoreIA}/100
             </h2>
 
@@ -648,7 +648,7 @@ return (
           mb-10
         ">
 
-  <div className="flex items-center justify-between">
+  <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
 
     <div>
 
@@ -656,7 +656,7 @@ return (
         🔥 PRODUTO VIRAL DO DIA
       </p>
 
-      <h2 className="text-3xl font-black mt-3">
+      <h2 className="text-2xl md:text-3xl font-black mt-3 break-words">
 
         {viralProduct?.title ||
           "Nenhum produto"}
@@ -710,7 +710,7 @@ return (
 
   </div>
 
-  <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
+  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-3 md:gap-4">
 
     {heatmapData.map((item) => (
 
@@ -938,7 +938,7 @@ return (
 )}
 
   {/* INPUT */}
-  <div className="flex gap-3">
+  <div className="flex flex-col md:flex-row gap-3">
 
     <input
       value={message}
@@ -961,6 +961,7 @@ return (
     <button
       onClick={handleSendMessage}
       className="
+        w-full md:w-auto
         bg-green-500
         hover:bg-green-400
         transition
@@ -997,7 +998,11 @@ return (
               rounded-2xl
               p-5
               flex
-              items-center
+              flex-col
+              md:flex-row
+              gap-3
+              items-start
+              md:items-center
               justify-between
             "
           >

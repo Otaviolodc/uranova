@@ -260,12 +260,12 @@ async function deleteProduct(id: string) {
 
   <div className="flex bg-black text-white min-h-screen">
 
-    <div className="flex-1 p-8">
+    <div className="flex-1 p-4 md:p-8 pt-20 md:pt-8">
 
       {/* HEADER */}
       <div className="mb-10">
 
-        <h1 className="text-4xl font-bold">
+        <h1 className="text-2xl md:text-4xl font-bold">
           🚀 Crie e venda produtos digitais
         </h1>
 
@@ -282,7 +282,7 @@ async function deleteProduct(id: string) {
       Produtos
     </p>
 
-    <h2 className="text-3xl font-bold mt-2">
+    <h2 className="text-2xl md:text-3xl font-bold mt-2">
       {products.length}
     </h2>
   </div>
@@ -292,7 +292,7 @@ async function deleteProduct(id: string) {
       Marketplace
     </p>
 
-    <h2 className="text-3xl font-bold mt-2">
+    <h2 className="text-2xl md:text-3xl font-bold mt-2">
       {
         products.filter(
           (p) => p.is_marketplace
@@ -306,7 +306,7 @@ async function deleteProduct(id: string) {
       Ativos
     </p>
 
-    <h2 className="text-3xl font-bold mt-2">
+    <h2 className="text-2xl md:text-3xl font-bold mt-2">
       {
         products.filter(
           (p) => p.status === "active"
@@ -326,7 +326,7 @@ async function deleteProduct(id: string) {
             border
             border-zinc-800
             rounded-3xl
-            p-8
+            p-4 md:p-8
           "
         >
 
@@ -506,9 +506,9 @@ async function deleteProduct(id: string) {
     border
     border-zinc-800
     rounded-3xl
-    p-8
-    sticky
-    top-8
+    p-4 md:p-8
+    xl:sticky
+    xl:top-8
     h-fit
   "
 >
@@ -525,7 +525,7 @@ async function deleteProduct(id: string) {
         src={imageUrl}
         className="
           w-full
-          h-72
+          h-52 md:h-72
           object-cover
         "
       />
@@ -548,7 +548,7 @@ async function deleteProduct(id: string) {
 
   </div>
 
-  <h3 className="text-2xl font-black mt-6">
+  <h3 className="text-xl md:text-2xl font-black mt-6 break-words">
     {title || "Seu produto"}
   </h3>
 
@@ -557,7 +557,7 @@ async function deleteProduct(id: string) {
       "A descrição aparecerá aqui."}
   </p>
 
-  <p className="text-4xl font-black text-green-400 mt-6">
+  <p className="text-2xl md:text-4xl font-black text-green-400 mt-6">
     R$ {price || "0,00"}
   </p>
 
@@ -587,7 +587,7 @@ async function deleteProduct(id: string) {
      {/* MEUS PRODUTOS */}
         <div className="mt-14">
  
-  <h2 className="text-3xl font-bold mb-8">
+  <h2 className="text-2xl md:text-3xl font-bold mb-8">
     📦 Meus Produtos
   </h2>
 
@@ -604,7 +604,7 @@ async function deleteProduct(id: string) {
           hover:border-green-500/30
           transition-all
           rounded-3xl
-          p-8
+          p-4 md:p-8
         "
       >
 
@@ -674,11 +674,11 @@ async function deleteProduct(id: string) {
             ● {product.status}
           </div>
 
-          <p className="text-green-400 text-3xl font-black mt-4">
+          <p className="text-green-400 text-2xl md:text-3xl font-black mt-4">
             R$ {product.price}
           </p>
 
-          <div className="flex gap-3 mt-6">
+          <div className="flex flex-col sm:flex-row gap-3 mt-6">
 
             <button
               onClick={() => editProduct(product)}

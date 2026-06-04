@@ -2,7 +2,6 @@
 
 import { supabase }
 from "@/lib/supabase/client";
-import Sidebar from "@/components/Sidebar";
 import { useEffect, useState } from "react";
 
 export default function MarketplacePage() {
@@ -45,14 +44,12 @@ export default function MarketplacePage() {
 
   <div className="flex bg-black text-white min-h-screen">
 
-    <Sidebar />
-
     <div className="flex-1">
 
       {/* HERO */}
       <div className="border-b border-zinc-800 bg-gradient-to-b from-zinc-900 to-black">
 
-        <div className="max-w-7xl mx-auto px-6 py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-24">
 
           <div className="max-w-3xl">
 
@@ -62,7 +59,7 @@ export default function MarketplacePage() {
 
             </p>
 
-            <h1 className="text-7xl font-black leading-tight">
+            <h1 className="text-4xl md:text-7xl font-black leading-tight">
 
               Descubra Produtos
               <span className="text-green-400">
@@ -71,7 +68,7 @@ export default function MarketplacePage() {
 
             </h1>
 
-            <p className="text-gray-400 text-2xl mt-6 leading-relaxed">
+            <p className="text-gray-400 text-lg md:text-2xl mt-6 leading-relaxed">
 
               Cursos, ebooks, ferramentas,
               produtos físicos e conteúdos
@@ -80,7 +77,7 @@ export default function MarketplacePage() {
             </p>
 
             {/* BUSCA */}
-            <div className="mt-10 flex gap-4">
+            <div className="mt-10 flex flex-col md:flex-row gap-4">
 
               <input
                 placeholder="Buscar produto..."
@@ -106,6 +103,7 @@ export default function MarketplacePage() {
 
               <button
                 className="
+                  w-full md:w-auto
                   bg-green-500
                   hover:bg-green-400
                   transition
@@ -124,11 +122,11 @@ export default function MarketplacePage() {
             </div>
 
             {/* STATS */}
-            <div className="flex gap-10 mt-12">
+            <div className="grid grid-cols-3 gap-4 mt-12">
 
               <div>
 
-                <h2 className="text-4xl font-black text-green-400">
+                <h2 className="text-2xl md:text-4xl font-black text-green-400">
 
                   {products.length}+
 
@@ -144,7 +142,7 @@ export default function MarketplacePage() {
 
               <div>
 
-                <h2 className="text-4xl font-black text-green-400">
+                <h2 className="text-2xl md:text-4xl font-black text-green-400">
 
                   24h
 
@@ -160,7 +158,7 @@ export default function MarketplacePage() {
 
               <div>
 
-                <h2 className="text-4xl font-black text-green-400">
+                <h2 className="text-2xl md:text-4xl font-black text-green-400">
 
                   IA
 
@@ -232,7 +230,7 @@ export default function MarketplacePage() {
 
           <div>
 
-            <h2 className="text-4xl font-black">
+            <h2 className="text-2xl md:text-4xl font-black">
 
               🚀 Produtos em Alta
 
@@ -353,7 +351,7 @@ export default function MarketplacePage() {
 
                       </p>
 
-                      <h3 className="text-4xl font-black text-green-400">
+                      <h3 className="text-2xl md:text-4xl font-black text-green-400">
 
                         R$ {product.price}
 
@@ -403,14 +401,14 @@ export default function MarketplacePage() {
 
         <div className="max-w-5xl mx-auto px-6 py-24 text-center">
 
-          <h2 className="text-6xl font-black leading-tight">
+          <h2 className="text-3xl md:text-6xl font-black leading-tight">
 
             Venda seus produtos
             no PromoLink 🚀
 
           </h2>
 
-          <p className="text-gray-400 text-2xl mt-6">
+          <p className="text-gray-400 text-lg md:text-2xl mt-6">
 
             Crie produtos digitais,
             links de afiliado e aumente
