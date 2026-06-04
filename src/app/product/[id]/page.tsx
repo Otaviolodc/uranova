@@ -145,6 +145,24 @@ export default function ProductPage() {
 
               🔥 Produto em Alta
 
+            <div className="flex gap-2 mb-6">
+
+              <span
+                className="
+                  px-4
+                  py-2
+                  rounded-full
+                  bg-blue-500/10
+                  text-blue-400
+                  text-sm
+                  font-bold
+                "
+            >
+                {product.product_type}
+            </span>
+
+            </div>
+
             </div>
 
             {/* TÍTULO */}
@@ -228,66 +246,60 @@ export default function ProductPage() {
               "
             >
 
-              Comprar Agora 🚀
+              Comprar Agora
+
+              <p className="text-center text-zinc-500 mt-3 text-sm">
+                Pagamento seguro • Liberação imediata
+              </p>
 
             </a>
 
-            {/* INFO EXTRA */}
+            {/* INFO PRODUTO */}
             <div className="grid grid-cols-3 gap-4 mt-10">
 
-              <div className="bg-zinc-900 rounded-2xl p-5 border border-zinc-800">
+             <div className="bg-zinc-900 rounded-2xl p-5 border border-zinc-800">
 
-                <p className="text-gray-400 text-sm">
+              <p className="text-zinc-400 text-sm">
+                Tipo
+              </p>
 
-                  Conversão
+              <h2 className="text-xl font-bold mt-2">
+                {product.product_type}
+              </h2>
 
-                </p>
+            </div>
 
-                <h2 className="text-3xl font-black mt-2 text-green-400">
+            <div className="bg-zinc-900 rounded-2xl p-5 border border-zinc-800">
 
-                  4.8%
+              <p className="text-zinc-400 text-sm">
+                Status
+              </p>
 
-                </h2>
+              <h2 className="text-xl font-bold mt-2 text-green-400">
+                {product.status}
+              </h2>
 
-              </div>
+            </div>
 
-              <div className="bg-zinc-900 rounded-2xl p-5 border border-zinc-800">
+            <div className="bg-zinc-900 rounded-2xl p-5 border border-zinc-800">
 
-                <p className="text-gray-400 text-sm">
+              <p className="text-zinc-400 text-sm">
+                Marketplace
+              </p>
 
-                  Score IA
-
-                </p>
-
-                <h2 className="text-3xl font-black mt-2 text-green-400">
-
-                  92
-
-                </h2>
-
-              </div>
-
-              <div className="bg-zinc-900 rounded-2xl p-5 border border-zinc-800">
-
-                <p className="text-gray-400 text-sm">
-
-                  Tendência
-
-                </p>
-
-                <h2 className="text-3xl font-black mt-2 text-green-400">
-
-                  Alta
-
-                </h2>
-
-              </div>
+              <h2 className="text-xl font-bold mt-2">
+                {product.is_marketplace
+                  ? "Sim"
+                  : "Não"}
+              </h2>
 
             </div>
 
           </div>
 
         </div>
+
+      </div>
 
         {/* RELACIONADOS */}
         <div className="mt-32">
@@ -298,7 +310,7 @@ export default function ProductPage() {
 
               <h2 className="text-5xl font-black">
 
-                🚀 Produtos Relacionados
+                Você também pode gostar
 
               </h2>
 

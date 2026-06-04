@@ -41,6 +41,11 @@ useEffect(() => {
   const [price, setPrice] =
     useState("");
 
+  const [
+  affiliateUrl,
+  setAffiliateUrl
+] = useState("");
+
   const [productType, setProductType] =
     useState("ebook");
 
@@ -130,6 +135,9 @@ if (editingId) {
         description,
         price,
 
+        affiliate_url:
+          affiliateUrl,
+
         product_type: productType,
 
         is_marketplace:
@@ -153,6 +161,9 @@ if (editingId) {
           title,
           description,
           price,
+
+          affiliate_url:
+            affiliateUrl,
 
           product_type:
             productType,
@@ -188,6 +199,7 @@ if (editingId) {
       setTitle("");
       setDescription("");
       setPrice("");
+      setAffiliateUrl("");
 
       setProductType("ebook");
       setIsMarketplace(false);
@@ -221,6 +233,11 @@ if (editingId) {
   setIsMarketplace(
     product.is_marketplace || false
   );
+
+  setAffiliateUrl(
+    product.affiliate_url || ""
+  );
+
 }
 
 async function deleteProduct(id: string) {
@@ -345,6 +362,20 @@ async function deleteProduct(id: string) {
     }
     className="w-full bg-zinc-800 p-4 rounded-2xl"
   />
+
+  <input
+  placeholder="Link de Venda"
+  value={affiliateUrl}
+  onChange={(e) =>
+    setAffiliateUrl(e.target.value)
+  }
+  className="
+    w-full
+    bg-zinc-800
+    p-4
+    rounded-2xl
+  "
+/>
 
     <select
   value={productType}
@@ -643,8 +674,6 @@ async function deleteProduct(id: string) {
             ● {product.status}
           </div>
 
-          </div>
-
           <p className="text-green-400 text-3xl font-black mt-4">
             R$ {product.price}
           </p>
@@ -685,7 +714,9 @@ async function deleteProduct(id: string) {
             Abrir Página 🚀
           </a>
 
-        </div>
+        </div> 
+
+      </div> 
 
     ))}
 
