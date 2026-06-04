@@ -541,7 +541,7 @@ const totalClicks = links.reduce(
   return (
     <div className="flex bg-black text-white min-h-screen">
 
-      <div className="flex-1 p-8 flex gap-8">
+      <div className="flex-1 p-4 md:p-8 flex gap-8">
 
         {/* CONTEÚDO */}
         <div className="flex-1">
@@ -551,7 +551,7 @@ const totalClicks = links.reduce(
 
             <div>
 
-              <h1 className="text-3xl font-bold">
+              <h1 className="text-2xl md:text-3xl font-bold">
                 Dashboard
               </h1>
 
@@ -650,7 +650,7 @@ const totalClicks = links.reduce(
             <a
               href={`/${profile?.username}`}
               target="_blank"
-              className="text-green-400 text-2xl font-bold mt-2 block"
+              className="text-green-400 text-lg md:text-2xl font-bold mt-2 block break-all"
             >
               promolink.com/{profile?.username}
             </a>
@@ -659,7 +659,7 @@ const totalClicks = links.reduce(
 
           {/* 🚀 CENTRAL DE PERFORMANCE */}
 
-<div className="grid grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+<div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-10">
 
   {/* FATURAMENTO */}
   <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
@@ -668,7 +668,7 @@ const totalClicks = links.reduce(
       💰 Faturamento
     </p>
 
-    <h2 className="text-4xl font-black mt-3 text-green-400">
+    <h2 className="text-2xl md:text-4xl font-black mt-3 text-green-400">
       R$ {(totalClicks * 6.9).toFixed(0)}
     </h2>
 
@@ -685,7 +685,7 @@ const totalClicks = links.reduce(
       🛒 Vendas Hoje
     </p>
 
-    <h2 className="text-4xl font-black mt-3">
+    <h2 className="text-2xl md:text-4xl font-black mt-3">
       {Math.floor(totalClicks * 0.08)}
     </h2>
 
@@ -702,7 +702,7 @@ const totalClicks = links.reduce(
       📈 Conversão
     </p>
 
-    <h2 className="text-4xl font-black mt-3">
+    <h2 className="text-2xl md:text-4xl font-black mt-3">
       4.8%
     </h2>
 
@@ -719,7 +719,7 @@ const totalClicks = links.reduce(
       🎯 Ticket Médio
     </p>
 
-    <h2 className="text-4xl font-black mt-3">
+    <h2 className="text-2xl md:text-4xl font-black mt-3">
       R$ 69
     </h2>
 
@@ -752,7 +752,8 @@ const totalClicks = links.reduce(
     <div>
 
       <h2 className="
-        text-2xl
+        text-xl
+        md:text-2xl
         font-bold
       ">
         📈 Tráfego
@@ -792,12 +793,15 @@ const totalClicks = links.reduce(
           {item.date}
         </p>
 
-        <h2 className="
-          text-4xl
-          font-black
-          mt-3
-          text-green-400
-        ">
+        <h2
+          className="
+            text-2xl
+            md:text-4xl
+            font-black
+            mt-3
+            text-green-400
+          "
+        >
 
           {item.clicks}
 
@@ -818,7 +822,7 @@ const totalClicks = links.reduce(
           {/* IA DE CONVERSÃO */}
 <div className="mt-12">
 
-  <h2 className="text-3xl font-bold">
+  <h2 className="text-2xl md:text-3xl font-bold">
     ⚡ IA de Conversão
   </h2>
 
@@ -949,7 +953,12 @@ const totalClicks = links.reduce(
   {...provided.dragHandleProps}
   className="
     flex
-    items-center
+    flex-col
+    md:flex-row
+    gap-4
+    md:gap-0
+    items-start
+    md:items-center
     justify-between
     p-6
     border
@@ -970,8 +979,8 @@ const totalClicks = links.reduce(
 <img
   src={link.image_url}
   className="
-    w-24
-    h-24
+    w-16 md:w-24
+    h-16 md:h-24
     object-cover
     rounded-3xl
   "
@@ -981,8 +990,8 @@ const totalClicks = links.reduce(
 
 <div
   className="
-    w-24
-    h-24
+    w-16 md:w-24
+    h-16 md:h-24
     rounded-3xl
     bg-zinc-800
     flex
@@ -1010,7 +1019,7 @@ const totalClicks = links.reduce(
 </div>
 
 {/* BOTÕES */}
-<div className="flex items-center gap-3">
+<div className="flex flex-wrap gap-2 w-full md:w-auto md:justify-end">
 
 <button
   onClick={() =>

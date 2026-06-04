@@ -41,6 +41,8 @@ export default function Sidebar() {
 
     <aside
       className="
+        hidden
+        md:flex
         w-72
         min-h-screen
         bg-zinc-950/90
@@ -48,11 +50,10 @@ export default function Sidebar() {
         border-r
         border-zinc-800
         p-5
-        flex
         flex-col
         gap-6
       "
->
+    >
 
       <div className="mb-10">
 
