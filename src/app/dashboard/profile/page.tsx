@@ -238,12 +238,12 @@ setAvatarUrl(data.publicUrl);
 
   <div className="flex bg-black text-white min-h-screen">
 
-    <div className="flex-1 p-8">
+    <div className="flex-1 p-4 md:p-8 pt-20 md:pt-8">
 
     {/* HEADER */}
     <div className="mb-10">
 
-      <h1 className="text-5xl font-bold">
+      <h1 className="text-3xl md:text-5xl font-bold">
         Editar Perfil
       </h1>
 
@@ -254,18 +254,18 @@ setAvatarUrl(data.publicUrl);
     </div>
 
     {/* BANNER PREMIUM */}
-    <div className="bg-gradient-to-r from-zinc-900 to-black border border-zinc-800 rounded-[40px] p-12 mb-10 relative overflow-hidden">
+    <div className="bg-gradient-to-r from-zinc-900 to-black border border-zinc-800 rounded-[32px] p-5 md:p-12 mb-10 relative overflow-hidden">
 
       <div className="absolute top-0 right-0 w-72 h-72 bg-green-500/10 blur-3xl rounded-full" />
 
-      <div className="relative z-10 flex items-center gap-8">
+      <div className="relative z-10 flex flex-col md:flex-row items-center gap-6 md:gap-8">
 
         <img
           src={
             avatarUrl ||
             "/placeholder.png"
           }
-          className="w-32 h-32 rounded-full object-cover border-4"
+          className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4"
           style={{
             borderColor: themeColor,
           }}
@@ -275,7 +275,7 @@ setAvatarUrl(data.publicUrl);
 
           <div className="flex items-center gap-3">
 
-            <h2 className="text-5xl font-extrabold">
+            <h2 className="text-2xl md:text-5xl font-extrabold break-all">
               @{username || "usuario"}
             </h2>
 
@@ -297,10 +297,10 @@ setAvatarUrl(data.publicUrl);
     </div>
 
     {/* GRID */}
-    <div className="grid grid-cols-1 xl:grid-cols-[1fr_350px] gap-10">
+    <div className="grid grid-cols-1 xl:grid-cols-[1fr_350px] gap-6 md:gap-10">
 
       {/* FORM */}
-      <div className="bg-zinc-900/70 backdrop-blur-xl border border-zinc-800 rounded-[32px] p-8 shadow-2xl">
+      <div className="bg-zinc-900/70 backdrop-blur-xl border border-zinc-800 rounded-[32px] p-4 md:p-8 shadow-2xl">
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
