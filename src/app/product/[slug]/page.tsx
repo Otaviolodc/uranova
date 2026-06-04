@@ -6,78 +6,84 @@ import { useParams } from "next/navigation";
 
 export default function ProductPage() {
 
-  const params = useParams();
+const params = useParams();
 
-  const slug = Array.isArray(params.slug)
-    ? params.slug[0]
-    : params.slug;
+const slug = Array.isArray(params.slug)
+  ? params.slug[0]
+  : params.slug;
 
-  const [product, setProduct] =
-    useState<any>(null);
+const [product, setProduct] =
+  useState<any>(null);
 
-  const [relatedProducts,
-    setRelatedProducts] =
-    useState<any[]>([]);
+const [loading, setLoading] =
+  useState(true);
 
-  useEffect(() => {
+const [relatedProducts, setRelatedProducts] =
+  useState<any[]>([]);
 
-    fetchProduct();
+const fetchProduct = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("products_checkout")
+      .select("*")
+      .eq("checkout_slug", slug)
+      .maybeSingle();
 
-  }, []);
-
-  const fetchProduct = async () => {
-
-  const { data } = await supabase
-    .from("products_checkout")
-    .select("*")
-    .eq("checkout_slug", slug)
-    .single();
-
-if (!data) return;
-
-setProduct(data);
-
-await supabase
-  .from("analytics")
-  .insert({
-    user_id: data.user_id,
-    product_id: data.id,
-    event_type: "product_view",
-    page: "product",
-  });
-
-  console.log("Analytics salvo");
-
-    if (data) {
-
-      const { data: related } =
-        await supabase
-          .from("products_checkout")
-          .select("*")
-          .neq("id", data.id)
-          .limit(4);
-
-      setRelatedProducts(
-        related || []
-      );
-
+    if (error) {
+      console.error(error);
     }
 
-  };
+    if (!data) {
+      setLoading(false);
+      return;
+    }
 
-  if (!product) {
+    setProduct(data);
 
-    return (
+    await supabase
+      .from("analytics")
+      .insert({
+        user_id: data.user_id,
+        product_id: data.id,
+        event_type: "product_view",
+        page: "product",
+      });
 
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+    const { data: related } = await supabase
+      .from("products_checkout")
+      .select("*")
+      .neq("id", data.id)
+      .limit(4);
 
-        Carregando produto...
-
-      </div>
-
-    );
-
+    setRelatedProducts(related || []);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoading(false);
   }
+}; 
+
+useEffect(() => {
+  if (slug) {
+    fetchProduct();
+  }
+}, [slug]);
+  
+  if (loading) {
+  return (
+    <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      Carregando produto...
+    </div>
+  );
+}
+
+if (!product) {
+  return (
+    <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      Produto não encontrado.
+    </div>
+  );
+}
 
   return (
 
@@ -374,7 +380,7 @@ await supabase
 
               <a
                 key={item.id}
-                href={`/product/${item.checkout_slug}`}
+                href={`/products/${item.checkout_slug}`}
                 className="
                   bg-zinc-900
                   border
