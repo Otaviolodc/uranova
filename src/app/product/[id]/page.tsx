@@ -125,45 +125,35 @@ export default function ProductPage() {
           {/* INFO */}
           <div>
 
-            {/* BADGE */}
-            <div
-              className="
-                inline-flex
-                items-center
-                gap-2
-                bg-green-500/10
-                border
-                border-green-500/20
-                text-green-400
-                px-5
-                py-3
-                rounded-full
-                font-bold
-                mb-6
-              "
-            >
+            <div className="flex gap-3 mb-6">
 
-              🔥 Produto em Alta
+  <span
+    className="
+      bg-green-500/10
+      text-green-400
+      px-4
+      py-2
+      rounded-full
+      font-bold
+    "
+  >
+    Produto Digital
+  </span>
 
-            <div className="flex gap-2 mb-6">
+  <span
+    className="
+      bg-blue-500/10
+      text-blue-400
+      px-4
+      py-2
+      rounded-full
+      font-bold
+    "
+  >
+    {product.product_type}
+  </span>
 
-              <span
-                className="
-                  px-4
-                  py-2
-                  rounded-full
-                  bg-blue-500/10
-                  text-blue-400
-                  text-sm
-                  font-bold
-                "
-            >
-                {product.product_type}
-            </span>
-
-            </div>
-
-            </div>
+</div>
 
             {/* TÍTULO */}
             <h1 className="text-6xl font-black leading-tight">
@@ -200,59 +190,111 @@ export default function ProductPage() {
             {/* IA */}
             <div
               className="
-                mt-10
                 bg-zinc-900
                 border
                 border-zinc-800
-                rounded-3xl
-                p-6
+                rounded-2xl
+                p-5
+                mt-8
               "
             >
 
-              <p className="text-green-400 font-bold mb-3">
+              <h3 className="font-bold text-white mb-3">
+                Informações do Produto
+              </h3>
 
-                🤖 IA ANALISANDO PRODUTO
+              <ul className="space-y-2 text-zinc-400">
 
-              </p>
+                <li>
+                  ✓ Produto Digital
+                </li>
 
-              <p className="text-lg text-gray-300 leading-relaxed">
+                <li>
+                  ✓ Acesso Imediato
+                </li>
 
-                Este produto está com
-                alta taxa de interesse
-                nas últimas horas e possui
-                potencial de crescimento
-                acima da média.
+                <li>
+                  ✓ Pagamento Seguro
+                </li>
 
-              </p>
+                </ul>
 
             </div>
 
-            {/* BOTÃO */}
-            <a
-              href={product.affiliate_url}
-              target="_blank"
-              className="
-                mt-10
-                block
-                bg-green-500
-                hover:bg-green-400
-                transition
-                text-black
-                text-center
-                py-6
-                rounded-3xl
-                font-black
-                text-2xl
-              "
-            >
+            {/* BOTÃO COMPRAR */}
+<a
+  href={product.affiliate_url}
+  target="_blank"
+  className="
+    mt-10
+    block
+    w-full
+    bg-gradient-to-r
+    from-green-500
+    to-emerald-400
+    hover:scale-[1.02]
+    transition-all
+    text-black
+    text-center
+    py-5
+    rounded-2xl
+    font-black
+    text-xl
+  "
+>
+  Comprar Agora
+</a>
 
-              Comprar Agora
+<p
+  className="
+    text-center
+    text-zinc-500
+    text-sm
+    mt-3
+  "
+>
+  Pagamento seguro • Liberação imediata
+</p>
 
-              <p className="text-center text-zinc-500 mt-3 text-sm">
-                Pagamento seguro • Liberação imediata
-              </p>
+<div className="flex gap-3 mt-4">
 
-            </a>
+  <button
+    onClick={() => {
+      navigator.clipboard.writeText(
+        window.location.href
+      );
+
+      alert("Link copiado!");
+    }}
+    className="
+      flex-1
+      bg-zinc-800
+      hover:bg-zinc-700
+      py-3
+      rounded-xl
+      font-semibold
+    "
+  >
+    Copiar Link
+  </button>
+
+  <a
+    href={`https://wa.me/?text=${encodeURIComponent(window.location.href)}`}
+    target="_blank"
+    className="
+      flex-1
+      bg-green-600
+      hover:bg-green-500
+      py-3
+      rounded-xl
+      text-center
+      font-semibold
+    "
+  >
+    WhatsApp
+  </a>
+
+</div>
 
             {/* INFO PRODUTO */}
             <div className="grid grid-cols-3 gap-4 mt-10">
@@ -358,7 +400,7 @@ export default function ProductPage() {
 
                   <div className="h-60 flex items-center justify-center text-5xl">
 
-                    📦
+                    Produtos
 
                   </div>
 
