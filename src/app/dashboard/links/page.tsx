@@ -541,7 +541,7 @@ const totalClicks = links.reduce(
   return (
     <div className="flex bg-black text-white min-h-screen">
 
-      <div className="flex-1 p-4 md:p-8 flex gap-8">
+      <div className="flex-1 p-4 md:p-8 pt-20 md:pt-8 flex gap-8">
 
         {/* CONTEÚDO */}
         <div className="flex-1">
@@ -1075,6 +1075,32 @@ const totalClicks = links.reduce(
           </div>
 
         </div>
+
+        <div className="xl:hidden fixed bottom-5 right-5 z-40">
+
+  <button
+    onClick={() => {
+      setEditingLink(null);
+      setTitle("");
+      setUrl("");
+      setImageUrl("");
+      setShowModal(true);
+    }}
+    className="
+      bg-green-500
+      hover:bg-green-400
+      text-black
+      font-bold
+      px-5
+      py-4
+      rounded-full
+      shadow-lg
+    "
+  >
+    + Novo Link
+  </button>
+
+</div>
 
        {/* PREVIEW MOBILE */}
 <div className="hidden xl:flex flex-col items-center">
