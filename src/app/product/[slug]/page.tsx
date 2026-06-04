@@ -1,7 +1,6 @@
 "use client";
 
-import { supabase }
-from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase/client";;
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
@@ -9,7 +8,9 @@ export default function ProductPage() {
 
   const params = useParams();
 
-  const id = params.id;
+  const slug = Array.isArray(params.slug)
+    ? params.slug[0]
+    : params.slug;
 
   const [product, setProduct] =
     useState<any>(null);
@@ -26,16 +27,17 @@ export default function ProductPage() {
 
   const fetchProduct = async () => {
 
-    const { data } = await supabase
-      .from("products_checkout")
-      .select("*")
-      .eq("id", id)
-      .single();
+  const { data } = await supabase
+    .from("products_checkout")
+    .select("*")
+    .eq("checkout_slug", slug)
+    .single();
 
-    setProduct(data);
+if (!data) return;
 
-    // ANALYTICS
-    await supabase
+setProduct(data);
+
+await supabase
   .from("analytics")
   .insert({
     user_id: data.user_id,
@@ -372,7 +374,7 @@ export default function ProductPage() {
 
               <a
                 key={item.id}
-                href={`/product/${item.id}`}
+                href={`/product/${item.checkout_slug}`}
                 className="
                   bg-zinc-900
                   border

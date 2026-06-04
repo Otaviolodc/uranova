@@ -697,7 +697,7 @@ async function deleteProduct(id: string) {
           </div>
 
           <a
-            href={`/product/${product.id}`}
+            href={`/product/${product.checkout_slug}`}
             target="_blank"
             className="
               mt-4
