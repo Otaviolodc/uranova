@@ -523,7 +523,7 @@ export default async function PublicPage({
       {/* FOOTER */}
       <div className="mt-12 text-xs text-white/50">
 
-        Powered by PromoLink
+        Powered by Uranova
 
       </div>
 

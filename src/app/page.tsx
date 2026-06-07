@@ -13,7 +13,7 @@ export default function HomePage() {
         <div className="text-center mb-20">
 
           <h1 className="text-7xl font-bold mb-6">
-            PromoLink
+            Uranova
           </h1>
 
           <p className="text-zinc-400 text-2xl max-w-3xl mx-auto leading-relaxed">

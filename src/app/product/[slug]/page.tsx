@@ -174,7 +174,7 @@ if (!product) {
             <p className="text-gray-400 text-xl mt-8 leading-relaxed">
 
               {product.description ||
-                "Produto digital disponível no marketplace PromoLink."}
+                "Produto digital disponível no marketplace Uranova."}
 
             </p>
 

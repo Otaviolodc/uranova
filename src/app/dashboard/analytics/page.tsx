@@ -901,7 +901,7 @@ return (
     <div>
 
       <h2 className="text-2xl font-bold">
-        🤖 IA PromoLink
+        🤖 IA Uranova
       </h2>
 
       <p className="text-gray-400 mt-1">

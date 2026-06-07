@@ -56,7 +56,7 @@ export default async function AdminLayout({
           mb-10
         ">
 
-          PromoLink Admin
+          Uranova Admin
 
         </h2>
 
@@ -222,7 +222,7 @@ export default async function AdminLayout({
               mt-1
             ">
 
-              Controle total do PromoLink
+              Controle total do Uranova
 
             </p>
 

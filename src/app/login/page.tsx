@@ -125,7 +125,7 @@ export default function LoginPage() {
         <div className="text-center mb-8">
 
           <h1 className="text-4xl font-bold text-green-400">
-            PromoLink
+            Uranova
           </h1>
 
           <p className="text-gray-400 mt-2">

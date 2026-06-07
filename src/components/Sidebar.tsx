@@ -64,7 +64,7 @@ export default function Sidebar() {
       "
     >
       <h2 className="font-bold text-white">
-        PromoLink
+        Uranova
       </h2>
 
       <button

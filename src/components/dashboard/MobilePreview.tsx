@@ -134,7 +134,7 @@ export default function MobilePreview({
 
           {/* FOOTER */}
           <div className="mt-10 text-center text-gray-400 text-xs">
-            Powered by PromoLink
+            Powered by Uranova
            
           </div>
 

@@ -72,7 +72,7 @@ export default function MarketplacePage() {
 
               Cursos, ebooks, ferramentas,
               produtos físicos e conteúdos
-              digitais da comunidade PromoLink.
+              digitais da comunidade Uranova.
 
             </p>
 
@@ -336,7 +336,7 @@ export default function MarketplacePage() {
                   <p className="text-gray-400 text-sm mt-4 line-clamp-3">
 
                     {product.description ||
-                      "Produto digital disponível no marketplace PromoLink."}
+                      "Produto digital disponível no marketplace Uranova."}
 
                   </p>
 
@@ -404,7 +404,7 @@ export default function MarketplacePage() {
           <h2 className="text-3xl md:text-6xl font-black leading-tight">
 
             Venda seus produtos
-            no PromoLink 🚀
+            no Uranova 
 
           </h2>
 

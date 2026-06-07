@@ -53,7 +53,7 @@ export default async function AdminPage() {
           text-lg
         ">
 
-          Controle total da plataforma PromoLink
+          Controle total da plataforma Uranova
 
         </p>
 

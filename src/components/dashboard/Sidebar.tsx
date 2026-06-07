@@ -49,7 +49,7 @@ export default function Sidebar() {
 
         <img
           src="/placeholder.png"
-          alt="PromoLink"
+          alt="Uranova"
           className="w-44 object-contain"
         />
 

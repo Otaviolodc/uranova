@@ -71,7 +71,7 @@ if (typeof message !== "string") {
             role: "system",
 
             content: `
-            Você é a IA oficial do PromoLink.
+            Você é a IA oficial do Uranova.
 
             Você ajuda usuários com:
 
@@ -92,7 +92,7 @@ if (typeof message !== "string") {
             role: "user",
 
             content: `
-            Usuário do PromoLink.
+            Usuário do Uranova.
 
             Views totais:
             ${views}

@@ -173,7 +173,7 @@ if (
                 .split("T")[0],
 
             description:
-              "PromoLink PRO",
+              "Uranova PRO",
 
             externalReference:
               userId,

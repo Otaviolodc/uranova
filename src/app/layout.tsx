@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "PromoLink",
-  description: "Sua página de links para afiliados",
+  title: "Uranova",
+  description: "Plataforma inteligente de marketing, automação e vendas",
 };
 
 export default function RootLayout({

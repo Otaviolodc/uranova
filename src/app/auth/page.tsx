@@ -153,7 +153,7 @@ if (password.length < 6) {
         <div className="text-center mb-8">
 
           <h1 className="text-5xl font-bold text-white mb-3">
-            PromoLink
+            Uranova
           </h1>
 
           <p className="text-zinc-400">

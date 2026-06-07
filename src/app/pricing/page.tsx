@@ -194,7 +194,7 @@ export default function PricingPage() {
       <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-10 max-w-lg w-full">
 
         <h1 className="text-4xl font-bold mb-3">
-          PromoLink PRO
+          Uranova PRO
         </h1>
 
         <p className="text-gray-400 mb-8">

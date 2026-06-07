@@ -43,7 +43,7 @@ export default async function UsersPage() {
             mt-2
           ">
 
-            Gerencie todos os usuários do PromoLink
+            Gerencie todos os usuários do Uranova
 
           </p>
 

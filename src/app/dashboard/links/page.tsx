@@ -652,7 +652,7 @@ const totalClicks = links.reduce(
               target="_blank"
               className="text-green-400 text-lg md:text-2xl font-bold mt-2 block break-all"
             >
-              promolink.com/{profile?.username}
+              Uranova.com/{profile?.username}
             </a>
 
           </div>
