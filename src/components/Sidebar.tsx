@@ -2,7 +2,6 @@
 
 import { supabase }
 from "@/lib/supabase/client";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -158,13 +157,19 @@ export default function Sidebar() {
 
       <div className="mb-10">
 
-        <Image
-          src="/logo.png"
-          alt=""
-          width={60}
-          height={60}
-          className="rounded-2xl"
-        />
+        <h1
+          className="
+            text-3xl
+            font-black
+            bg-gradient-to-r
+            from-green-400
+            to-emerald-600
+            bg-clip-text
+            text-transparent
+          "
+        >
+          Uranova
+        </h1>
 
         <p className="text-zinc-500 text-sm mt-1">
           IA Marketing Platform
