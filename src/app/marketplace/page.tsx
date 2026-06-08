@@ -1,7 +1,6 @@
 "use client";
 
-import { supabase }
-from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 
 export default function MarketplacePage() {
@@ -11,6 +10,12 @@ export default function MarketplacePage() {
 
   const [search, setSearch] =
     useState("");
+
+  const [category, setCategory] =
+    useState("todos");
+
+  const [sortBy, setSortBy] =
+    useState("recentes");
 
   useEffect(() => {
 
@@ -23,22 +28,71 @@ export default function MarketplacePage() {
     const { data } = await supabase
       .from("products_checkout")
       .select("*")
+      .eq("status", "active")
+      .eq("is_marketplace", true)
       .order("created_at", {
         ascending: false,
-      });
+    });
 
     setProducts(data || []);
 
   };
 
   const filteredProducts =
-    products.filter((product) =>
+  products.filter((product) => {
+
+    const matchesSearch =
       product.title
         ?.toLowerCase()
         .includes(
           search.toLowerCase()
-        )
+        );
+
+    const matchesCategory =
+      category === "todos"
+        ? true
+        : product.product_type === category;
+
+    return (
+      matchesSearch &&
+      matchesCategory
     );
+
+  });
+
+  const sortedProducts =
+  [...filteredProducts];
+
+if (sortBy === "menor-preco") {
+
+  sortedProducts.sort(
+    (a, b) =>
+      Number(a.price) -
+      Number(b.price)
+  );
+
+}
+
+if (sortBy === "maior-preco") {
+
+  sortedProducts.sort(
+    (a, b) =>
+      Number(b.price) -
+      Number(a.price)
+  );
+
+}
+
+if (sortBy === "az") {
+
+  sortedProducts.sort(
+    (a, b) =>
+      a.title.localeCompare(
+        b.title
+      )
+  );
+
+}
 
   return (
 
@@ -55,7 +109,7 @@ export default function MarketplacePage() {
 
             <p className="text-green-400 font-bold mb-4">
 
-              🔥 MARKETPLACE OFICIAL
+              MARKETPLACE OFICIAL
 
             </p>
 
@@ -121,58 +175,36 @@ export default function MarketplacePage() {
 
             </div>
 
-            {/* STATS */}
-            <div className="grid grid-cols-3 gap-4 mt-12">
+            <div className="grid grid-cols-3 gap-6 mt-12">
 
-              <div>
+  <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+    <h2 className="text-4xl font-black text-green-400">
+      {products.length}
+    </h2>
+    <p className="text-gray-400 mt-2">
+      Produtos
+    </p>
+  </div>
 
-                <h2 className="text-2xl md:text-4xl font-black text-green-400">
+  <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+    <h2 className="text-4xl font-black text-green-400">
+      5
+    </h2>
+    <p className="text-gray-400 mt-2">
+      Categorias
+    </p>
+  </div>
 
-                  {products.length}+
+  <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+    <h2 className="text-4xl font-black text-green-400">
+      Ativo
+    </h2>
+    <p className="text-gray-400 mt-2">
+      Marketplace
+    </p>
+  </div>
 
-                </h2>
-
-                <p className="text-gray-400 mt-2">
-
-                  Produtos
-
-                </p>
-
-              </div>
-
-              <div>
-
-                <h2 className="text-2xl md:text-4xl font-black text-green-400">
-
-                  24h
-
-                </h2>
-
-                <p className="text-gray-400 mt-2">
-
-                  Atualização IA
-
-                </p>
-
-              </div>
-
-              <div>
-
-                <h2 className="text-2xl md:text-4xl font-black text-green-400">
-
-                  IA
-
-                </h2>
-
-                <p className="text-gray-400 mt-2">
-
-                  Recomendação Inteligente
-
-                </p>
-
-              </div>
-
-            </div>
+</div>
 
           </div>
 
@@ -185,35 +217,38 @@ export default function MarketplacePage() {
 
         <div className="flex gap-4 overflow-x-auto pb-2">
 
-          {[
-            "🔥 Em Alta",
-            "📚 Cursos",
-            "💻 Ferramentas",
-            "📱 Apps",
-            "🏋 Fitness",
-            "🧠 IA",
-            "📦 Produtos",
-            "🎨 Design",
+          {[  
+             "todos",
+             "ebook",
+             "curso",
+             "pdf",
+             "ferramenta",
+             "mentoria",
           ].map((item) => (
 
             <button
               key={item}
-              className="
+              onClick={() =>
+                setCategory(item)
+              }
+              className={`
                 whitespace-nowrap
-                bg-zinc-900
-                border
-                border-zinc-800
-                hover:border-green-500
-                transition
                 px-6
                 py-3
                 rounded-2xl
                 text-sm
                 font-semibold
-              "
-            >
+                border
+                transition
 
-              {item}
+                ${
+                  category === item
+                    ? "bg-green-500 text-black border-green-500"
+                    : "bg-zinc-900 border-zinc-800"
+                }
+             `}
+          >
+              {item.charAt(0).toUpperCase() + item.slice(1)}
 
             </button>
 
@@ -222,6 +257,91 @@ export default function MarketplacePage() {
         </div>
 
       </div>
+
+      {/* ORDENAÇÃO */}
+<div className="max-w-7xl mx-auto px-6 mt-6">
+
+  <select
+    value={sortBy}
+    onChange={(e) =>
+      setSortBy(e.target.value)
+    }
+    className="
+      bg-zinc-900
+      border
+      border-zinc-800
+      px-4
+      py-3
+      rounded-2xl
+      text-white
+    "
+  >
+    <option value="recentes">
+      Mais recentes
+    </option>
+
+    <option value="menor-preco">
+      Menor preço
+    </option>
+
+    <option value="maior-preco">
+      Maior preço
+    </option>
+
+    <option value="az">
+      A-Z
+    </option>
+
+  </select>
+
+</div>
+
+      {/* RECENTES */}
+<div className="max-w-7xl mx-auto px-6 mt-10">
+
+  <h2 className="text-3xl font-black mb-6">
+    Novidades do Marketplace
+  </h2>
+
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+    {products
+      .slice(0, 3)
+      .map((product) => (
+
+        <a
+          key={product.id}
+          href={`/product/${product.checkout_slug}`}
+          className="
+            bg-zinc-900
+            border
+            border-zinc-800
+            rounded-3xl
+            p-5
+            hover:border-green-500/30
+            transition-all
+          "
+        >
+
+          <p className="text-green-400 text-sm font-bold">
+            NOVO
+          </p>
+
+          <h3 className="text-xl font-bold mt-2">
+            {product.title}
+          </h3>
+
+          <p className="text-green-400 text-2xl font-black mt-4">
+            R$ {product.price}
+          </p>
+
+        </a>
+
+      ))}
+
+  </div>
+
+</div>
 
       {/* PRODUTOS */}
       <div className="max-w-7xl mx-auto px-6 py-14">
@@ -232,13 +352,17 @@ export default function MarketplacePage() {
 
             <h2 className="text-2xl md:text-4xl font-black">
 
-              🚀 Produtos em Alta
+              Produtos em Destaque
 
             </h2>
 
+            <p className="text-zinc-500 mt-2">
+              {sortedProducts.length} produtos encontrados
+            </p>
+
             <p className="text-gray-400 mt-2">
 
-              Produtos mais acessados hoje
+              Produtos disponíveis no marketplace
 
             </p>
 
@@ -258,7 +382,7 @@ export default function MarketplacePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
 
-            {filteredProducts.map((product) => (
+            {sortedProducts.map((product) => (
 
               <div
                 key={product.id}
@@ -296,7 +420,7 @@ export default function MarketplacePage() {
 
                     <div className="w-full h-full flex items-center justify-center text-6xl">
 
-                      📦
+                      Produto
 
                     </div>
 
@@ -318,7 +442,7 @@ export default function MarketplacePage() {
                     "
                   >
 
-                    🔥 EM ALTA
+                    {product.product_type?.toUpperCase()}
 
                   </div>
 
@@ -332,6 +456,10 @@ export default function MarketplacePage() {
                     {product.title}
 
                   </h2>
+
+                  <p className="text-green-400 text-sm font-semibold mt-2">
+                    ● Produto Ativo
+                  </p>
 
                   <p className="text-gray-400 text-sm mt-4 line-clamp-3">
 
@@ -351,11 +479,15 @@ export default function MarketplacePage() {
 
                       </p>
 
-                      <h3 className="text-2xl md:text-4xl font-black text-green-400">
+                      <h3 className="text-4xl font-black text-green-400">
 
                         R$ {product.price}
 
                       </h3>
+
+                      <p className="text-zinc-500 text-sm mt-4">
+                        Marketplace Uranova
+                      </p>
 
                     </div>
 
@@ -380,7 +512,7 @@ export default function MarketplacePage() {
                     "
                   >
 
-                    Comprar Agora
+                    Ver Produto
 
                   </a>
 
@@ -395,6 +527,36 @@ export default function MarketplacePage() {
         )}
 
       </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-20">
+
+  <div
+    className="
+      bg-zinc-900
+      border
+      border-zinc-800
+      rounded-3xl
+      p-10
+      text-center
+    "
+  >
+
+    <h2 className="text-4xl font-black">
+
+      Marketplace em Crescimento
+
+    </h2>
+
+    <p className="text-zinc-400 mt-4 text-lg">
+
+      Já são {products.length} produtos
+      publicados pela comunidade Uranova.
+
+    </p>
+
+  </div>
+
+</div>
 
       {/* CTA */}
       <div className="border-t border-zinc-800">
