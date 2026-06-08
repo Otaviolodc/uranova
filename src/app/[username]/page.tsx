@@ -73,6 +73,29 @@ export default async function PublicPage({
 
   const links = data || [];
 
+  // PRODUCTS
+const {
+  data: products,
+} = await supabase
+  .from("products_checkout")
+  .select("*")
+  .eq("user_id", profile.id)
+  .eq("status", "active")
+  .order("created_at", {
+    ascending: false,
+  });
+
+const totalProducts =
+  products?.length || 0;
+
+const totalLinks =
+  links?.length || 0;
+
+const marketplaceProducts =
+  products?.filter(
+    (p) => p.is_marketplace
+  ).length || 0;
+
   // BACKGROUND
   const backgroundClass =
     profile?.background_style ===
@@ -215,7 +238,7 @@ export default async function PublicPage({
               backdrop-blur-xl
             ">
 
-              ✨ PRO MEMBER
+              Criador Verificado
 
             </div>
 
@@ -238,6 +261,67 @@ export default async function PublicPage({
             </p>
 
           )}
+
+          <div className="grid grid-cols-3 gap-4 mt-6">
+
+  <div
+    className="
+      bg-zinc-900
+      border
+      border-zinc-800
+      rounded-2xl
+      p-4
+      text-center
+    "
+  >
+    <h3 className="text-2xl font-black text-green-400">
+      {totalProducts}
+    </h3>
+
+    <p className="text-zinc-400 text-sm">
+      Produtos
+    </p>
+  </div>
+
+  <div
+    className="
+      bg-zinc-900
+      border
+      border-zinc-800
+      rounded-2xl
+      p-4
+      text-center
+    "
+  >
+    <h3 className="text-2xl font-black text-green-400">
+      {totalLinks}
+    </h3>
+
+    <p className="text-zinc-400 text-sm">
+      Links
+    </p>
+  </div>
+
+  <div
+    className="
+      bg-zinc-900
+      border
+      border-zinc-800
+      rounded-2xl
+      p-4
+      text-center
+    "
+  >
+    <h3 className="text-2xl font-black text-green-400">
+      {marketplaceProducts}
+    </h3>
+
+    <p className="text-zinc-400 text-sm">
+      Marketplace
+    </p>
+  </div>
+
+</div>
 
         </div>
 
@@ -341,6 +425,95 @@ export default async function PublicPage({
         )}
 
       </div>
+
+      {/* PRODUTOS DO CRIADOR */}
+{products &&
+ products.length > 0 && (
+
+  <div className="w-full max-w-6xl mb-12">
+
+    <h2 className="text-3xl font-black mb-6">
+
+      Produtos do Criador
+
+    </h2>
+
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      {products.map((product) => (
+
+        <a
+          key={product.id}
+          href={`/product/${product.checkout_slug}`}
+          className="
+            bg-zinc-900
+            border
+            border-zinc-800
+            rounded-3xl
+            overflow-hidden
+            hover:border-green-500/30
+            transition-all
+          "
+        >
+
+          {product.image_url && (
+
+            <img
+              src={product.image_url}
+              className="
+                w-full
+                h-52
+                object-cover
+              "
+            />
+
+          )}
+
+          <div className="p-5">
+
+            <p className="text-green-400 text-xs font-bold">
+
+              {product.product_type?.toUpperCase()}
+
+            </p>
+
+            <h3 className="text-xl font-bold mt-2">
+
+              {product.title}
+
+            </h3>
+
+            <p className="text-green-400 text-2xl font-black mt-4">
+
+              R$ {product.price}
+
+            </p>
+
+            <div
+              className="
+                mt-4
+                bg-green-500
+                text-black
+                text-center
+                py-2
+                rounded-xl
+                font-bold
+              "
+            >
+              Ver Produto
+            </div>
+
+          </div>
+
+        </a>
+
+      ))}
+
+    </div>
+
+  </div>
+
+)}
 
       {/* PRODUCTS */}
       <div className="w-full max-w-2xl space-y-8">
@@ -504,7 +677,7 @@ export default async function PublicPage({
                     }}
                   >
 
-                    Comprar Agora →
+                    Acessar →
 
                   </div>
 
