@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase/client";
 import AIInsights from "@/components/dashboard/AIInsights";
 import TopProducts from "@/components/dashboard/TopProducts";
 import RecentSales from "@/components/dashboard/RecentSales";
@@ -6,7 +10,62 @@ import QuickActions from "@/components/dashboard/QuickActions";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 
 export default function DashboardPage() {
+
+const [revenue, setRevenue] = useState(0);
+const [salesToday, setSalesToday] = useState(0);
+const [ticket, setTicket] = useState(0);
+const [orders, setOrders] = useState<any[]>([]);
+
+async function fetchOrders() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return;
+
+  const { data } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("user_id", user.id);
+
+  setOrders(data || []);
+
+  const totalRevenue =
+    data?.reduce(
+      (total, order) =>
+        total + Number(order.amount),
+      0
+    ) || 0;
+
+  setRevenue(totalRevenue);
+
+  const today =
+    new Date()
+      .toISOString()
+      .split("T")[0];
+
+  const todaySales =
+    data?.filter((order) =>
+      order.created_at?.startsWith(today)
+    ).length || 0;
+
+  setSalesToday(todaySales);
+
+  const avgTicket =
+    totalRevenue > 0
+      ? totalRevenue /
+        (data?.length || 1)
+      : 0;
+
+  setTicket(avgTicket);
+}
+
+useEffect(() => {
+  fetchOrders();
+}, []);
+
   return (
+
     <div className="p-6 md:p-8">
 
       {/* HEADER */}
@@ -27,13 +86,13 @@ export default function DashboardPage() {
 
         <StatsCard
           title="💰 Receita Total"
-          value="R$ 0"
+          value={`R$ ${revenue.toFixed(2)}`}
           subtitle="+0% hoje"
         />
 
         <StatsCard
           title="🛒 Vendas"
-          value="0"
+          value={salesToday.toString()}
           subtitle="Nenhuma venda"
         />
 
@@ -45,7 +104,7 @@ export default function DashboardPage() {
 
         <StatsCard
           title="🎯 Ticket Médio"
-          value="R$ 0"
+          value={`R$ ${ticket.toFixed(2)}`}
           subtitle="Sem vendas"
         />
 

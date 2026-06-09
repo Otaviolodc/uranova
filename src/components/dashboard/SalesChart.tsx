@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase/client";
+
 import {
   LineChart,
   Line,
@@ -8,17 +11,52 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  { day: "01", vendas: 12 },
-  { day: "05", vendas: 25 },
-  { day: "10", vendas: 18 },
-  { day: "15", vendas: 35 },
-  { day: "20", vendas: 28 },
-  { day: "25", vendas: 50 },
-  { day: "30", vendas: 42 },
-];
-
 export default function SalesChart() {
+
+  const [data, setData] =
+  useState<any[]>([]);
+
+  const [mounted, setMounted] =
+  useState(false);
+
+  async function fetchClicks() {
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return;
+
+    const { data: clicks } =
+      await supabase
+        .from("link_clicks_daily")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("date", {
+          ascending: true,
+        });
+
+    const formatted =
+      (clicks || []).map((item) => ({
+        day: item.date?.slice(8, 10),
+        clicks: item.clicks,
+      }));
+
+    setData(formatted);
+  }
+
+  useEffect(() => {
+    fetchClicks();
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <div
       className="
@@ -30,40 +68,43 @@ export default function SalesChart() {
         p-6
       "
     >
+
       <h2 className="text-2xl font-bold text-white mb-2">
         📈 Visão Geral
       </h2>
 
       <p className="text-zinc-400 mb-6">
-        Vendas dos últimos 30 dias
+        Cliques dos últimos dias
       </p>
 
-      <div className="w-full min-h-[320px] h-[320px]">
+      <div className="w-full h-[320px]">
 
         <ResponsiveContainer
-          width="100%"
-          height="100%"
+          width="99%"
+          height={320}
         >
+
           <LineChart data={data}>
 
             <XAxis
               dataKey="day"
-              stroke="#888"
             />
 
             <Tooltip />
 
             <Line
               type="monotone"
-              dataKey="vendas"
+              dataKey="clicks"
               stroke="#22c55e"
               strokeWidth={3}
             />
 
           </LineChart>
+
         </ResponsiveContainer>
 
       </div>
+
     </div>
   );
 }

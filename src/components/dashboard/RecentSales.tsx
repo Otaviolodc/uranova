@@ -1,29 +1,42 @@
-const sales = [
-  {
-    id: 1,
-    customer: "João Silva",
-    product: "Curso Dropshipping",
-    value: "R$ 97",
-    status: "Pago",
-  },
-  {
-    id: 2,
-    customer: "Maria Souza",
-    product: "Ebook Marketing",
-    value: "R$ 49",
-    status: "Pago",
-  },
-  {
-    id: 3,
-    customer: "Pedro Lima",
-    product: "Mentoria Premium",
-    value: "R$ 297",
-    status: "Pago",
-  },
-];
+"use client";
+
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase/client";
 
 export default function RecentSales() {
+
+  const [sales, setSales] =
+    useState<any[]>([]);
+
+  async function fetchSales() {
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return;
+
+    const { data } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", {
+        ascending: false,
+      })
+      .limit(10);
+
+    setSales(data || []);
+
+  console.log("USER:", user.id);
+  console.log("ORDERS:", data);
+  }
+
+  useEffect(() => {
+    fetchSales();
+  }, []);
+
   return (
+
     <div
       className="
         mt-10
@@ -34,7 +47,15 @@ export default function RecentSales() {
         p-6
       "
     >
-      <h2 className="text-2xl font-bold text-white mb-6">
+
+      <h2
+        className="
+          text-2xl
+          font-bold
+          text-white
+          mb-6
+        "
+      >
         🧾 Últimas Vendas
       </h2>
 
@@ -44,14 +65,15 @@ export default function RecentSales() {
 
           <thead>
 
-            <tr className="border-b border-zinc-800">
+            <tr
+              className="
+                border-b
+                border-zinc-800
+              "
+            >
 
               <th className="text-left py-3 text-zinc-400">
                 Cliente
-              </th>
-
-              <th className="text-left py-3 text-zinc-400">
-                Produto
               </th>
 
               <th className="text-left py-3 text-zinc-400">
@@ -60,6 +82,10 @@ export default function RecentSales() {
 
               <th className="text-left py-3 text-zinc-400">
                 Status
+              </th>
+
+              <th className="text-left py-3 text-zinc-400">
+                Data
               </th>
 
             </tr>
@@ -79,15 +105,18 @@ export default function RecentSales() {
               >
 
                 <td className="py-4 text-white">
-                  {sale.customer}
+                  {sale.customer_name ||
+                    "Cliente"}
                 </td>
 
-                <td className="py-4 text-white">
-                  {sale.product}
-                </td>
-
-                <td className="py-4 text-green-400 font-semibold">
-                  {sale.value}
+                <td
+                  className="
+                    py-4
+                    text-green-400
+                    font-semibold
+                  "
+                >
+                  R$ {sale.amount}
                 </td>
 
                 <td className="py-4">
@@ -107,6 +136,16 @@ export default function RecentSales() {
 
                 </td>
 
+                <td className="py-4 text-zinc-400">
+
+                  {new Date(
+                    sale.created_at
+                  ).toLocaleDateString(
+                    "pt-BR"
+                  )}
+
+                </td>
+
               </tr>
 
             ))}
@@ -118,5 +157,6 @@ export default function RecentSales() {
       </div>
 
     </div>
+
   );
 }

@@ -20,7 +20,7 @@ export default function Sidebar() {
 
     {
       name: "Financeiro",
-      href: "/dashboard/home",
+      href: "/dashboard",
     },
 
     {

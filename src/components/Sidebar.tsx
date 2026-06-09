@@ -36,8 +36,8 @@ export default function Sidebar() {
   },
   {
     name: "Configurações",
-    href: "/dashboard/settings",
-  },
+    href: "/dashboard/profile",
+  }
 ];
 
   return (
