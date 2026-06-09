@@ -69,7 +69,7 @@ export default function ThemeCustomizer({
         </h2>
 
         <p className="text-zinc-400 text-sm mt-1">
-          Personalize sua página premium.
+          Personalize sua página pública.
         </p>
 
       </div>

@@ -115,7 +115,7 @@ export default function MobilePreview({
 
                     {index === 0 && (
                       <p className="text-xs font-bold mb-1">
-                        🔥 RECOMENDADO
+                        RECOMENDADO
                       </p>
                     )}
 

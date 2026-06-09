@@ -42,12 +42,7 @@ export default function ProfilePreview({
                 "Sua bio aparecerá aqui"}
             </p>
 
-            {/* BADGE */}
-            <div className="mt-3 bg-green-500 text-black text-xs font-bold px-4 py-1 rounded-full">
-              PRO
             </div>
-
-          </div>
 
           {/* LINKS MOCK */}
           <div className="mt-8 space-y-4">
@@ -79,7 +74,7 @@ export default function ProfilePreview({
                         productTextColor,
                     }}
                   >
-                    Produto Premium
+                    Produto Digital
                   </h3>
 
                   <p className="text-xs text-white/60">

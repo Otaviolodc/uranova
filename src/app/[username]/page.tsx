@@ -35,7 +35,6 @@ export default async function PublicPage({
         instagram,
         telegram,
         whatsapp,
-        subscription_status,
         product_text_color
       `)
       .eq("username", username)
@@ -219,30 +218,6 @@ const marketplaceProducts =
             @{profile.username}
 
           </h1>
-
-          {/* PRO */}
-          {profile.subscription_status ===
-            "active" && (
-
-            <div className="
-              mt-3
-              px-4
-              py-1
-              rounded-full
-              bg-green-500/20
-              border
-              border-green-400/30
-              text-green-300
-              text-sm
-              font-semibold
-              backdrop-blur-xl
-            ">
-
-              Criador Verificado
-
-            </div>
-
-          )}
 
           {/* BIO */}
           {profile.bio && (
@@ -521,9 +496,7 @@ const marketplaceProducts =
         {links.length === 0 ? (
 
           <p className="text-white/70 text-center">
-
-            Nenhum produto encontrado
-
+            Nenhum link encontrado
           </p>
 
         ) : (

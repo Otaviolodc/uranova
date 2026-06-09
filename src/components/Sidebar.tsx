@@ -34,10 +34,7 @@ export default function Sidebar() {
     name: "Marketplace",
     href: "/marketplace",
   },
-  {
-    name: "Upgrade PRO",
-    href: "/pricing",
-  },
+  
 ];
 
   return (

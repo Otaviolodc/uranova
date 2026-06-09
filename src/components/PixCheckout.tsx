@@ -97,7 +97,7 @@ export default function PixCheckout() {
         disabled={loading}
         className="border px-4 py-2 rounded"
       >
-        {loading ? "Gerando..." : "Assinar PRO"}
+        {loading ? "Gerando..." : "Comprar Agora"}
       </button>
 
       {qrCode && (

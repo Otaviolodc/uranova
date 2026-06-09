@@ -31,13 +31,6 @@ export default function HomePage() {
               Começar Agora
             </Link>
 
-            <Link
-              href="/pricing"
-              className="border border-zinc-700 hover:border-zinc-500 transition px-8 py-4 rounded-2xl font-bold text-lg"
-            >
-              Ver Planos
-            </Link>
-
           </div>
 
         </div>

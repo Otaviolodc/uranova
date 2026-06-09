@@ -35,10 +35,7 @@ export default function Sidebar() {
       name: "Analytics",
       href: "/dashboard/analytics",
     },
-    {
-      name: "Upgrade PRO",
-      href: "/pricing",
-    },
+    
   ];
 
   return (
