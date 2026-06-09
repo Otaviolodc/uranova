@@ -75,7 +75,7 @@ export async function POST(req: Request) {
     // =========================
 
       
-      const { data: existingOrder } =
+    const { data: existingOrder } =
   await supabase
     .from("orders")
     .select("id")
@@ -106,76 +106,11 @@ if (!existingOrder) {
 
 }
 
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          is_pro: true,
-          subscription_status: "active",
-          subscription_plan: "pro",
-          subscription_end_date: payment.dueDate,
-        })
-        .eq("id", userId);
+}
 
-      if (error) {
-        console.error(
-          "ASAAS WEBHOOK ERROR:",
-          error
-      );
-
-        return NextResponse.json(
-          {
-            error: "Webhook error",
-          },
-          {
-            status: 500,
-          }
-        );
-      }
-
-      
-    }
-
-    // =========================
-    // ASSINATURA CANCELADA
-    // =========================
-    if (
-      body.event === "PAYMENT_DELETED" ||
-      body.event === "PAYMENT_OVERDUE"
-    ) {
-
-      
-
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          is_pro: false,
-          subscription_status: "inactive",
-          subscription_plan: "free",
-        })
-        .eq("id", userId);
-
-      if (error) {
-        console.error(
-          "ASAAS WEBHOOK ERROR:",
-          error
-      );
-
-        return NextResponse.json(
-          {
-            error: error.message,
-          },
-          {
-            status: 500,
-          }
-        );
-      }
-
-      
-    }
-
-    return NextResponse.json({
-      success: true,
-    });
+return NextResponse.json({
+  success: true,
+});
 
   } catch (error) {
     console.error(
