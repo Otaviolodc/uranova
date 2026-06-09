@@ -15,10 +15,6 @@ export default function LinksPage() {
   const [links, setLinks] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);
 
-// 🚀 produtos do banco
-  const [dailyClicks, setDailyClicks] =
-    useState<any[]>([]);
-
   const [showModal, setShowModal] =
     useState(false);
 
@@ -70,18 +66,6 @@ export default function LinksPage() {
       });
 
     setLinks(linksData || []);
-
-    // 📈 clicks diários
-
-const { data: dailyData } =
-  await supabase
-    .from("link_clicks_daily")
-    .select("*")
-    .order("date", {
-      ascending: true,
-    });
-
-    setDailyClicks(dailyData || []);
 
     };
 
@@ -476,15 +460,6 @@ const handleGenerateMarketing =
   };
 
   // 📊 métricas
-const totalClicks = links.reduce(
-  (total, link) => total + (link.clicks || 0),
-  0
-);
-
-  const topLink = [...links].sort(
-    (a, b) => b.clicks - a.clicks
-  )[0];
-
   const handleDragEnd = async (
   result: any
 ) => {
@@ -539,11 +514,11 @@ const totalClicks = links.reduce(
             <div>
 
               <h1 className="text-2xl md:text-3xl font-bold">
-                Dashboard
+                Links
               </h1>
 
               <p className="text-gray-400 mt-1">
-                Gerencie seus links
+                Gerencie sua página pública
               </p>
 
           </div>
@@ -567,253 +542,6 @@ const totalClicks = links.reduce(
             </a>
 
           </div>
-
-          {/* 🚀 CENTRAL DE PERFORMANCE */}
-
-<div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-10">
-
-  {/* FATURAMENTO */}
-  <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
-
-    <p className="text-gray-400 text-sm">
-      💰 Faturamento
-    </p>
-
-    <h2 className="text-2xl md:text-4xl font-black mt-3 text-green-400">
-      R$ {(totalClicks * 6.9).toFixed(0)}
-    </h2>
-
-    <p className="text-green-400 text-sm mt-2">
-      +12% hoje
-    </p>
-
-  </div>
-
-  {/* VENDAS */}
-  <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
-
-    <p className="text-gray-400 text-sm">
-      🛒 Vendas Hoje
-    </p>
-
-    <h2 className="text-2xl md:text-4xl font-black mt-3">
-      {Math.floor(totalClicks * 0.08)}
-    </h2>
-
-    <p className="text-gray-400 text-sm mt-2">
-      Conversões estimadas
-    </p>
-
-  </div>
-
-  {/* CONVERSÃO */}
-  <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
-
-    <p className="text-gray-400 text-sm">
-      📈 Conversão
-    </p>
-
-    <h2 className="text-2xl md:text-4xl font-black mt-3">
-      4.8%
-    </h2>
-
-    <p className="text-green-400 text-sm mt-2">
-      Acima da média
-    </p>
-
-  </div>
-
-  {/* TICKET */}
-  <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
-
-    <p className="text-gray-400 text-sm">
-      🎯 Ticket Médio
-    </p>
-
-    <h2 className="text-2xl md:text-4xl font-black mt-3">
-      R$ 69
-    </h2>
-
-    <p className="text-gray-400 text-sm mt-2">
-      Valor médio por venda
-    </p>
-
-  </div>
-
-</div>
-
-{/* 📈 TRÁFEGO */}
-
-<div className="
-  bg-zinc-900
-  border
-  border-zinc-800
-  rounded-3xl
-  p-6
-  mb-10
-">
-
-  <div className="
-    flex
-    items-center
-    justify-between
-    mb-6
-  ">
-
-    <div>
-
-      <h2 className="
-        text-xl
-        md:text-2xl
-        font-bold
-      ">
-        📈 Tráfego
-      </h2>
-
-      <p className="text-gray-400 mt-1">
-        Analytics em tempo real
-      </p>
-
-    </div>
-
-  </div>
-
-  <div className="
-    grid
-    grid-cols-2
-    md:grid-cols-4
-    gap-4
-  ">
-
-    {dailyClicks
-      .slice(-4)
-      .map((item) => (
-
-      <div
-        key={item.id}
-        className="
-          bg-black
-          border
-          border-zinc-800
-          rounded-2xl
-          p-5
-        "
-      >
-
-        <p className="text-gray-400 text-sm">
-          {item.date}
-        </p>
-
-        <h2
-          className="
-            text-2xl
-            md:text-4xl
-            font-black
-            mt-3
-            text-green-400
-          "
-        >
-
-          {item.clicks}
-
-        </h2>
-
-        <p className="text-gray-500 text-sm mt-2">
-          cliques
-        </p>
-
-      </div>
-
-    ))}
-
-  </div>
-
-</div>
-
-          {/* IA DE CONVERSÃO */}
-<div className="mt-12">
-
-  <h2 className="text-2xl md:text-3xl font-bold">
-    ⚡ IA de Conversão
-  </h2>
-
-  <p className="text-gray-400 mt-2">
-    Seu assistente de vendas com IA
-  </p>
-
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
-
-    {/* CARD 1 */}
-    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
-
-      <p className="text-gray-400 text-sm">
-        📈 Melhor Produto Hoje
-      </p>
-
-      <h3 className="text-2xl font-bold mt-3">
-        Curso Dropshipping Brasil
-      </h3>
-
-      <p className="text-green-400 mt-2">
-        +32% de cliques hoje
-      </p>
-
-    </div>
-
-    {/* CARD 2 */}
-    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
-
-      <p className="text-gray-400 text-sm">
-        🤖 Sugestão da IA
-      </p>
-
-      <h3 className="text-xl font-bold mt-3">
-        Use títulos menores
-      </h3>
-
-      <p className="text-gray-400 mt-2">
-        Produtos com até 45 caracteres convertem mais.
-      </p>
-
-    </div>
-
-    {/* CARD 3 */}
-    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
-
-      <p className="text-gray-400 text-sm">
-        🔥 Melhor Horário
-      </p>
-
-      <h3 className="text-2xl font-bold mt-3">
-        19h às 22h
-      </h3>
-
-      <p className="text-gray-400 mt-2">
-        Maior pico de conversão hoje
-      </p>
-
-    </div>
-
-    {/* CARD 4 */}
-    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
-
-      <p className="text-gray-400 text-sm">
-        🎯 Missão do Dia
-      </p>
-
-      <div className="mt-3 space-y-2">
-
-        <p>✔ Criar 1 produto</p>
-        <p>✔ Compartilhar 2 links</p>
-        <p>✔ Fazer 20 cliques</p>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
 
           {/* LINKS */}
 

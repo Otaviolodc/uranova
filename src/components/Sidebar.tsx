@@ -15,26 +15,29 @@ export default function Sidebar() {
 
   const menu = [
   {
+    name: "Dashboard",
+    href: "/dashboard",
+  },
+  {
     name: "Links",
     href: "/dashboard/links",
   },
   {
-    name: "Perfil",
-    href: "/dashboard/profile",
+    name: "Produtos",
+    href: "/dashboard/products",
   },
   {
     name: "Analytics IA",
     href: "/dashboard/analytics",
   },
   {
-    name: "Criar Produtos",
-    href: "/dashboard/store",
+    name: "Marketplace",
+    href: "/dashboard/marketplace",
   },
   {
-    name: "Marketplace",
-    href: "/marketplace",
+    name: "Configurações",
+    href: "/dashboard/settings",
   },
-  
 ];
 
   return (
