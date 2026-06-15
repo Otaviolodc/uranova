@@ -31,6 +31,7 @@ export async function POST(
       cpfCnpj,
       value,
       userId,
+      couponCode,
     } = body;
 
     // =========================
@@ -93,6 +94,28 @@ if (
       status: 400,
     }
   );
+
+} 
+
+   let finalValue = value;
+
+if (couponCode) {
+
+  const { data: coupon } =
+    await supabase
+      .from("coupons")
+      .select("*")
+      .eq("code", couponCode.toUpperCase())
+      .eq("active", true)
+      .single();
+
+  if (coupon) {
+
+    finalValue =
+      value -
+      (value * coupon.discount) / 100;
+
+  }
 
 }
 
@@ -162,7 +185,7 @@ if (
             billingType:
               "PIX",
 
-            value,
+            value: finalValue,
 
             cycle:
               "MONTHLY",

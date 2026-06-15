@@ -5,13 +5,23 @@ from "@/lib/supabase/client";
 import { useState } from "react"
 import Image from "next/image"
 
-export default function PixCheckout() {
+interface PixCheckoutProps {
+  price: number;
+  userId: string;
+}
+
+export default function PixCheckout({
+  price,
+  userId,
+}: PixCheckoutProps) {
 
   const [loading, setLoading] = useState(false)
 
   const [pixCode, setPixCode] = useState("")
 
   const [qrCode, setQrCode] = useState("")
+
+  const [localCouponCode, setLocalCouponCode] = useState("")
 
   async function handleCheckout() {
 
@@ -27,11 +37,12 @@ export default function PixCheckout() {
         },
 
         body: JSON.stringify({
-          name: "Luis",
-          email: "teste@gmail.com",
+          name: "Cliente",
+          email: "cliente@email.com",
           cpfCnpj: "12345678909",
-          value: 19.90,
-          userId: "123",
+          value: price,
+          userId,
+          couponCode: localCouponCode,
         }),
       })
 
@@ -91,6 +102,24 @@ export default function PixCheckout() {
   return (
 
     <div className="flex flex-col items-center gap-4">
+
+      <input
+  value={localCouponCode}
+  onChange={(e) =>
+    setLocalCouponCode(
+      e.target.value.toUpperCase()
+    )
+  }
+  placeholder="Cupom de desconto"
+  className="
+    border
+    rounded
+    px-4
+    py-2
+    text-black
+    w-64
+  "
+/>
 
       <button
         onClick={handleCheckout}
