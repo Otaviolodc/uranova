@@ -12,11 +12,11 @@ export default function QuickActions() {
     },
     {
       title: "💳 Novo Checkout",
-      href: "/dashboard/products",
+      href: "/dashboard/checkouts",
     },
     {
       title: "🎟 Novo Cupom",
-      href: "/dashboard/products",
+      href: "/dashboard/coupons",
     },
   ];
 
