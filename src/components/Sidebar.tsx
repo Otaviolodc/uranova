@@ -27,6 +27,10 @@ export default function Sidebar() {
     href: "/dashboard/products",
   },
   {
+    name: "Checkouts",
+    href: "/dashboard/checkouts",
+  },
+  {
     name: "Analytics IA",
     href: "/dashboard/analytics",
   },
@@ -36,7 +40,7 @@ export default function Sidebar() {
   },
   {
     name: "Configurações",
-    href: "/dashboard/profile",
+    href: "/dashboard/settings",
   }
 ];
 
