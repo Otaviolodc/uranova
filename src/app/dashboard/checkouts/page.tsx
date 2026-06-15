@@ -85,11 +85,51 @@ export default function CheckoutsPage() {
                 "
               >
 
-                <td className="p-4">
-  {product.checkout_slug}
+              <td className="p-4">
+  {product.title}
 </td>
 
 <td className="p-4">
+  R$ {product.price}
+</td>
+
+<td className="p-4">
+
+  <div className="flex gap-3">
+
+    <a
+      href={`/checkout/${product.checkout_slug}`}
+      target="_blank"
+      className="
+        text-green-400
+        hover:text-green-300
+      "
+    >
+      Abrir
+    </a>
+
+    <button
+      onClick={() => {
+        navigator.clipboard.writeText(
+          `${window.location.origin}/checkout/${product.checkout_slug}`
+        );
+
+        alert("Link copiado ✅");
+      }}
+      className="
+        text-blue-400
+        hover:text-blue-300
+      "
+    >
+      Copiar
+    </button>
+
+  </div>
+
+</td>
+
+<td className="p-4">
+
   <span
     className={`
       px-3
@@ -107,41 +147,11 @@ export default function CheckoutsPage() {
   >
     {product.status}
   </span>
+
 </td>
 
 <td className="p-4">
-
-  <div className="flex gap-3">
-
-    <a
-      href={`/product/${product.checkout_slug}`}
-      target="_blank"
-      className="
-        text-green-400
-        hover:text-green-300
-      "
-    >
-      Abrir
-    </a>
-
-    <button
-      onClick={() => {
-        navigator.clipboard.writeText(
-          `${window.location.origin}/product/${product.checkout_slug}`
-        );
-
-        alert("Link copiado ✅");
-      }}
-      className="
-        text-blue-400
-        hover:text-blue-300
-      "
-    >
-      Copiar
-    </button>
-
-  </div>
-
+  —
 </td>
 
               </tr>
