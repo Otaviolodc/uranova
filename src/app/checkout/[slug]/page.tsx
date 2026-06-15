@@ -1,3 +1,5 @@
+import CouponBox
+from "@/components/checkout/CouponBox";
 import { createClient }
 from "@/lib/supabase/server";
 import Image from "next/image";
@@ -110,6 +112,10 @@ export default async function CheckoutPage({
               <div className="text-6xl font-black text-green-400 mt-2">
                 R$ {product.price}
               </div>
+
+              <CouponBox
+                price={Number(product.price)}
+              />
 
             </div>
 
