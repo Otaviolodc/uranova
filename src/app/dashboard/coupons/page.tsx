@@ -33,6 +33,21 @@ export default function CouponsPage() {
     setCoupons(data || []);
   }
 
+  async function toggleCoupon(
+  id: string,
+  active: boolean
+) {
+
+  await supabase
+    .from("coupons")
+    .update({
+      active: !active,
+    })
+    .eq("id", id);
+
+  fetchCoupons();
+}
+
   async function createCoupon() {
 
     const {
@@ -188,23 +203,37 @@ export default function CouponsPage() {
 
                 <td className="p-4">
 
-                  <span
-                    className="
+                  <button
+                    onClick={() =>
+                      toggleCoupon(
+                        coupon.id,
+                        coupon.active
+                      )
+                    }
+                    className={`
                       px-3
                       py-1
                       rounded-full
-                      bg-green-500/10
-                      text-green-400
                       text-xs
                       font-bold
-                    "
-                  >
-                    Ativo
-                  </span>
 
-                </td>
+                      ${
+                        coupon.active
+                          ? "bg-green-500/10 text-green-400"
+                          : "bg-red-500/10 text-red-400"
+                      }
+                    `}
+                >
 
-              </tr>
+                  {coupon.active
+                    ? "Ativo"
+                    : "Inativo"}
+
+                </button>
+
+              </td>
+
+            </tr>
 
             ))}
 
