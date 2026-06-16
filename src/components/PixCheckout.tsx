@@ -1,7 +1,5 @@
 "use client"
 
-import { supabase }
-from "@/lib/supabase/client";
 import { useState } from "react"
 import Image from "next/image"
 
@@ -23,13 +21,27 @@ export default function PixCheckout({
 
   const [localCouponCode, setLocalCouponCode] = useState("")
 
+  const [name, setName] = useState("")
+
+  const [email, setEmail] = useState("")
+
+  const [cpfCnpj, setCpfCnpj] = useState("")
+
   async function handleCheckout() {
 
-    try {
+  if (!name || !email || !cpfCnpj) {
 
-      setLoading(true)
+    alert("Preencha todos os campos");
 
-      const response = await fetch("/api/asaas/create-payment", {
+    return;
+
+  }
+
+  try {
+
+    setLoading(true)
+
+    const response = await fetch("/api/asaas/create-payment", {
         method: "POST",
 
         headers: {
@@ -37,9 +49,9 @@ export default function PixCheckout({
         },
 
         body: JSON.stringify({
-          name: "Cliente",
-          email: "cliente@email.com",
-          cpfCnpj: "12345678909",
+          name,
+          email,
+          cpfCnpj,
           value: price,
           userId,
           couponCode: localCouponCode,
@@ -101,30 +113,99 @@ export default function PixCheckout({
 
   return (
 
-    <div className="flex flex-col items-center gap-4">
+  <div
+    className="
+      flex
+      flex-col
+      gap-4
+      bg-zinc-900
+      border
+      border-zinc-800
+      rounded-3xl
+      p-6
+      max-w-md
+    "
+  >
 
       <input
-  value={localCouponCode}
-  onChange={(e) =>
-    setLocalCouponCode(
-      e.target.value.toUpperCase()
-    )
-  }
-  placeholder="Cupom de desconto"
-  className="
-    border
-    rounded
-    px-4
-    py-2
-    text-black
-    w-64
-  "
-/>
+        value={name}
+        onChange={(e) =>
+          setName(e.target.value)
+        }
+        placeholder="Nome completo"
+        className="
+          border
+          rounded
+          px-4
+          py-2
+          text-black
+          w-64
+        "
+      />
+
+      <input
+        value={email}
+        onChange={(e) =>
+          setEmail(e.target.value)
+        }
+        placeholder="E-mail"
+        className="
+          border
+          rounded
+          px-4
+          py-2
+          text-black
+          w-64
+        "
+      />
+
+      <input
+        value={cpfCnpj}
+        onChange={(e) =>
+          setCpfCnpj(e.target.value)
+        }
+        placeholder="CPF"
+        className="
+          border
+          rounded
+          px-4
+          py-2
+          text-black
+          w-64
+        "
+      />
+
+      <input
+        value={localCouponCode}
+        onChange={(e) =>
+          setLocalCouponCode(
+            e.target.value.toUpperCase()
+          )
+        }
+        placeholder="Cupom de desconto"
+        className="
+          border
+          rounded
+          px-4
+          py-2
+          text-black
+          w-64
+        "
+      />
 
       <button
         onClick={handleCheckout}
         disabled={loading}
-        className="border px-4 py-2 rounded"
+        className="
+          w-64
+          bg-green-500
+          hover:bg-green-400
+          text-black
+          font-bold
+          py-3
+          rounded-2xl
+          transition
+        "
       >
         {loading ? "Gerando..." : "Comprar Agora"}
       </button>
