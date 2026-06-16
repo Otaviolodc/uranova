@@ -225,35 +225,7 @@ if (couponCode) {
     // SALVAR ASSINATURA
     // =========================
 
-    await supabase
-  .from("payments")
-  .insert({
-    user_id: userId,
-
-    payment_id:
-      subscriptionData.id,
-
-    status:
-      subscriptionData.status,
-
-    customer_name:
-      name,
-
-    customer_email:
-      email,
-
-    customer_cpf:
-      cpfCnpj,
-
-    original_value:
-      value,
-
-    final_value:
-      finalValue,
-
-    coupon_code:
-      couponCode || null,
-  });
+    
 
     // =========================
     // PEGAR QR CODE PIX
@@ -300,6 +272,51 @@ if (!firstPayment) {
   );
 
 }
+
+  const { data: paymentInsert, error: paymentError } =
+  await supabase
+    .from("payments")
+    .insert({
+      user_id: userId,
+
+      asaas_payment_id:
+        firstPayment.id,
+
+      status:
+        firstPayment.status,
+
+      value:
+        finalValue,
+
+      customer_name:
+        name,
+
+      customer_email:
+        email,
+
+      customer_cpf:
+        cpfCnpj,
+
+      original_value:
+        value,
+
+      final_value:
+        finalValue,
+
+      coupon_code:
+        couponCode || null,
+    })
+    .select();
+
+console.log(
+  "PAYMENT INSERT:",
+  paymentInsert
+);
+
+console.log(
+  "PAYMENT ERROR:",
+  paymentError
+);
 
     // =========================
     // PEGAR QR CODE DO PIX
