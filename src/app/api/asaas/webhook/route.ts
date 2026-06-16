@@ -63,51 +63,57 @@ export async function POST(req: Request) {
     // =========================
     // PAGAMENTO CONFIRMADO
     // =========================
-    if (
-      body.event === "PAYMENT_RECEIVED" ||
-      body.event === "PAYMENT_CONFIRMED"
-    ) {
 
+    await supabase
+  .from("payments")
+  .update({
+    status: payment.status,
+  })
+  .eq(
+    "asaas_payment_id",
+    payment.id
+  );
 
+if (
+  body.event === "PAYMENT_RECEIVED" ||
+  body.event === "PAYMENT_CONFIRMED"
+) {
 
-    // =========================
-    // SALVAR VENDA
-    // =========================
+  const { data: existingOrder } =
+    await supabase
+      .from("orders")
+      .select("id")
+      .eq("payment_id", payment.id)
+      .maybeSingle();
 
-      
-    const { data: existingOrder } =
-  await supabase
-    .from("orders")
-    .select("id")
-    .eq("payment_id", payment.id)
-    .maybeSingle();
+  if (!existingOrder) {
 
-if (!existingOrder) {
+    await supabase
+      .from("orders")
+      .insert({
+        user_id: userId,
 
-  await supabase
-    .from("orders")
-    .insert({
+        product_id:
+          payment.description,
 
-      user_id: userId,
+        amount:
+          payment.value,
 
-      product_id: payment.description,
+        customer_name:
+          payment.customer,
 
-      amount: payment.value,
+        customer_email: "",
 
-      customer_name: payment.customer,
+        status: "paid",
 
-      customer_email: "",
+        payment_id:
+          payment.id,
+      });
 
-      status: "paid",
-
-      payment_id: payment.id,
-
-    });
+  }
 
 }
-
-}
-
+    
 return NextResponse.json({
   success: true,
 });
@@ -127,4 +133,5 @@ return NextResponse.json({
       }
     );
   }
+
 }
