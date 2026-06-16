@@ -134,12 +134,15 @@ export default function PixCheckout({
         }
         placeholder="Nome completo"
         className="
+          w-full
+          bg-zinc-800
           border
-          rounded
+          border-zinc-700
+          rounded-xl
           px-4
-          py-2
-          text-black
-          w-64
+          py-3
+          text-white
+          placeholder:text-zinc-400
         "
       />
 
@@ -150,12 +153,15 @@ export default function PixCheckout({
         }
         placeholder="E-mail"
         className="
+          w-full
+          bg-zinc-800
           border
-          rounded
+          border-zinc-700
+          rounded-xl
           px-4
-          py-2
-          text-black
-          w-64
+          py-3
+          text-white
+          placeholder:text-zinc-400
         "
       />
 
@@ -166,12 +172,15 @@ export default function PixCheckout({
         }
         placeholder="CPF"
         className="
+          w-full
+          bg-zinc-800
           border
-          rounded
+          border-zinc-700
+          rounded-xl
           px-4
-          py-2
-          text-black
-          w-64
+          py-3
+          text-white
+          placeholder:text-zinc-400
         "
       />
 
@@ -184,12 +193,15 @@ export default function PixCheckout({
         }
         placeholder="Cupom de desconto"
         className="
+          w-full
+          bg-zinc-800
           border
-          rounded
+          border-zinc-700
+          rounded-xl
           px-4
-          py-2
-          text-black
-          w-64
+          py-3
+          text-white
+          placeholder:text-zinc-400
         "
       />
 
@@ -197,14 +209,15 @@ export default function PixCheckout({
         onClick={handleCheckout}
         disabled={loading}
         className="
-          w-64
+          w-full
           bg-green-500
           hover:bg-green-400
           text-black
           font-bold
-          py-3
-          rounded-2xl
+          py-4
+          rounded-xl
           transition
+          shadow-lg
         "
       >
         {loading ? "Gerando..." : "Comprar Agora"}
@@ -219,25 +232,44 @@ export default function PixCheckout({
             width={256}
             height={256}
             unoptimized
-            className="w-64 h-64 bg-white p-2 rounded"
+            className="
+              w-64
+              h-64
+              bg-white
+              p-2
+              rounded-xl
+              mx-auto
+            "
           />
 
           <textarea
             value={pixCode}
             readOnly
             className="
-              w-64
+              w-full
               h-24
-              text-black
-              p-2
-              rounded
+              bg-zinc-800
+              border
+              border-zinc-700
+              text-white
+              p-3
+              rounded-xl
               resize-none
             "
           />
 
           <button
             onClick={copyPix}
-            className="bg-green-500 text-white px-4 py-2 rounded"
+            className="
+              w-full
+              bg-green-500
+              hover:bg-green-400
+              text-black
+              font-bold
+              py-3
+              rounded-xl
+              transition
+            "
           >
             Copiar PIX
           </button>
