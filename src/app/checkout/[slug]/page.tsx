@@ -9,14 +9,18 @@ from "@/lib/supabase/server";
 import Image from "next/image";
 
 interface Props {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default async function CheckoutPage({
   params,
 }: Props) {
+
+  const { slug } = await params;
+
+  console.log("SLUG:", slug);
 
   const supabase =
     await createClient();
@@ -31,9 +35,12 @@ export default async function CheckoutPage({
       .select("*")
       .eq(
         "checkout_slug",
-        params.slug
+        slug
       )
       .maybeSingle();
+
+  console.log("PRODUCT:", product);
+  console.log("ERROR:", error);
 
   if (error) {
 
