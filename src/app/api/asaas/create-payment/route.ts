@@ -226,16 +226,34 @@ if (couponCode) {
     // =========================
 
     await supabase
-      .from("payments")
-      .insert({
-        user_id: userId,
+  .from("payments")
+  .insert({
+    user_id: userId,
 
-        payment_id:
-          subscriptionData.id,
+    payment_id:
+      subscriptionData.id,
 
-        status:
-          subscriptionData.status,
-      });
+    status:
+      subscriptionData.status,
+
+    customer_name:
+      name,
+
+    customer_email:
+      email,
+
+    customer_cpf:
+      cpfCnpj,
+
+    original_value:
+      value,
+
+    final_value:
+      finalValue,
+
+    coupon_code:
+      couponCode || null,
+  });
 
     // =========================
     // PEGAR QR CODE PIX
