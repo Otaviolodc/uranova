@@ -25,7 +25,7 @@ export default function HomePage() {
           <div className="flex items-center justify-center gap-4 mt-10">
 
             <Link
-              href="/auth"
+              href="/login"
               className="bg-green-500 hover:bg-green-400 transition px-8 py-4 rounded-2xl font-bold text-black text-lg"
             >
               Começar Agora
