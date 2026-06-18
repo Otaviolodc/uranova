@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient }
 from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
@@ -29,8 +30,8 @@ export default async function AdminLayout({
     .single();
 
   // NÃO ADMIN
-  if (profile?.role !== "admin") {
-    redirect("/dashboard/links");
+  if (!profile || profile.role !== "admin") {
+  redirect("/dashboard/links");
   }
 
   return (
@@ -79,7 +80,10 @@ export default async function AdminLayout({
               hover:border-zinc-700
             "
           >
+            <Link href="/admin">
             Dashboard
+            </Link>
+            
           </a>
 
           <a
@@ -163,6 +167,30 @@ export default async function AdminLayout({
           </a>
 
         </nav>
+
+      <a
+  href="/dashboard/links"
+  className="
+    block
+    w-full
+    mt-6
+    bg-blue-500
+    hover:bg-blue-400
+    transition-all
+    duration-200
+    px-4
+    py-3
+    rounded-xl
+    font-medium
+    text-white
+    text-center
+  "
+>
+  <Link href="/dashboard/links">
+  Ir para Dashboard
+  </Link>
+
+</a>
 
      <a
   href="/auth/logout"
