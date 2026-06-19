@@ -39,7 +39,8 @@ export default async function AdminPage() {
       <div className="mb-10">
 
         <h1 className="
-          text-5xl
+          text-3xl
+          md:text-5xl
           font-bold
         ">
 
@@ -50,7 +51,8 @@ export default async function AdminPage() {
         <p className="
           text-zinc-400
           mt-3
-          text-lg
+          text-base
+          md:text-lg
         ">
 
           Controle total da plataforma Uranova
@@ -73,7 +75,8 @@ export default async function AdminPage() {
           border
           border-zinc-800
           rounded-3xl
-          p-8
+          p-5 
+          md:p-8
         ">
 
           <p className="
@@ -86,7 +89,7 @@ export default async function AdminPage() {
           </p>
 
           <h2 className="
-            text-6xl
+            text-4xl md:text-6xl
             font-bold
           ">
 
@@ -102,7 +105,8 @@ export default async function AdminPage() {
           border
           border-zinc-800
           rounded-3xl
-          p-8
+          p-5 
+          md:p-8
         ">
 
           <p className="
@@ -115,7 +119,7 @@ export default async function AdminPage() {
           </p>
 
           <h2 className="
-            text-6xl
+            text-4xl md:text-6xl
             font-bold
           ">
 
@@ -131,7 +135,8 @@ export default async function AdminPage() {
           border
           border-zinc-800
           rounded-3xl
-          p-8
+          p-5 
+          md:p-8
         ">
 
           <p className="
@@ -144,7 +149,7 @@ export default async function AdminPage() {
           </p>
 
           <h2 className="
-            text-6xl
+            text-4xl md:text-6xl
             font-bold
           ">
 
@@ -160,7 +165,8 @@ export default async function AdminPage() {
           border
           border-zinc-800
           rounded-3xl
-          p-8
+          p-5 
+          md:p-8
         ">
 
           <p className="
@@ -173,7 +179,7 @@ export default async function AdminPage() {
           </p>
 
           <h2 className="
-            text-6xl
+            text-4xl md:text-6xl
             font-bold
             text-green-400
           ">
@@ -190,7 +196,8 @@ export default async function AdminPage() {
           border
           border-zinc-800
           rounded-3xl
-          p-8
+          p-5 
+          md:p-8
         ">
 
           <p className="
@@ -203,7 +210,7 @@ export default async function AdminPage() {
           </p>
 
           <h2 className="
-            text-6xl
+            text-4xl md:text-6xl
             font-bold
             text-green-400
           ">
@@ -220,7 +227,8 @@ export default async function AdminPage() {
           border
           border-zinc-800
           rounded-3xl
-          p-8
+          p-5 
+          md:p-8
         ">
 
           <p className="
@@ -233,7 +241,7 @@ export default async function AdminPage() {
           </p>
 
           <h2 className="
-            text-4xl
+            text-3xl md:text-4xl
             font-bold
             text-green-400
           ">

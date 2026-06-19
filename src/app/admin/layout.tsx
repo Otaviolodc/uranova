@@ -36,34 +36,33 @@ export default async function AdminLayout({
 
   return (
 
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col md:flex-row">
 
       {/* SIDEBAR */}
-      <aside className="
-        w-64
-        h-screen
-        sticky
-        top-0
-        bg-zinc-950
-        border-r
-        border-zinc-800
-        p-6
-        text-white
-      ">
+      <aside
+        className="
+          w-full
+          md:w-64
+          bg-zinc-950
+          border-b
+          md:border-b-0
+          md:border-r
+          border-zinc-800
+          p-4
+          md:p-6
+          text-white
+        "
+      >
 
-        <h2 className="
-          text-2xl
-          font-bold
-          mb-10
-        ">
+        <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-10">
 
           Uranova Admin
 
         </h2>
 
-        <nav className="flex flex-col gap-3">
+        <nav className="flex flex-col gap-2 md:flex md:flex-col md:gap-3">
 
-          <a
+          <Link
             href="/admin"
             className="
               bg-zinc-900
@@ -80,13 +79,10 @@ export default async function AdminLayout({
               hover:border-zinc-700
             "
           >
-            <Link href="/admin">
             Dashboard
-            </Link>
-            
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/admin/users"
             className="
               bg-zinc-900
@@ -104,9 +100,9 @@ export default async function AdminLayout({
             "
           >
             Usuários
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/admin/products"
             className="
               bg-zinc-900
@@ -124,9 +120,9 @@ export default async function AdminLayout({
             "
           >
             Produtos
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/admin/payments"
             className="
               bg-zinc-900
@@ -144,9 +140,9 @@ export default async function AdminLayout({
             "
           >
             Pagamentos
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/admin/analytics"
             className="
               bg-zinc-900
@@ -164,33 +160,30 @@ export default async function AdminLayout({
             "
           >
             Analytics
-          </a>
+          </Link>
 
         </nav>
 
-      <a
-  href="/dashboard/links"
-  className="
-    block
-    w-full
-    mt-6
-    bg-blue-500
-    hover:bg-blue-400
-    transition-all
-    duration-200
-    px-4
-    py-3
-    rounded-xl
-    font-medium
-    text-white
-    text-center
-  "
->
-  <Link href="/dashboard/links">
-  Ir para Dashboard
-  </Link>
-
-</a>
+          <Link
+            href="/dashboard/links"
+            className="
+              block
+              w-full
+              mt-6
+              bg-blue-500
+              hover:bg-blue-400
+              transition-all
+              duration-200
+              px-4
+              py-3
+              rounded-xl
+              font-medium
+              text-white
+              text-center
+            "
+          >
+            Ir para Dashboard
+          </Link>
 
      <a
   href="/auth/logout"
@@ -218,20 +211,29 @@ export default async function AdminLayout({
 </aside>
 
       {/* MAIN */}
-      <main className="
-        flex-1
-        bg-black
-        text-white
-        p-10
-      ">
+      <main
+        className="
+          flex-1
+          bg-black
+          text-white
+          p-4
+          md:p-10
+          overflow-x-hidden
+        "
+      >
 
         {/* TOPBAR */}
-        <header className="
-          mb-10
-          flex
-          items-center
-          justify-between
-        ">
+        <header
+          className="
+            mb-6
+            flex
+            flex-col
+            gap-4
+            md:flex-row
+            md:items-center
+            md:justify-between
+          "
+        >
 
           <div>
 
