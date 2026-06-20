@@ -2,7 +2,7 @@ import CouponBox
 from "@/components/checkout/CouponBox";
 
 import PixCheckout
-from "@/components/PixCheckout";
+from "@/components/checkout/PixCheckout";
 
 import { createClient }
 from "@/lib/supabase/server";

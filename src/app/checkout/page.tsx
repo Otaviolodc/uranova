@@ -1,4 +1,4 @@
-import PixCheckout from "@/components/PixCheckout"
+import PixCheckout from "@/components/checkout/PixCheckout"
 
 export default function CheckoutPage() {
 

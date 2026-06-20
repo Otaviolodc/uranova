@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase/client";
 import AIInsights from "@/components/dashboard/AIInsights";
 import TopProducts from "@/components/dashboard/TopProducts";
 import RecentSales from "@/components/dashboard/RecentSales";
-import SalesChart from "@/components/dashboard/SalesChart";
+import SalesChart from "@/components/charts/SalesChart";
 import QuickActions from "@/components/dashboard/QuickActions";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 

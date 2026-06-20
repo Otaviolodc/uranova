@@ -380,7 +380,7 @@ if (!product) {
 
               <a
                 key={item.id}
-                href={`/products/${item.checkout_slug}`}
+                href={`/checkout/product/${item.checkout_slug}`}
                 className="
                   bg-zinc-900
                   border

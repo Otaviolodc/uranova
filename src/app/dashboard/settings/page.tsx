@@ -3,7 +3,7 @@
 import { supabase }
 from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
-import ThemeCustomizer from "@/components/ThemeCustomizer";
+import ThemeCustomizer from "@/components/profile/ThemeCustomizer";
 import dynamic from "next/dynamic";
 
 const ProfilePreview = dynamic(
