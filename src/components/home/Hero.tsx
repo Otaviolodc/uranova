@@ -10,13 +10,12 @@ import {
 export default function Hero() {
   return (
     <section className="relative overflow-hidden">
-
       {/* Glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-violet-600/20 blur-[220px] rounded-full" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-violet-600/20 blur-[180px] rounded-full" />
 
-      <div className="max-w-[1400px] mx-auto px-8 pt-32 pb-32">
+      <div className="max-w-7xl mx-auto px-6 py-20">
 
-        <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-24 items-center">
+        <div className="grid lg:grid-cols-2 gap-10 items-center">
 
           {/* ESQUERDA */}
           <div className="max-w-3xl">
@@ -25,18 +24,18 @@ export default function Hero() {
               Plataforma completa para criadores digitais
             </div>
 
-            <h1 className="mt-8 text-6xl md:text-7xl xl:text-8xl font-extrabold leading-[0.95]">
+            <h1 className="mt-8 text-4xl md:text-5xl xl:text-6xl font-bold leading-tight">
               Venda{" "}
               <span className="gradient-text">
-                Cursos, E-books
+              Cursos, E-books
               </span>
               <br />
               e Assinaturas
               <br />
               em um só lugar.
             </h1>
-
-            <p className="text-zinc-400 text-xl mt-8 max-w-2xl leading-relaxed">
+    
+            <p className="text-zinc-400 text-lg mt-8 max-w-2xl leading-relaxed">
               Crie sua página profissional, venda cursos,
               e-books, mentorias e assinaturas, entregue
               conteúdos exclusivos e acompanhe seus resultados
@@ -52,7 +51,7 @@ export default function Hero() {
                   bg-violet-600
                   hover:bg-violet-700
                   transition
-                  px-8
+                  px-7
                   py-4
                   rounded-xl
                   font-semibold
@@ -70,7 +69,7 @@ export default function Hero() {
                   border
                   border-zinc-700
                   hover:border-zinc-500
-                  px-8
+                  px-7
                   py-4
                   rounded-xl
                   transition
@@ -82,57 +81,49 @@ export default function Hero() {
             </div>
 
             {/* BENEFÍCIOS */}
-            <div className="mt-8 flex flex-wrap gap-6 text-sm text-zinc-400">
+            <div className="flex flex-wrap gap-6 mt-8 text-sm text-zinc-400">
 
-              <span>
-                ✓ Área de membros integrada
-              </span>
+              <span>✓ Área de membros integrada</span>
 
-              <span>
-                ✓ Checkout próprio
-              </span>
+              <span>✓ Checkout próprio</span>
 
-              <span>
-                ✓ Saques simplificados
-              </span>
+              <span>✓ Saques simplificados</span>
 
-              <span>
-                ✓ Página de links profissional
-              </span>
+              <span>✓ Página de links profissional</span>
 
             </div>
 
             {/* DESTAQUES */}
-            <div className="flex flex-wrap gap-10 mt-12">
+            <div className="flex flex-wrap gap-8 mt-12">
 
               <div>
-                <span className="text-white font-bold text-2xl">
+                <div className="text-xl font-bold">
                   Cursos
-                </span>
-                <br />
-                <span className="text-zinc-400">
+                </div>
+
+                <div className="text-zinc-400">
                   Área de membros completa
-                </span>
+                </div>
               </div>
 
               <div>
-                <span className="text-white font-bold text-2xl">
+                <div className="text-xl font-bold">
                   PIX
-                </span>
-                <br />
-                <span className="text-zinc-400">
+                </div>
+
+                <div className="text-zinc-400">
                   Recebimentos automáticos
-                </span>
+                </div>
               </div>
 
               <div>
-                <span className="text-white font-bold text-2xl">
+                <div className="text-xl font-bold">
                   Links
-                </span>
-                <br />
-                <span className="text-zinc-400">
+                </div>
+
+                <div className="text-zinc-400">
                   Página profissional
-                </span>
+                </div>
               </div>
 
             </div>
@@ -140,9 +131,9 @@ export default function Hero() {
           </div>
 
           {/* DIREITA */}
-          <div className="scale-110 xl:scale-125 origin-center">
+          <div>
 
-            <div className="glass rounded-[32px] p-10 border border-white/10 shadow-2xl">
+            <div className="w-full">
 
               <div className="flex items-center justify-between mb-8">
 
@@ -187,7 +178,7 @@ export default function Hero() {
               {/* GRÁFICO */}
               <div className="bg-black/40 rounded-2xl p-6 border border-white/5">
 
-                <div className="flex justify-between mb-4">
+                <div className="flex justify-between mb-5">
 
                   <span className="text-zinc-400">
                     Crescimento Mensal
@@ -201,12 +192,17 @@ export default function Hero() {
 
                 <div className="flex items-end gap-3 h-40">
 
-                  <div className="w-full bg-violet-600/30 rounded-t h-10" />
-                  <div className="w-full bg-violet-600/40 rounded-t h-16" />
-                  <div className="w-full bg-violet-600/50 rounded-t h-20" />
-                  <div className="w-full bg-violet-600/60 rounded-t h-28" />
-                  <div className="w-full bg-violet-600/70 rounded-t h-24" />
-                  <div className="w-full bg-violet-600 rounded-t h-36" />
+                  <div className="w-full bg-violet-600/30 rounded-t-xl h-10" />
+
+                  <div className="w-full bg-violet-600/40 rounded-t-xl h-16" />
+
+                  <div className="w-full bg-violet-600/50 rounded-t-xl h-20" />
+
+                  <div className="w-full bg-violet-600/60 rounded-t-xl h-28" />
+
+                  <div className="w-full bg-violet-600/70 rounded-t-xl h-24" />
+
+                  <div className="w-full bg-violet-600 rounded-t-xl h-36" />
 
                 </div>
 

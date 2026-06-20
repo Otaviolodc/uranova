@@ -7,47 +7,38 @@ import {
 const comparisons = [
   {
     feature: "Página de Links",
-    uranova: true,
     outros: true,
   },
   {
     feature: "Área de Membros",
-    uranova: true,
     outros: false,
   },
   {
     feature: "Venda de Cursos",
-    uranova: true,
     outros: false,
   },
   {
     feature: "Venda de E-books",
-    uranova: true,
     outros: false,
   },
   {
     feature: "Mentorias",
-    uranova: true,
     outros: false,
   },
   {
     feature: "Assinaturas Recorrentes",
-    uranova: true,
     outros: false,
   },
   {
     feature: "Analytics Avançado",
-    uranova: true,
     outros: false,
   },
   {
     feature: "Checkout Integrado",
-    uranova: true,
     outros: false,
   },
   {
     feature: "Saques",
-    uranova: true,
     outros: false,
   },
 ];
@@ -63,11 +54,11 @@ export default function Comparison() {
             Tudo em um só lugar
           </span>
 
-          <h2 className="text-5xl font-bold mt-4">
+          <h2 className="text-4xl md:text-5xl font-bold mt-4">
             Pare de pagar várias plataformas
           </h2>
 
-          <p className="text-zinc-400 text-lg mt-6">
+          <p className="text-zinc-400 text-lg mt-6 leading-relaxed">
             Enquanto outras ferramentas resolvem apenas
             uma parte do problema, a Uranova reúne tudo
             que você precisa para vender e escalar seu
@@ -76,7 +67,19 @@ export default function Comparison() {
 
         </div>
 
-        <div className="glass rounded-3xl overflow-hidden mt-16">
+        {/* TABELA */}
+        <div
+          className="
+            glass
+            rounded-[32px]
+            overflow-hidden
+            mt-20
+            border
+            border-white/5
+            shadow-lg
+            shadow-black/20
+          "
+        >
 
           <div className="grid grid-cols-3 border-b border-white/10">
 
@@ -84,7 +87,7 @@ export default function Comparison() {
               Recurso
             </div>
 
-            <div className="p-6 bg-violet-600/10 font-bold text-violet-300 text-center">
+            <div className="p-6 text-center bg-violet-600/10 text-violet-300 font-bold">
               Uranova
             </div>
 
@@ -97,20 +100,29 @@ export default function Comparison() {
           {comparisons.map((item) => (
             <div
               key={item.feature}
-              className="grid grid-cols-3 border-b border-white/5"
+              className="
+                grid
+                grid-cols-3
+                border-b
+                border-white/5
+              "
             >
+
               <div className="p-5">
                 {item.feature}
               </div>
 
               <div className="p-5 flex justify-center">
+
                 <Check
                   size={20}
                   className="text-green-400"
                 />
+
               </div>
 
               <div className="p-5 flex justify-center">
+
                 {item.outros ? (
                   <Check
                     size={20}
@@ -122,6 +134,7 @@ export default function Comparison() {
                     className="text-red-400"
                   />
                 )}
+
               </div>
 
             </div>
@@ -129,21 +142,35 @@ export default function Comparison() {
 
         </div>
 
-        <div className="mt-12 glass rounded-3xl p-8 text-center">
+        {/* CARD FINAL */}
+        <div
+          className="
+            glass
+            rounded-[32px]
+            border
+            border-white/5
+            shadow-lg
+            shadow-black/20
+            p-10
+            mt-14
+            text-center
+          "
+        >
 
           <Layers
-            size={42}
-            className="mx-auto text-violet-400 mb-4"
+            size={44}
+            className="mx-auto text-violet-400 mb-5"
           />
 
           <h3 className="text-3xl font-bold">
             Uma única plataforma.
           </h3>
 
-          <p className="text-zinc-400 mt-4 max-w-2xl mx-auto">
+          <p className="text-zinc-400 mt-5 max-w-2xl mx-auto leading-relaxed">
             Não combine Linktree, Hotmart, checkout,
             área de membros e analytics separados.
-            Centralize tudo dentro da Uranova.
+            Centralize tudo dentro da Uranova e tenha
+            uma operação mais simples e profissional.
           </p>
 
         </div>

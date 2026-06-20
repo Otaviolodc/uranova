@@ -32,8 +32,13 @@ body {
   background:
     radial-gradient(
       circle at top,
-      rgba(124, 58, 237, 0.18),
-      transparent 35%
+      rgba(124, 58, 237, .20),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at bottom,
+      rgba(139, 92, 246, .08),
+      transparent 40%
     ),
     #050505;
 
@@ -54,6 +59,8 @@ body {
   color: white;
 }
 
+/* Scroll */
+
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -71,31 +78,39 @@ body {
   background: #7c3aed;
 }
 
+/* Sections */
+
 section {
   position: relative;
 }
 
+/* Glow */
+
 .glow {
   position: absolute;
 
-  width: 400px;
-  height: 400px;
+  width: 500px;
+  height: 500px;
 
   border-radius: 999px;
 
-  background: rgba(124, 58, 237, 0.15);
+  background: rgba(124,58,237,.15);
 
-  filter: blur(120px);
+  filter: blur(140px);
 
   pointer-events: none;
 }
 
+/* Gradient Text */
+
 .gradient-text {
-  background: linear-gradient(
-    to right,
-    #ffffff,
-    #a78bfa
-  );
+
+  background:
+    linear-gradient(
+      to right,
+      #ffffff,
+      #c4b5fd
+    );
 
   background-clip: text;
   -webkit-background-clip: text;
@@ -103,15 +118,24 @@ section {
   color: transparent;
   -webkit-text-fill-color: transparent;
 }
+
+/* Glass */
+
 .glass {
-  background: rgba(255,255,255,0.04);
+
+  background:
+    rgba(255,255,255,.03);
 
   backdrop-filter: blur(20px);
 
-  border: 1px solid rgba(255,255,255,0.08);
+  border:
+    1px solid rgba(255,255,255,.06);
 }
 
+/* Hover */
+
 .card-hover {
+
   transition:
     transform .25s ease,
     border-color .25s ease,
@@ -119,10 +143,33 @@ section {
 }
 
 .card-hover:hover {
-  transform: translateY(-4px);
 
-  border-color: rgba(124,58,237,.4);
+  transform:
+    translateY(-5px);
+
+  border-color:
+    rgba(124,58,237,.30);
 
   box-shadow:
-    0 0 30px rgba(124,58,237,.15);
+    0 0 40px rgba(124,58,237,.12);
 }
+
+/* Images */
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Links */
+
+a {
+  text-decoration: none;
+}
+
+/* Buttons */
+
+button {
+  cursor: pointer;
+}
+

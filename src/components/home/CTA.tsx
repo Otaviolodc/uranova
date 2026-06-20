@@ -4,31 +4,67 @@ import { ArrowRight, CheckCircle } from "lucide-react";
 export default function CTA() {
   return (
     <section className="py-32 px-6">
+
       <div className="max-w-6xl mx-auto">
 
-        <div className="relative overflow-hidden rounded-[40px] border border-violet-500/20 bg-gradient-to-br from-violet-600 via-violet-700 to-violet-900 p-12 md:p-20 text-center">
+        <div
+          className="
+            relative
+            overflow-hidden
+            rounded-[40px]
+            border
+            border-violet-500/20
+            bg-gradient-to-br
+            from-violet-600
+            via-violet-700
+            to-violet-900
+            px-8
+            py-16
+            md:px-16
+            md:py-24
+            text-center
+            shadow-2xl
+            shadow-violet-900/40
+          "
+        >
 
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-white/10 blur-[180px] rounded-full" />
+          {/* Glow */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-white/10 blur-[200px] rounded-full" />
 
           <div className="relative z-10">
 
-            <span className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-2 rounded-full text-sm">
+            <span
+              className="
+                inline-flex
+                items-center
+                gap-2
+                rounded-full
+                border
+                border-white/20
+                bg-white/10
+                px-5
+                py-2
+                text-sm
+              "
+            >
               Plataforma completa para criadores digitais
             </span>
 
-            <h2 className="text-5xl md:text-6xl font-bold mt-8 leading-tight">
-              Pronto para transformar
+            <h2 className="mt-8 text-4xl md:text-6xl font-bold leading-tight">
+              Transforme seguidores
               <br />
-              seguidores em clientes?
+              em clientes.
             </h2>
 
-            <p className="mt-8 text-lg text-violet-100 max-w-3xl mx-auto leading-relaxed">
-              Venda cursos, e-books, mentorias, assinaturas,
-              crie sua área de membros, receba pagamentos e
-              acompanhe seus resultados em uma única plataforma.
+            <p className="max-w-3xl mx-auto mt-8 text-lg text-violet-100 leading-relaxed">
+              Venda cursos, e-books, mentorias e assinaturas.
+              Crie sua área de membros, acompanhe métricas,
+              receba pagamentos e gerencie todo o seu negócio
+              digital em um único lugar.
             </p>
 
-            <div className="flex flex-wrap justify-center gap-6 mt-10 text-sm">
+            {/* BENEFÍCIOS */}
+            <div className="flex flex-wrap justify-center gap-8 mt-10 text-sm">
 
               <div className="flex items-center gap-2">
                 <CheckCircle size={18} />
@@ -47,7 +83,8 @@ export default function CTA() {
 
             </div>
 
-            <div className="mt-12">
+            {/* BOTÃO */}
+            <div className="mt-14">
 
               <Link
                 href="/login"
@@ -55,24 +92,26 @@ export default function CTA() {
                   inline-flex
                   items-center
                   gap-3
+                  rounded-2xl
                   bg-white
-                  text-black
                   px-10
                   py-5
-                  rounded-2xl
+                  text-black
                   font-bold
-                  hover:scale-105
                   transition
+                  hover:scale-105
+                  shadow-xl
                 "
               >
                 Criar Conta Gratuitamente
 
                 <ArrowRight size={20} />
+
               </Link>
 
             </div>
 
-            <p className="mt-6 text-sm text-violet-200">
+            <p className="mt-8 text-sm text-violet-200">
               Comece hoje e centralize todo o seu negócio digital na Uranova.
             </p>
 
@@ -81,6 +120,8 @@ export default function CTA() {
         </div>
 
       </div>
+
     </section>
   );
 }
+

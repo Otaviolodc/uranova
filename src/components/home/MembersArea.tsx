@@ -8,7 +8,10 @@ import {
 
 export default function MembersArea() {
   return (
-    <section className="py-32 px-6">
+    <section
+      id="membros"
+      className="py-32 px-6"
+    >
       <div className="max-w-7xl mx-auto">
 
         <div className="grid lg:grid-cols-2 gap-20 items-center">
@@ -20,15 +23,15 @@ export default function MembersArea() {
               Área de membros profissional
             </span>
 
-            <h2 className="text-5xl font-bold mt-4 leading-tight">
+            <h2 className="text-4xl md:text-5xl font-bold mt-4 leading-tight">
               Entregue conteúdos premium
               para seus alunos.
             </h2>
 
             <p className="text-zinc-400 text-lg mt-6 leading-relaxed">
               Organize cursos, mentorias, comunidades,
-              aulas gravadas e materiais exclusivos
-              em uma área de membros moderna e intuitiva.
+              aulas gravadas e materiais exclusivos em
+              uma área de membros moderna e intuitiva.
             </p>
 
             <div className="mt-10 space-y-5">
@@ -44,16 +47,28 @@ export default function MembersArea() {
           </div>
 
           {/* DIREITA */}
-          <div className="glass rounded-3xl p-8">
+          <div
+            className="
+              glass
+              rounded-[32px]
+              p-8
+              border
+              border-white/5
+              shadow-lg
+              shadow-black/20
+            "
+          >
 
-            <div className="border-b border-white/10 pb-5 mb-5">
+            <div className="border-b border-white/10 pb-6 mb-6">
+
               <h3 className="text-2xl font-bold">
                 Curso de Marketing Digital
               </h3>
 
-              <p className="text-zinc-400 mt-1">
+              <p className="text-zinc-400 mt-2">
                 24 aulas • 8 módulos
               </p>
+
             </div>
 
             <div className="space-y-4">
@@ -106,12 +121,16 @@ function Feature({
 }) {
   return (
     <div className="flex items-center gap-3">
+
       <CheckCircle
         size={20}
         className="text-green-400"
       />
 
-      <span>{text}</span>
+      <span className="text-zinc-200">
+        {text}
+      </span>
+
     </div>
   );
 }
@@ -126,20 +145,35 @@ function Lesson({
   status: string;
 }) {
   return (
-    <div className="bg-black/40 border border-white/5 rounded-2xl p-4 flex items-center justify-between">
+    <div
+      className="
+        bg-black/40
+        border
+        border-white/5
+        rounded-2xl
+        p-4
+        flex
+        items-center
+        justify-between
+      "
+    >
+
       <div className="flex items-center gap-3">
 
         <div className="text-violet-400">
           {icon}
         </div>
 
-        <span>{title}</span>
+        <span className="text-sm md:text-base">
+          {title}
+        </span>
 
       </div>
 
       <span className="text-zinc-400 text-sm">
         {status}
       </span>
+
     </div>
   );
 }

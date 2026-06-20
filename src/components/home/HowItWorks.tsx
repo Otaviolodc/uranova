@@ -29,7 +29,7 @@ const steps = [
     icon: Rocket,
     title: "Entregue Automaticamente",
     description:
-      "O acesso ao produto é liberado automaticamente após a compra.",
+      "O acesso é liberado automaticamente após a compra.",
   },
   {
     icon: Wallet,
@@ -41,7 +41,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="py-28 px-6 bg-zinc-950">
+    <section className="py-32 px-6 bg-zinc-950">
       <div className="max-w-7xl mx-auto">
 
         <div className="text-center max-w-3xl mx-auto">
@@ -50,18 +50,18 @@ export default function HowItWorks() {
             Processo simples
           </span>
 
-          <h2 className="text-5xl font-bold mt-4">
+          <h2 className="text-4xl md:text-5xl font-bold mt-4">
             Comece a vender em minutos
           </h2>
 
-          <p className="text-zinc-400 text-lg mt-6">
-            A Uranova automatiza toda a operação para que você
-            possa focar no crescimento do seu negócio digital.
+          <p className="text-zinc-400 text-lg mt-6 leading-relaxed">
+            A Uranova automatiza toda a operação para que
+            você possa focar no crescimento do seu negócio.
           </p>
 
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 mt-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 mt-20">
 
           {steps.map((step, index) => {
             const Icon = step.icon;
@@ -72,29 +72,46 @@ export default function HowItWorks() {
                 className="
                   glass
                   card-hover
-                  rounded-3xl
-                  p-6
+                  rounded-[32px]
+                  p-8
+                  border
+                  border-white/5
+                  shadow-lg
+                  shadow-black/20
                   relative
                 "
               >
-                <div className="absolute top-4 right-4 text-violet-500 text-3xl font-bold opacity-30">
+
+                <div className="absolute top-6 right-6 text-4xl font-bold text-violet-500/20">
                   {index + 1}
                 </div>
 
-                <div className="w-14 h-14 rounded-2xl bg-violet-500/10 flex items-center justify-center mb-6">
+                <div
+                  className="
+                    w-16
+                    h-16
+                    rounded-2xl
+                    bg-violet-500/10
+                    flex
+                    items-center
+                    justify-center
+                    mb-6
+                  "
+                >
                   <Icon
-                    size={28}
+                    size={30}
                     className="text-violet-400"
                   />
                 </div>
 
-                <h3 className="text-xl font-semibold mb-3">
+                <h3 className="text-xl font-bold mb-4">
                   {step.title}
                 </h3>
 
                 <p className="text-zinc-400 text-sm leading-relaxed">
                   {step.description}
                 </p>
+
               </div>
             );
           })}
@@ -105,3 +122,4 @@ export default function HowItWorks() {
     </section>
   );
 }
+

@@ -50,7 +50,7 @@ const features = [
     icon: CreditCard,
     title: "Checkout Integrado",
     description:
-      "Receba pagamentos de forma simples com PIX e cartões.",
+      "Receba pagamentos via PIX e cartões de forma simples e segura.",
   },
   {
     icon: Shield,
@@ -64,7 +64,7 @@ export default function Features() {
   return (
     <section
       id="recursos"
-      className="py-28 px-6"
+      className="py-32 px-6"
     >
       <div className="max-w-7xl mx-auto">
 
@@ -74,20 +74,19 @@ export default function Features() {
             Recursos completos
           </span>
 
-          <h2 className="text-5xl font-bold mt-4">
+          <h2 className="text-4xl md:text-5xl font-bold mt-4">
             Tudo que você precisa
             para vender online
           </h2>
 
-          <p className="text-zinc-400 mt-6 text-lg">
-            A Uranova reúne todas as ferramentas
-            necessárias para criar, vender,
-            entregar e escalar produtos digitais.
+          <p className="text-zinc-400 mt-6 text-lg leading-relaxed">
+            A Uranova reúne todas as ferramentas necessárias
+            para criar, vender, entregar e escalar produtos digitais.
           </p>
 
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-20">
 
           {features.map((feature, index) => {
             const Icon = feature.icon;
@@ -98,18 +97,34 @@ export default function Features() {
                 className="
                   glass
                   card-hover
-                  rounded-3xl
-                  p-7
+                  rounded-[32px]
+                  p-8
+                  border
+                  border-white/5
+                  shadow-lg
+                  shadow-black/20
                 "
               >
-                <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mb-5">
+
+                <div
+                  className="
+                    w-16
+                    h-16
+                    rounded-2xl
+                    bg-violet-500/10
+                    flex
+                    items-center
+                    justify-center
+                    mb-6
+                  "
+                >
                   <Icon
-                    size={24}
+                    size={30}
                     className="text-violet-400"
                   />
                 </div>
 
-                <h3 className="text-xl font-semibold mb-3">
+                <h3 className="text-xl font-bold mb-4">
                   {feature.title}
                 </h3>
 
@@ -127,3 +142,4 @@ export default function Features() {
     </section>
   );
 }
+

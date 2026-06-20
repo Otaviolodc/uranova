@@ -17,11 +17,11 @@ export default function Analytics() {
             Analytics avançado
           </span>
 
-          <h2 className="text-5xl font-bold mt-4">
+          <h2 className="text-4xl md:text-5xl font-bold mt-4">
             Tome decisões com dados reais
           </h2>
 
-          <p className="text-zinc-400 text-lg mt-6">
+          <p className="text-zinc-400 text-lg mt-6 leading-relaxed">
             Acompanhe vendas, conversões, cliques,
             faturamento e desempenho dos seus produtos
             em tempo real.
@@ -29,10 +29,20 @@ export default function Analytics() {
 
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 mt-20">
+        <div className="grid lg:grid-cols-2 gap-16 mt-20">
 
-          {/* DASHBOARD */}
-          <div className="glass rounded-3xl p-8">
+          {/* Dashboard */}
+          <div
+            className="
+              glass
+              rounded-[32px]
+              p-8
+              border
+              border-white/5
+              shadow-lg
+              shadow-black/20
+            "
+          >
 
             <div className="flex items-center justify-between mb-8">
 
@@ -47,6 +57,7 @@ export default function Analytics() {
               </div>
 
               <BarChart3 className="text-violet-400" />
+
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-8">
@@ -78,9 +89,10 @@ export default function Analytics() {
             </div>
 
             {/* gráfico */}
-            <div className="bg-black/40 rounded-2xl p-6 border border-white/5">
+            <div className="bg-black/40 rounded-3xl border border-white/5 p-6">
 
-              <div className="flex justify-between mb-5">
+              <div className="flex justify-between mb-6">
+
                 <span className="text-zinc-400">
                   Crescimento Mensal
                 </span>
@@ -88,6 +100,7 @@ export default function Analytics() {
                 <span className="text-green-400">
                   +18%
                 </span>
+
               </div>
 
               <div className="flex items-end gap-3 h-44">
@@ -105,7 +118,7 @@ export default function Analytics() {
 
           </div>
 
-          {/* TEXTO */}
+          {/* Texto */}
           <div className="flex flex-col justify-center">
 
             <span className="text-violet-400 font-medium">
@@ -152,6 +165,7 @@ function Metric({
 }) {
   return (
     <div className="bg-black/40 border border-white/5 rounded-2xl p-5">
+
       <div className="text-violet-400 mb-2">
         {icon}
       </div>
@@ -163,6 +177,7 @@ function Metric({
       <div className="text-zinc-400 text-sm mt-1">
         {label}
       </div>
+
     </div>
   );
 }
@@ -174,8 +189,14 @@ function Benefit({
 }) {
   return (
     <div className="flex items-center gap-3">
+
       <div className="w-2 h-2 rounded-full bg-violet-500" />
-      <span>{text}</span>
+
+      <span className="text-zinc-200">
+        {text}
+      </span>
+
     </div>
   );
 }
+

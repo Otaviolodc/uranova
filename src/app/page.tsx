@@ -11,16 +11,32 @@ import CTA from "@/components/home/CTA";
 
 export default function HomePage() {
   return (
-    <main className="bg-black text-white overflow-hidden">
+    <main
+      className="
+        bg-black
+        text-white
+        overflow-hidden
+        min-h-screen
+      "
+    >
       <Hero />
+
       <TrustBar />
+
       <Products />
+
       <HowItWorks />
+
       <Features />
+
       <MembersArea />
+
       <Analytics />
+
       <Comparison />
+
       <FAQ />
+
       <CTA />
     </main>
   );
