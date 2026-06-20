@@ -3,9 +3,6 @@
 :root {
   --background: #050505;
   --foreground: #fafafa;
-
-  --uranova-primary: #7c3aed;
-  --uranova-secondary: #8b5cf6;
 }
 
 @theme inline {
@@ -18,8 +15,6 @@
 
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 html {
@@ -28,20 +23,7 @@ html {
 
 body {
   min-height: 100vh;
-
-  background:
-    radial-gradient(
-      circle at top,
-      rgba(124, 58, 237, .20),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at bottom,
-      rgba(139, 92, 246, .08),
-      transparent 40%
-    ),
-    #050505;
-
+  background: #050505;
   color: var(--foreground);
 
   font-family:
@@ -59,83 +41,34 @@ body {
   color: white;
 }
 
-/* Scroll */
-
-::-webkit-scrollbar {
-  width: 10px;
+img {
+  max-width: 100%;
+  display: block;
 }
 
-::-webkit-scrollbar-track {
-  background: #090909;
+a {
+  text-decoration: none;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 999px;
+button {
+  cursor: pointer;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #7c3aed;
+.glass {
+  background: rgba(255,255,255,.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,.06);
 }
-
-/* Sections */
-
-section {
-  position: relative;
-}
-
-/* Glow */
-
-.glow {
-  position: absolute;
-
-  width: 500px;
-  height: 500px;
-
-  border-radius: 999px;
-
-  background: rgba(124,58,237,.15);
-
-  filter: blur(140px);
-
-  pointer-events: none;
-}
-
-/* Gradient Text */
 
 .gradient-text {
-
-  background:
-    linear-gradient(
-      to right,
-      #ffffff,
-      #c4b5fd
-    );
-
+  background: linear-gradient(to right, #ffffff, #c4b5fd);
   background-clip: text;
   -webkit-background-clip: text;
-
   color: transparent;
   -webkit-text-fill-color: transparent;
 }
 
-/* Glass */
-
-.glass {
-
-  background:
-    rgba(255,255,255,.03);
-
-  backdrop-filter: blur(20px);
-
-  border:
-    1px solid rgba(255,255,255,.06);
-}
-
-/* Hover */
-
 .card-hover {
-
   transition:
     transform .25s ease,
     border-color .25s ease,
@@ -143,33 +76,7 @@ section {
 }
 
 .card-hover:hover {
-
-  transform:
-    translateY(-5px);
-
-  border-color:
-    rgba(124,58,237,.30);
-
-  box-shadow:
-    0 0 40px rgba(124,58,237,.12);
+  transform: translateY(-5px);
+  border-color: rgba(124,58,237,.30);
+  box-shadow: 0 0 40px rgba(124,58,237,.12);
 }
-
-/* Images */
-
-img {
-  max-width: 100%;
-  display: block;
-}
-
-/* Links */
-
-a {
-  text-decoration: none;
-}
-
-/* Buttons */
-
-button {
-  cursor: pointer;
-}
-
