@@ -84,7 +84,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
 
           <Link
-            href="/login"
+            href="/auth/login"
             className="
               px-5
               py-2.5
@@ -99,7 +99,7 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="/login"
+            href="/auth/login"
             className="
               px-5
               py-2.5

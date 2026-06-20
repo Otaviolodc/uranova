@@ -27,7 +27,7 @@ export default function Hero() {
           <div className="flex gap-4 mt-10">
 
             <Link
-              href="/login"
+              href="/auth/login"
               className="bg-violet-600 hover:bg-violet-700 px-8 py-4 rounded-2xl font-semibold flex items-center gap-2 transition"
             >
               Criar conta

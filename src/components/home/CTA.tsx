@@ -17,7 +17,7 @@ export default function CTA() {
           </p>
 
           <Link
-            href="/login"
+            href="/auth/login"
             className="inline-block mt-10 bg-white text-black px-8 py-4 rounded-2xl font-bold"
           >
             Criar Conta

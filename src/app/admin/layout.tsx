@@ -19,7 +19,7 @@ export default async function AdminLayout({
 
   // NÃO LOGADO
   if (!session) {
-    redirect("/login");
+    redirect("/auth/login");
   }
 
   // PROFILE

@@ -121,7 +121,7 @@ export default function Sidebar() {
       </nav>
 
       <Link
-        href="/login"
+        href="/auth/login"
         prefetch={true}
         className="
           mt-10
@@ -216,7 +216,7 @@ export default function Sidebar() {
       </nav>
 
       <Link
-        href="/login"
+        href="/auth/login"
         prefetch={true}
         className="
           mt-10
