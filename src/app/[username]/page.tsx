@@ -61,10 +61,11 @@ export default async function PublicPage({
       .select(`
         id,
         title,
+        description,
         slug,
         image_url,
         clicks
-     `)
+      `)
       .eq("user_id", profile.id)
       .order("created_at", {
         ascending: true,
@@ -419,7 +420,7 @@ const marketplaceProducts =
 
         <a
           key={product.id}
-          href={`/product/${product.checkout_slug}`}
+          href={`/checkout/product/${product.checkout_slug}`}
           className="
             bg-zinc-900
             border
@@ -591,7 +592,7 @@ const marketplaceProducts =
                         shadow-xl
                       ">
 
-                        🔥 EM ALTA
+                        ⭐ DESTAQUE
 
                       </div>
 
@@ -622,6 +623,10 @@ const marketplaceProducts =
 
                   </h2>
 
+                  <p className="text-white/70 mt-3 leading-relaxed">
+                    {link.description}
+                  </p>
+
                   {/* CLICKS */}
                   <p className="text-white/50 mt-2">
 
@@ -650,7 +655,7 @@ const marketplaceProducts =
                     }}
                   >
 
-                    Acessar →
+                    Saiba Mais →
 
                   </div>
 

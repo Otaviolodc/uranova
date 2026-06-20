@@ -23,7 +23,7 @@ export default function MobilePreview({
           className="h-full overflow-y-auto px-5 py-8"
           style={{
             background:
-              profile?.theme_color || "#000000",
+              "linear-gradient(180deg,#050505,#111111)",
           }}
         >
 
@@ -88,49 +88,78 @@ export default function MobilePreview({
           </div>
 
           {/* LINKS */}
-          <div className="mt-8 space-y-4">
+        <div className="mt-8 space-y-4">
 
-            {links.map((link, index) => (
-              <div
-                key={link.id}
-                className={`rounded-2xl overflow-hidden transition ${
-                  index === 0
-                    ? "bg-green-500 text-black"
-                    : "bg-white text-black"
-                }`}
-              >
+        {links.map((link) => (
 
-                <div className="flex items-center gap-3 p-3">
+      <div
+        key={link.id}
+        className="
+          bg-zinc-950/90
+          border
+          border-zinc-800
+          rounded-3xl
+          p-4
+          shadow-lg
+          hover:border-green-500/30
+          transition-all
+        "
+      >
 
-                  {/* IMAGEM */}
-                  {link.image_url && (
-                    <img
-                      src={link.image_url}
-                      className="w-16 h-16 rounded-xl object-cover"
-                    />
-                  )}
+      <div className="flex items-center gap-4">
 
-                  {/* TEXTO */}
-                  <div className="flex-1">
+    {link.image_url ? (
 
-                    {index === 0 && (
-                      <p className="text-xs font-bold mb-1">
-                        RECOMENDADO
-                      </p>
-                    )}
+      <img
+        src={link.image_url}
+        className="
+          w-16
+          h-16
+          rounded-2xl
+          object-cover
+          border
+          border-zinc-700
+        "
+      />
 
-                    <h2 className="font-semibold text-sm leading-tight">
-                      {link.title}
-                    </h2>
+    ) : (
 
-                  </div>
+      <div
+        className="
+          w-16
+          h-16
+          rounded-2xl
+          bg-zinc-800
+          flex
+          items-center
+          justify-center
+          text-2xl
+        "
+      >
+        📦
+      </div>
 
-                </div>
+     )}
 
-              </div>
-            ))}
+        <div className="flex-1">
 
-          </div>
+          <h2 className="text-white font-bold text-lg">
+            {link.title}
+          </h2>
+
+          <p className="text-zinc-400 text-sm mt-1">
+            {link.description || "Clique para acessar"}
+          </p>
+         
+        </div>
+
+      </div>
+
+    </div>
+
+  ))}
+
+</div>
 
           {/* FOOTER */}
           <div className="mt-10 text-center text-gray-400 text-xs">
