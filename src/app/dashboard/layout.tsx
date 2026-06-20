@@ -16,7 +16,7 @@ export default function DashboardLayout({
 
         <Topbar />
 
-        <main className="overflow-x-hidden">
+        <main className="overflow-visible">
 
           {children}
 

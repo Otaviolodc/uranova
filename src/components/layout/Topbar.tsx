@@ -36,6 +36,7 @@ useEffect(() => {
   return (
     <header
       className="
+        relative
         h-20
         border-b
         border-zinc-800
@@ -45,6 +46,7 @@ useEffect(() => {
         flex
         items-center
         justify-between
+        z-50
       "
     >
       {/* Pesquisa */}
@@ -108,9 +110,10 @@ useEffect(() => {
   `}
 >
   {profile?.is_pro ? "💎 PRO" : "FREE"}
+
 </div>
 
-    <div className="relative">
+<div className="relative">
 
 <button
   onClick={() => setOpenMenu(!openMenu)}
@@ -184,17 +187,16 @@ useEffect(() => {
 
 <div
   className="
-    absolute
-    right-0
-    top-20
+    fixed
+    top-24
+    right-8
     w-64
     bg-zinc-950
     border
     border-zinc-800
     rounded-3xl
-    overflow-hidden
     shadow-2xl
-    z-50
+    z-[99999]
   "
 >
 
