@@ -9,17 +9,15 @@ import {
   XAxis,
   Tooltip,
   ResponsiveContainer,
+  CartesianGrid,
 } from "recharts";
 
 export default function SalesChart() {
 
-  const [data, setData] =
-  useState<any[]>([]);
+  const [data, setData] = useState<any[]>([]);
+  const [mounted, setMounted] = useState(false);
 
-  const [mounted, setMounted] =
-  useState(false);
-
-  async function fetchClicks() {
+  async function fetchSales() {
 
     const {
       data: { user },
@@ -27,37 +25,51 @@ export default function SalesChart() {
 
     if (!user) return;
 
-    const { data: clicks } =
-      await supabase
-        .from("link_clicks_daily")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("date", {
-          ascending: true,
-        });
+    const { data: orders } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", {
+        ascending: true,
+      });
 
-    const formatted =
-      (clicks || []).map((item) => ({
-        day: item.date?.slice(8, 10),
-        clicks: item.clicks,
-      }));
+    const grouped: any = {};
+
+    (orders || []).forEach((order) => {
+
+      const day =
+        order.created_at?.slice(8, 10);
+
+      if (!grouped[day]) {
+        grouped[day] = 0;
+      }
+
+      grouped[day] += Number(order.amount);
+
+    });
+
+    const formatted = Object.entries(grouped).map(
+      ([day, revenue]) => ({
+        day,
+        revenue,
+      })
+    );
 
     setData(formatted);
   }
 
   useEffect(() => {
-    fetchClicks();
+    fetchSales();
   }, []);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   return (
+
     <div
       className="
         mt-10
@@ -65,38 +77,45 @@ export default function SalesChart() {
         border
         border-zinc-800
         rounded-3xl
-        p-6
+        p-8
       "
     >
 
       <h2 className="text-2xl font-bold text-white mb-2">
-        📈 Visão Geral
+        📈 Receita dos últimos dias
       </h2>
 
-      <p className="text-zinc-400 mb-6">
-        Cliques dos últimos dias
+      <p className="text-zinc-400 mb-8">
+        Evolução das vendas da sua operação
       </p>
 
-      <div className="w-full h-[320px]">
+      <div className="w-full h-[350px]">
 
         <ResponsiveContainer
-          width="99%"
-          height={320}
+          width="100%"
+          height="100%"
         >
 
           <LineChart data={data}>
 
+            <CartesianGrid
+              stroke="#27272a"
+              vertical={false}
+            />
+
             <XAxis
               dataKey="day"
+              stroke="#71717a"
             />
 
             <Tooltip />
 
             <Line
               type="monotone"
-              dataKey="clicks"
+              dataKey="revenue"
               stroke="#22c55e"
-              strokeWidth={3}
+              strokeWidth={4}
+              dot={{ r: 4 }}
             />
 
           </LineChart>
@@ -106,5 +125,6 @@ export default function SalesChart() {
       </div>
 
     </div>
+
   );
 }

@@ -1,5 +1,6 @@
 export default function AIInsights() {
   return (
+
     <div
       className="
         mt-10
@@ -7,72 +8,142 @@ export default function AIInsights() {
         border
         border-zinc-800
         rounded-3xl
-        p-6
+        overflow-hidden
       "
     >
-      <h2 className="text-2xl font-bold text-white mb-6">
-        🤖 Insights IA
-      </h2>
 
-      <div className="grid md:grid-cols-2 gap-4">
+      {/* HEADER */}
+      <div
+        className="
+          p-6
+          border-b
+          border-zinc-800
+        "
+      >
 
-        <div className="bg-black border border-zinc-800 rounded-2xl p-5">
+        <h2 className="text-2xl font-bold text-white">
+          🤖 Insights IA
+        </h2>
+
+        <p className="text-zinc-400 mt-2">
+          Recomendações inteligentes da sua operação
+        </p>
+
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-5 p-6">
+
+        {/* MELHOR HORÁRIO */}
+        <div
+          className="
+            bg-black
+            border
+            border-zinc-800
+            rounded-3xl
+            p-6
+            hover:border-green-500/30
+            transition
+          "
+        >
+
           <p className="text-zinc-400 text-sm">
             📈 Melhor Horário
           </p>
 
-          <h3 className="text-xl font-bold text-white mt-2">
+          <h3 className="text-2xl font-black text-white mt-3">
             19h às 22h
           </h3>
 
-          <p className="text-zinc-500 mt-2">
-            Maior volume de cliques.
+          <p className="text-zinc-500 mt-3">
+            Período com maior atividade dos usuários.
           </p>
+
         </div>
 
-        <div className="bg-black border border-zinc-800 rounded-2xl p-5">
+        {/* MELHOR PRODUTO */}
+        <div
+          className="
+            bg-black
+            border
+            border-zinc-800
+            rounded-3xl
+            p-6
+            hover:border-green-500/30
+            transition
+          "
+        >
+
           <p className="text-zinc-400 text-sm">
-            🔥 Melhor Produto
+            🏆 Melhor Produto
           </p>
 
-          <h3 className="text-xl font-bold text-white mt-2">
-            Curso Dropshipping
+          <h3 className="text-2xl font-black text-white mt-3">
+            Produto em Destaque
           </h3>
 
-          <p className="text-zinc-500 mt-2">
-            32% mais acessado.
+          <p className="text-zinc-500 mt-3">
+            Maior potencial de vendas da operação.
           </p>
+
         </div>
 
-        <div className="bg-black border border-zinc-800 rounded-2xl p-5">
+        {/* CONVERSÃO */}
+        <div
+          className="
+            bg-black
+            border
+            border-zinc-800
+            rounded-3xl
+            p-6
+            hover:border-green-500/30
+            transition
+          "
+        >
+
           <p className="text-zinc-400 text-sm">
-            🎯 Melhor CTA
+            🎯 Conversão
           </p>
 
-          <h3 className="text-xl font-bold text-white mt-2">
-            Acesse Agora
+          <h3 className="text-2xl font-black text-white mt-3">
+            Crescimento constante
           </h3>
 
-          <p className="text-zinc-500 mt-2">
-            Melhor taxa de clique.
+          <p className="text-zinc-500 mt-3">
+            Continue enviando tráfego para os produtos principais.
           </p>
+
         </div>
 
-        <div className="bg-black border border-zinc-800 rounded-2xl p-5">
+        {/* SUGESTÃO */}
+        <div
+          className="
+            bg-black
+            border
+            border-zinc-800
+            rounded-3xl
+            p-6
+            hover:border-green-500/30
+            transition
+          "
+        >
+
           <p className="text-zinc-400 text-sm">
             💡 Sugestão IA
           </p>
 
-          <h3 className="text-xl font-bold text-white mt-2">
-            Use títulos menores
+          <h3 className="text-2xl font-black text-white mt-3">
+            Continue escalando
           </h3>
 
-          <p className="text-zinc-500 mt-2">
-            Títulos curtos convertem mais.
+          <p className="text-zinc-500 mt-3">
+            Seus produtos possuem potencial para aumentar as vendas.
           </p>
+
         </div>
 
       </div>
+
     </div>
+
   );
 }

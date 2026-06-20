@@ -82,30 +82,30 @@ useEffect(() => {
       </div>
 
       {/* CARDS */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
 
         <StatsCard
           title="💰 Receita Total"
           value={`R$ ${revenue.toFixed(2)}`}
-          subtitle="+0% hoje"
+          subtitle="Receita acumulada"
         />
 
         <StatsCard
           title="🛒 Vendas"
           value={salesToday.toString()}
-          subtitle="Nenhuma venda"
+          subtitle="Vendas realizadas hoje"
         />
 
         <StatsCard
           title="📈 Conversão"
           value="0%"
-          subtitle="Sem dados"
+          subtitle="Taxa de conversão"
         />
 
         <StatsCard
           title="🎯 Ticket Médio"
           value={`R$ ${ticket.toFixed(2)}`}
-          subtitle="Sem vendas"
+          subtitle="Valor médio por pedido"
         />
 
       </div>

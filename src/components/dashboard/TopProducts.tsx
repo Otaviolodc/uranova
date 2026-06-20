@@ -33,6 +33,7 @@ export default function TopProducts() {
   }, []);
 
   return (
+
     <div
       className="
         mt-10
@@ -40,27 +41,41 @@ export default function TopProducts() {
         border
         border-zinc-800
         rounded-3xl
-        p-6
+        overflow-hidden
       "
     >
 
-      <h2
+      {/* HEADER */}
+      <div
         className="
-          text-2xl
-          font-bold
-          text-white
-          mb-6
+          p-6
+          border-b
+          border-zinc-800
         "
       >
-        🔥 Seus Produtos
-      </h2>
+
+        <h2
+          className="
+            text-2xl
+            font-bold
+            text-white
+          "
+        >
+          🔥 Produtos em Destaque
+        </h2>
+
+        <p className="text-zinc-400 mt-2">
+          Produtos mais recentes da sua operação
+        </p>
+
+      </div>
 
       {products.length === 0 ? (
 
         <div
           className="
+            py-16
             text-center
-            py-10
             text-zinc-500
           "
         >
@@ -69,83 +84,100 @@ export default function TopProducts() {
 
       ) : (
 
-        <div className="space-y-4">
+        <div className="p-6 space-y-4">
 
-          {products.map(
-            (product, index) => (
+          {products.map((product, index) => (
+
+            <div
+              key={product.id}
+              className="
+                flex
+                items-center
+                justify-between
+                bg-black
+                border
+                border-zinc-800
+                rounded-3xl
+                p-5
+                hover:border-green-500/30
+                hover:-translate-y-1
+                transition-all
+              "
+            >
+
               <div
-                key={product.id}
                 className="
                   flex
                   items-center
-                  justify-between
-                  bg-black
-                  border
-                  border-zinc-800
-                  rounded-2xl
-                  p-4
+                  gap-5
                 "
               >
 
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-4
-                  "
-                >
+                <div className="text-3xl">
 
-                  <span className="text-2xl">
-                    {index === 0
-                      ? "🥇"
-                      : index === 1
-                      ? "🥈"
-                      : index === 2
-                      ? "🥉"
-                      : "📦"}
-                  </span>
-
-                  <div>
-
-                    <h3
-                      className="
-                        text-white
-                        font-semibold
-                      "
-                    >
-                      {product.title}
-                    </h3>
-
-                    <p
-                      className="
-                        text-zinc-400
-                        text-sm
-                      "
-                    >
-                      {product.product_type}
-                    </p>
-
-                  </div>
+                  {index === 0
+                    ? "🥇"
+                    : index === 1
+                    ? "🥈"
+                    : index === 2
+                    ? "🥉"
+                    : "📦"}
 
                 </div>
 
-                <div
-                  className="
-                    text-green-400
-                    font-bold
-                  "
-                >
-                  R$ {product.price}
+                <div>
+
+                  <h3
+                    className="
+                      text-white
+                      font-bold
+                      text-lg
+                    "
+                  >
+                    {product.title}
+                  </h3>
+
+                  <p
+                    className="
+                      text-zinc-400
+                      mt-1
+                    "
+                  >
+                    {product.product_type}
+                  </p>
+
                 </div>
 
               </div>
-            )
-          )}
+
+              <div className="text-right">
+
+                <h2
+                  className="
+                    text-green-400
+                    text-2xl
+                    font-black
+                  "
+                >
+                  R$ {Number(product.price).toFixed(2)}
+                </h2>
+
+                <p className="text-zinc-500 text-sm mt-1">
+                  Produto ativo
+                </p>
+
+              </div>
+
+            </div>
+
+          ))}
 
         </div>
 
       )}
 
     </div>
+
   );
+
 }

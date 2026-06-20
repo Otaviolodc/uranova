@@ -705,7 +705,7 @@ return (
     </div>
 
     <div className="text-green-400 font-bold">
-      IA ANALISANDO
+      Tempo Real
     </div>
 
   </div>
@@ -774,7 +774,7 @@ return (
     </div>
 
     <div className="text-green-400 font-bold">
-      IA ATIVA
+      Performance
     </div>
 
   </div>
@@ -911,7 +911,7 @@ return (
     </div>
 
     <div className="text-green-400 font-bold">
-      ONLINE
+      Uranova AI
     </div>
 
   </div>

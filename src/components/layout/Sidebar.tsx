@@ -12,36 +12,21 @@ export default function Sidebar() {
 
   const [mobileOpen, setMobileOpen] =
     useState(false);
+  
+  const [collapsed, setCollapsed] =
+    useState(false);
 
   const menu = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-  },
-  {
-    name: "Links",
-    href: "/dashboard/links",
-  },
-  {
-    name: "Produtos",
-    href: "/dashboard/products",
-  },
-  {
-    name: "Checkouts",
-    href: "/dashboard/checkouts",
-  },
-  {
-    name: "Analytics IA",
-    href: "/dashboard/analytics",
-  },
-  {
-    name: "Marketplace",
-    href: "/dashboard/marketplace",
-  },
-  {
-    name: "Configurações",
-    href: "/dashboard/settings",
-  }
+  { icon: "🏠", name: "Dashboard", href: "/dashboard" },
+  { icon: "🔗", name: "Links", href: "/dashboard/links" },
+  { icon: "📦", name: "Produtos", href: "/dashboard/products" },
+  { icon: "💳", name: "Checkouts", href: "/dashboard/checkouts" },
+  { icon: "📈", name: "Analytics IA", href: "/dashboard/analytics" },
+  { icon: "🛒", name: "Marketplace", href: "/dashboard/marketplace" },
+  { icon: "👥", name: "Clientes", href: "/dashboard/customers" },
+  { icon: "📋", name: "Pedidos", href: "/dashboard/orders" },
+  { icon: "💰", name: "Financeiro", href: "/dashboard/finance" },
+  { icon: "⚙️", name: "Configurações", href: "/dashboard/settings" },
 ];
 
   return (
@@ -113,7 +98,15 @@ export default function Sidebar() {
               text-white
             "
           >
-            {item.name}
+            <>
+              <span className="text-xl">
+                {item.icon}
+              </span>
+
+              <span className="ml-3">
+                {item.name}
+              </span>
+            </>
           </Link>
 
         ))}
@@ -137,17 +130,17 @@ export default function Sidebar() {
           block
         "
             >
-        Sair da conta
+        {collapsed ? "🚪" : "Sair da conta"}
       </Link>
 
       </div>
     )}
 
     <aside
-      className="
+      className={`
         hidden
         md:flex
-        w-72
+        ${collapsed ? "w-24" : "w-72"}
         min-h-screen
         bg-zinc-950/90
         backdrop-blur-xl
@@ -156,8 +149,27 @@ export default function Sidebar() {
         p-5
         flex-col
         gap-6
+        transition-all
+        duration-300
+      `}
+    >
+    
+    <button
+      onClick={() => setCollapsed(!collapsed)}
+      className="
+        bg-zinc-900
+        border
+        border-zinc-800
+        rounded-2xl
+        p-3
+        text-white
+        mb-6
+        hover:border-green-500
+        transition
       "
     >
+      ☰
+    </button>
 
       <div className="mb-10">
 
@@ -172,12 +184,14 @@ export default function Sidebar() {
             text-transparent
           "
         >
-          Uranova
+          {collapsed ? "U" : "Uranova"}
         </h1>
 
-        <p className="text-zinc-500 text-sm mt-1">
-          IA Marketing Platform
-        </p>
+        {!collapsed && (
+          <p className="text-zinc-500 text-sm mt-1">
+            IA Marketing Platform
+          </p>
+        )}
 
       </div>
 
@@ -189,17 +203,13 @@ export default function Sidebar() {
             key={item.href}
             href={item.href}
             prefetch={true}
+            title={item.name}
             className={`
               flex
               items-center
-              gap-3
+              ${collapsed ? "justify-center" : "gap-3"}
               px-5
               py-4
-              rounded-2xl
-              transition-all
-              duration-300
-              font-medium
-              border
 
               ${
                 pathname === item.href
@@ -208,7 +218,17 @@ export default function Sidebar() {
               }
             `}
           >
-            {item.name}
+            <>
+              <span className="text-xl">
+                {item.icon}
+              </span>
+
+              {!collapsed && (
+               <span>
+                 {item.name}
+               </span>
+              )}
+            </>
           </Link>
 
         ))}
@@ -219,7 +239,7 @@ export default function Sidebar() {
         href="/auth/login"
         prefetch={true}
         className="
-          mt-10
+          mt-auto
           bg-red-500
           hover:bg-red-400
           transition
@@ -232,7 +252,7 @@ export default function Sidebar() {
           block
         "
       >
-        Sair da conta
+        {collapsed ? "🚪" : "Sair da conta"}
       </Link>
 
     </aside>
