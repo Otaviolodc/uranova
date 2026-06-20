@@ -1,8 +1,11 @@
 import "./globals.css";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "Uranova",
-  description: "Plataforma inteligente de marketing, automação e vendas",
+  title: "Uranova - Plataforma Completa para Criadores Digitais",
+  description:
+    "Venda cursos, e-books, mentorias, assinaturas e gerencie sua audiência em uma única plataforma.",
 };
 
 export default function RootLayout({
@@ -12,8 +15,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className="bg-zinc-100 text-zinc-900 antialiased">
+      <body className="bg-black text-white antialiased">
+        <Navbar />
+
         {children}
+
+        <Footer />
       </body>
     </html>
   );
