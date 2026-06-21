@@ -14,7 +14,13 @@ export default function DashboardPage() {
 const [revenue, setRevenue] = useState(0);
 const [salesToday, setSalesToday] = useState(0);
 const [ticket, setTicket] = useState(0);
-const [orders, setOrders] = useState<any[]>([]);
+type Order = {
+  amount: number;
+  created_at: string;
+};
+
+const [orders, setOrders] =
+  useState<Order[]>([]);
 
 async function fetchOrders() {
   const {
@@ -23,10 +29,24 @@ async function fetchOrders() {
 
   if (!user) return;
 
-  const { data } = await supabase
-    .from("orders")
-    .select("*")
-    .eq("user_id", user.id);
+  const {
+  data,
+  error,
+} = await supabase
+  .from("orders")
+  .select(`
+    amount,
+    created_at
+  `)
+  .eq("user_id", user.id);
+
+if (error) {
+
+  console.error(error);
+
+  return;
+
+}
 
   setOrders(data || []);
 

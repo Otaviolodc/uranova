@@ -14,6 +14,24 @@ import {
 
 export default function AnalyticsPage() {
 
+  type AnalyticsItem = {
+  created_at: string;
+  product_id: string;
+};
+
+type ProductRanking = {
+  id: string;
+  title: string;
+  price: number;
+  total: number;
+};
+
+type HeatmapItem = {
+  hour: string;
+  level: number;
+  total: number;
+};
+
   const [message, setMessage] =
     useState("");
 
@@ -26,16 +44,16 @@ export default function AnalyticsPage() {
     useState(0);
 
   const [viralProduct, setViralProduct] =
-    useState<any>(null);
+    useState<ProductRanking | null>(null);
 
   const [aiInsights, setAiInsights] =
     useState<string[]>([]);
 
   const [topProducts, setTopProducts] =
-  useState<any[]>([]);
+    useState<ProductRanking[]>([]);
 
   const [heatmapData, setHeatmapData] =
-  useState<any[]>([]);
+    useState<HeatmapItem[]>([]);
 
   async function fetchAnalytics() {
 
@@ -47,11 +65,24 @@ export default function AnalyticsPage() {
   if (!user) return;
 
   // BUSCAR ANALYTICS
-  const { data: analyticsData } =
-    await supabase
-      .from("analytics")
-      .select("*")
-      .eq("user_id", user.id);
+  const {
+  data: analyticsData,
+  error: analyticsError,
+} = await supabase
+  .from("analytics")
+  .select(`
+    created_at,
+    product_id
+  `)
+  .eq("user_id", user.id);
+
+if (analyticsError) {
+
+  console.error(analyticsError);
+
+  return;
+
+}
 
   // TOTAL DE VIEWS
   setViews(
@@ -115,7 +146,8 @@ setGrowth(
 
   // AGRUPAR VIEWS POR DIA
 
-const groupedDays: any = {};
+const groupedDays:
+Record<string, number> = {};
 
 analyticsData?.forEach((item) => {
 
@@ -145,7 +177,8 @@ setChartData(formattedChart);
 
 // AGRUPAR POR HORÁRIO
 
-const groupedHours: any = {};
+const groupedHours:
+Record<number, number> = {};
 
 analyticsData?.forEach((item) => {
 
@@ -189,7 +222,8 @@ const formattedHeatmap =
 setHeatmapData(formattedHeatmap);
 
   // AGRUPAR PRODUTOS
-  const grouped: any = {};
+  const grouped:
+  Record<string, number> = {};
 
   analyticsData?.forEach((item) => {
 
@@ -206,7 +240,11 @@ setHeatmapData(formattedHeatmap);
       id,
       total,
     }))
-    .sort((a: any, b: any) => b.total - a.total);
+    .sort(
+    (
+    a: ProductRanking,
+    b: ProductRanking
+    ) => b.total - a.total);
 
     // 🤖 gerar insights IA
 
@@ -256,13 +294,16 @@ if (views > 50) {
 }
 
 // horário
-if (heatmapData.length > 0) {
+if (formattedHeatmap.length > 0) {
 
   const bestHour =
-    heatmapData.sort(
-      (a, b) =>
-        b.total - a.total
-    )[0];
+  [...formattedHeatmap].sort(
+    (
+      a: any,
+      b: any
+    ) =>
+      b.total - a.total
+  )[0];
 
   insights.push(
     `⏰ Seu melhor horário atual é ${bestHour.hour}.`
@@ -276,13 +317,28 @@ setAiInsights(insights);
     // PEGAR PRODUTOS REAIS
 
 const productIds =
-  ranking.map((item: any) => item.id);
+  ranking.map(
+(item: ProductRanking) => item.id);
 
-const { data: productsData } =
-  await supabase
-    .from("products_checkout")
-    .select("*")
-    .in("id", productIds);
+const {
+  data: productsData,
+  error: productsError,
+} = await supabase
+  .from("products_checkout")
+  .select(`
+    id,
+    title,
+    price
+  `)
+  .in("id", productIds);
+
+if (productsError) {
+
+  console.error(productsError);
+
+  return;
+
+}
 
 const finalRanking =
   ranking.map((rank: any) => {
@@ -317,8 +373,6 @@ if (finalRanking.length > 0) {
 
   setTopProducts(finalRanking);
 
-  console.log(ranking)
-
   }
   
 useEffect(() => {
@@ -327,11 +381,16 @@ useEffect(() => {
 
 }, []);
 
-  const [chartData, setChartData] =
-  useState<any[]>([]);
+const [chartData, setChartData] =
+useState<
+{
+  day: string;
+  clicks: number;
+}[]
+>([]);
 
 const [viralProducts, setViralProducts] =
-  useState<any[]>([]);
+  useState<ProductRanking[]>([]);
 
 const conversionRate =
   views > 0
@@ -480,7 +539,11 @@ return (
 
   <div className="space-y-4">
 
-    {topProducts.map((product: any, index) => (
+    {topProducts.map(
+    (
+    product: ProductRanking,
+    index
+    ) => (
 
       <div
         key={product.id}
@@ -882,7 +945,12 @@ return (
     <p className="text-lg">
 
       {heatmapData.length > 0
-        ? `Seu horário mais forte é ${heatmapData.sort((a, b) => b.total - a.total)[0]?.hour}.`
+        ? `Seu horário mais forte é 
+        ${[...heatmapData]
+            .sort(
+              (a, b) =>
+                b.total - a.total
+            )[0]?.hour}.`
         : "Ainda analisando horários."}
 
     </p>
@@ -988,8 +1056,12 @@ return (
           <div className="space-y-4">
 
               {topProducts
-                .slice(0, 5)
-                .map((product: any, index) => (
+               .slice(0,5)
+               .map(
+               (
+               product: ProductRanking,
+               index
+              ) => (
 
           <div
             key={product.id}

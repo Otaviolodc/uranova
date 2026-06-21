@@ -19,6 +19,19 @@ export async function POST(
       country,
     } = body;
 
+    if (!link_id || !product_id) {
+
+  return NextResponse.json(
+    {
+      error: "link_id e product_id são obrigatórios",
+    },
+    {
+      status: 400,
+    }
+  );
+
+}
+
     const { error } = await supabase
       .from("clicks")
       .insert([
@@ -31,18 +44,35 @@ export async function POST(
       ]);
 
     if (error) {
-      return NextResponse.json({
-        error,
-      });
-    }
 
-    return NextResponse.json({
-      success: true,
-    });
-
-  } catch (error) {
-    return NextResponse.json({
+  return NextResponse.json(
+    {
       error,
-    });
-  }
+    },
+    {
+      status: 500,
+    }
+  );
+
+}
+
+return NextResponse.json({
+  success: true,
+});
+
+} catch (error) {
+
+  console.error(error);
+
+  return NextResponse.json(
+    {
+      error: "Erro interno",
+    },
+    {
+      status: 500,
+    }
+  );
+
+}
+
 }

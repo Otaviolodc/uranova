@@ -13,6 +13,10 @@ export async function createClient() {
         get(name) {
           return cookieStore.get(name)?.value;
         },
+
+        set() {},
+
+        remove() {},
       },
     }
   );

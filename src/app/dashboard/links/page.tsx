@@ -12,14 +12,32 @@ import { useEffect, useState } from "react";
 import MobilePreview from "@/components/dashboard/MobilePreview";
 
 export default function LinksPage() {
-  const [links, setLinks] = useState<any[]>([]);
-  const [profile, setProfile] = useState<any>(null);
+  type Link = {
+  id: string;
+  title: string;
+  description: string | null;
+  affiliate_url: string;
+  image_url: string | null;
+  slug: string;
+  clicks: number;
+  position: number;
+};
+
+  const [links, setLinks] =
+    useState<Link[]>([]);
+
+  type Profile = {
+    username: string;
+  };
+
+  const [profile, setProfile] =
+    useState<Profile | null>(null);
 
   const [showModal, setShowModal] =
     useState(false);
 
   const [editingLink, setEditingLink] =
-    useState<any>(null);
+    useState<Link | null>(null);
 
   // FORM
   const [title, setTitle] = useState("");
@@ -41,37 +59,75 @@ export default function LinksPage() {
 
   // 🚀 carregar dados
   const fetchData = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
 
-    if (!user) return;
+    const sessionResult =
+  await supabase.auth.getSession();
+
+const user =
+  sessionResult.data.session?.user;
+
+if (!user) {
+  return;
+}
 
     // 👤 perfil
-    const { data: profileData } = await supabase
+    const {
+      data: profileData,
+      error: profileError,
+    } = await supabase
       .from("profiles")
-      .select("*")
+      .select("username")
       .eq("id", user.id)
       .single();
+
+    if (profileError) {
+
+      console.error(profileError);
+
+      return;
+
+    }
 
     setProfile(profileData);
 
     // 🔗 links
-    const { data: linksData } = await supabase
-      .from("links")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("position", {
-        ascending: true,
-      });
+    const {
+  data: linksData,
+  error: linksError,
+} = await supabase
+  .from("links")
+  .select(`
+    id,
+    title,
+    description,
+    affiliate_url,
+    image_url,
+    slug,
+    clicks,
+    position
+  `)
+  .eq("user_id", user.id)
+  .order("position", {
+    ascending: true,
+  });
+
+if (linksError) {
+
+  console.error(linksError);
+
+  return;
+
+}
 
     setLinks(linksData || []);
 
     };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+
+  fetchData();
+
+}, []);
 
 // 📸 upload imagem produto
 const handleImageUpload = async (
@@ -398,7 +454,9 @@ const handleGenerateMarketing =
   };
 
   // ✏️ editar
-  const handleOpenEdit = (link: any) => {
+  const handleOpenEdit = (
+    link: Link
+  ) => {
     setEditingLink(link);
 
     setTitle(link.title);

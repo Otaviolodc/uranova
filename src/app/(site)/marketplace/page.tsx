@@ -1,12 +1,23 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 
-export default function MarketplacePage() {
+type Product = {
+  id: string;
+  title: string;
+  description: string | null;
+  price: number;
+  image_url: string | null;
+  checkout_slug: string;
+  product_type: string;
+};
 
+export default function MarketplacePage() {
   const [products, setProducts] =
-    useState<any[]>([]);
+    useState<Product[]>([]);
 
   const [search, setSearch] =
     useState("");
@@ -25,16 +36,29 @@ export default function MarketplacePage() {
 
   const fetchProducts = async () => {
 
-    const { data } = await supabase
-      .from("products_checkout")
-      .select("*")
-      .eq("status", "active")
-      .eq("is_marketplace", true)
-      .order("created_at", {
-        ascending: false,
-    });
+    const { data, error } = await supabase
+  .from("products_checkout")
+  .select(`
+  id,
+  title,
+  description,
+  price,
+  image_url,
+  checkout_slug,
+  product_type
+  `)
+  .eq("status", "active")
+  .eq("is_marketplace", true)
+  .order("created_at", {
+    ascending: false,
+  });
 
-    setProducts(data || []);
+if (error) {
+  console.error(error);
+  return;
+}
+
+setProducts(data || []);
 
   };
 
@@ -309,7 +333,7 @@ if (sortBy === "az") {
       .slice(0, 3)
       .map((product) => (
 
-        <a
+        <Link
           key={product.id}
           href={`/product/${product.checkout_slug}`}
           className="
@@ -335,7 +359,7 @@ if (sortBy === "az") {
             R$ {product.price}
           </p>
 
-        </a>
+        </Link>
 
       ))}
 
@@ -404,11 +428,11 @@ if (sortBy === "az") {
 
                   {product.image_url ? (
 
-                    <img
+                    <Image
                       src={product.image_url}
+                      alt={product.title}
+                      fill
                       className="
-                        w-full
-                        h-full
                         object-cover
                         group-hover:scale-110
                         transition-all
@@ -494,7 +518,7 @@ if (sortBy === "az") {
                   </div>
 
                   {/* BOTÃO */}
-                  <a
+                  <Link
                     href={`/product/${product.checkout_slug}`}
                     target="_blank"
                     className="
@@ -514,7 +538,7 @@ if (sortBy === "az") {
 
                     Ver Produto
 
-                  </a>
+                  </Link>
 
                 </div>
 
@@ -578,7 +602,7 @@ if (sortBy === "az") {
 
           </p>
 
-          <a
+          <Link
             href="/dashboard/store"
             className="
               inline-block
@@ -597,7 +621,7 @@ if (sortBy === "az") {
 
             Começar Agora
 
-          </a>
+          </Link>
 
         </div>
 

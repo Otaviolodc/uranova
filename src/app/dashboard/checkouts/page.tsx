@@ -5,8 +5,16 @@ import { supabase } from "@/lib/supabase/client";
 
 export default function CheckoutsPage() {
 
-  const [products, setProducts] =
-    useState<any[]>([]);
+  type Product = {
+  id: string;
+  title: string;
+  price: number;
+  checkout_slug: string;
+  status: string;
+};
+
+const [products, setProducts] =
+  useState<Product[]>([]);
 
   async function fetchProducts() {
 
@@ -16,14 +24,30 @@ export default function CheckoutsPage() {
 
     if (!user) return;
 
-    const { data } =
-      await supabase
-        .from("products_checkout")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", {
-          ascending: false,
-        });
+    const {
+  data,
+  error,
+} = await supabase
+  .from("products_checkout")
+  .select(`
+    id,
+    title,
+    price,
+    checkout_slug,
+    status
+  `)
+  .eq("user_id", user.id)
+  .order("created_at", {
+    ascending: false,
+  });
+
+if (error) {
+
+  console.error(error);
+
+  return;
+
+}
 
     setProducts(data || []);
   }
@@ -114,7 +138,7 @@ export default function CheckoutsPage() {
           `${window.location.origin}/checkout/${product.checkout_slug}`
         );
 
-        alert("Link copiado ✅");
+        alert("Link copiado com sucesso ✅");
       }}
       className="
         text-blue-400

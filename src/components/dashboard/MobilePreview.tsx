@@ -43,8 +43,7 @@ export default function MobilePreview({
 
             {/* NOME */}
             <h1 className="text-white text-2xl font-bold mt-4">
-              {profile?.display_name ||
-                profile?.username}
+              {profile?.name || profile?.username}
             </h1>
 
             {/* BIO */}

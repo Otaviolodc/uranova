@@ -56,6 +56,19 @@ if (typeof message !== "string") {
 
     const cleanMessage = message.trim();
 
+if (!cleanMessage) {
+
+  return Response.json(
+    {
+      message: "Mensagem vazia",
+    },
+    {
+      status: 400,
+    }
+  );
+
+}
+
     const completion =
       await openai.chat.completions.create({
 
@@ -122,10 +135,11 @@ if (typeof message !== "string") {
       });
 
     return Response.json({
-      message:
-        completion.choices[0]
-          .message.content,
-    });
+  message:
+    completion.choices[0]
+      .message.content ||
+    "Não foi possível gerar resposta.",
+});
 
   } catch (error) {
 

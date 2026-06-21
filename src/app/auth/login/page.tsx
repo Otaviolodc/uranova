@@ -51,13 +51,17 @@ export default function LoginPage() {
 
   if (profile?.role === "admin") {
 
-    router.push("/admin");
+  setLoading(false);
 
-  } else {
+  router.push("/admin");
 
-    router.push("/dashboard/links");
+} else {
 
-  }
+  setLoading(false);
+
+  router.push("/dashboard/links");
+
+}
 
 };
 
@@ -65,7 +69,7 @@ export default function LoginPage() {
   const handleSignup = async () => {
     setLoading(true);
 
-    if (!username) {
+    if (!username.trim()) {
       alert("Digite username");
       setLoading(false);
       return;
@@ -93,25 +97,51 @@ export default function LoginPage() {
     }
 
     // 👤 criar perfil
-    await supabase.from("profiles").insert([
+    const { error: profileError } =
+  await supabase
+    .from("profiles")
+    .insert([
       {
         id: user.id,
         username: username.toLowerCase(),
       },
     ]);
 
+if (profileError) {
+
+  alert(profileError.message);
+
+  setLoading(false);
+
+  return;
+
+}
+
     // 💎 criar assinatura FREE
-    await supabase
-      .from("subscriptions")
-      .insert([
-        {
-          user_id: user.id,
-          plan: "free",
-          status: "active",
-        },
-      ]);
+    const { error: subscriptionError } =
+  await supabase
+    .from("subscriptions")
+    .insert([
+      {
+        user_id: user.id,
+        plan: "free",
+        status: "active",
+      },
+    ]);
+
+if (subscriptionError) {
+
+  alert(subscriptionError.message);
+
+  setLoading(false);
+
+  return;
+
+}
 
     alert("Conta criada com sucesso!");
+
+    setLoading(false);
 
     router.push("/dashboard/links");
   };

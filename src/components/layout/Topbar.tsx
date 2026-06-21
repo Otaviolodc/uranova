@@ -1,12 +1,20 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 
+type Profile = {
+  name: string | null;
+  avatar_url: string | null;
+  is_pro: boolean;
+};
+
 export default function Topbar() {
 
-  const [profile, setProfile] = useState<any>(null);
+const [profile, setProfile] =
+  useState<Profile | null>(null);
 
   const [openMenu, setOpenMenu] =
     useState(false);
@@ -20,13 +28,22 @@ useEffect(() => {
 
     if (!user) return;
 
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single();
+    const { data, error } = await supabase
+  .from("profiles")
+  .select(`
+    name,
+    avatar_url,
+    is_pro
+  `)
+  .eq("id", user.id)
+  .single();
 
-    setProfile(data);
+if (error) {
+  console.error(error);
+  return;
+}
+
+setProfile(data);
   }
 
   fetchProfile();
@@ -135,11 +152,12 @@ useEffect(() => {
   {/* Avatar */}
   {profile?.avatar_url ? (
 
-    <img
+    <Image
       src={profile.avatar_url}
+      alt={profile.name || "Avatar"}
+      width={48}
+      height={48}
       className="
-        w-12
-        h-12
         rounded-full
         object-cover
         border
@@ -227,24 +245,6 @@ useEffect(() => {
   >
     ⚙️ Configurações
   </Link>
-
-  {!profile?.is_pro && (
-
-    <Link
-      href="/pricing"
-      className="
-        flex
-        items-center
-        px-5
-        py-4
-        text-purple-400
-        hover:bg-zinc-900
-      "
-    >
-      💎 Upgrade PRO
-    </Link>
-
-  )}
 
   <Link
     href="/auth/logout"

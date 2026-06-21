@@ -3,8 +3,10 @@ import { NextResponse } from "next/server";
 import { createClient }
 from "@supabase/supabase-js";
 
-import { ASAAS_URL }
-from "@/lib/asaas";
+import {
+  ASAAS_URL,
+  getAsaasHeaders,
+} from "@/lib/asaas";
 
 const supabase = createClient(
 
@@ -102,33 +104,25 @@ if (
 if (couponCode) {
 
   const { data: coupon } =
-    await supabase
-      .from("coupons")
-      .select("*")
-      .eq("code", couponCode.toUpperCase())
-      .eq("active", true)
-      .single();
+  await supabase
+    .from("coupons")
+    .select("discount")
+    .eq("code", couponCode.toUpperCase())
+    .eq("active", true)
+    .single();
 
   if (coupon) {
 
     finalValue =
       value -
       (value * coupon.discount) / 100;
+      finalValue = Math.max(finalValue, 0);
 
   }
 
 }
 
-    const headers = {
-      accept: "application/json",
-
-      "content-type":
-        "application/json",
-
-      access_token: String(
-        process.env.ASAAS_API_KEY
-      ),
-    };
+    const headers = getAsaasHeaders();
 
     // =========================
     // CRIAR CUSTOMER
@@ -317,6 +311,19 @@ console.log(
   "PAYMENT ERROR:",
   paymentError
 );
+
+if (paymentError) {
+
+  return NextResponse.json(
+    {
+      error: "Erro ao salvar pagamento",
+    },
+    {
+      status: 500,
+    }
+  );
+
+}
 
     // =========================
     // PEGAR QR CODE DO PIX

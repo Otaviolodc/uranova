@@ -5,8 +5,15 @@ import { supabase } from "@/lib/supabase/client";
 
 export default function CouponsPage() {
 
-  const [coupons, setCoupons] =
-    useState<any[]>([]);
+  type Coupon = {
+  id: string;
+  code: string;
+  discount: number;
+  active: boolean;
+};
+
+const [coupons, setCoupons] =
+  useState<Coupon[]>([]);
 
   const [code, setCode] =
     useState("");
@@ -22,14 +29,29 @@ export default function CouponsPage() {
 
     if (!user) return;
 
-    const { data } = await supabase
+    const {
+      data,
+      error,
+    } = await supabase
       .from("coupons")
-      .select("*")
+      .select(`
+       id,
+       code,
+       discount,
+       active
+      `)
       .eq("user_id", user.id)
       .order("created_at", {
         ascending: false,
       });
 
+    if (error) {
+
+  console.error(error);
+
+  return;
+
+}
     setCoupons(data || []);
   }
 
@@ -38,17 +60,32 @@ export default function CouponsPage() {
   active: boolean
 ) {
 
-  await supabase
+  const { error } = await supabase
     .from("coupons")
     .update({
       active: !active,
     })
     .eq("id", id);
 
+  if (error) {
+
+    console.error(error);
+
+    return;
+
+  }
+
   fetchCoupons();
+
 }
 
   async function createCoupon() {
+
+    if (!code || !discount) {
+
+  return;
+
+}
 
     const {
       data: { user },
@@ -56,15 +93,24 @@ export default function CouponsPage() {
 
     if (!user) return;
 
-    await supabase
-      .from("coupons")
-      .insert([
-        {
-          user_id: user.id,
-          code,
-          discount: Number(discount),
-        },
-      ]);
+    const { error } =
+  await supabase
+    .from("coupons")
+    .insert([
+      {
+        user_id: user.id,
+        code,
+        discount: Number(discount),
+      },
+    ]);
+
+if (error) {
+
+  console.error(error);
+
+  return;
+
+}
 
     setCode("");
     setDiscount("");

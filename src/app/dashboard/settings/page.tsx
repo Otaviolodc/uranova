@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { supabase }
 from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
@@ -20,8 +21,22 @@ export default function SettingsPage() {
   const [template, setTemplate] =
   useState("default");
 
+  type Profile = {
+  username: string | null;
+  bio: string | null;
+  avatar_url: string | null;
+  instagram: string | null;
+  telegram: string | null;
+  whatsapp: string | null;
+  featured_text: string | null;
+  featured_url: string | null;
+  theme_color: string | null;
+  product_text_color: string | null;
+  template: string | null;
+};
+
   const [profile, setProfile] =
-    useState<any>(null);
+    useState<Profile | null>(null);
 
   // PERFIL
   const [username, setUsername] =
@@ -66,7 +81,19 @@ export default function SettingsPage() {
 
     const { data } = await supabase
       .from("profiles")
-      .select("*")
+      .select(`
+        username,
+        bio,
+        avatar_url,
+        instagram,
+        telegram,
+        whatsapp,
+        featured_text,
+        featured_url,
+        theme_color,
+        product_text_color,
+        template
+      `)
       .eq("id", user.id)
       .single();
 
@@ -123,7 +150,7 @@ export default function SettingsPage() {
 
 // 📸 upload imagem
 const handleUpload = async (
-  e: any
+  e: React.ChangeEvent<HTMLInputElement>
 ) => {
   const file = e.target.files?.[0];
 
@@ -148,11 +175,13 @@ const handleUpload = async (
     });
 
 if (error) {
-  console.log(error);
+
+  console.error(error);
 
   alert(error.message);
 
   return;
+
 }
 
 const { data } = supabase.storage
@@ -205,7 +234,7 @@ setAvatarUrl(data.publicUrl);
 
     if (error) {
 
-      console.log(error);
+      console.error(error);
 
       alert(error.message);
 
@@ -219,7 +248,7 @@ setAvatarUrl(data.publicUrl);
 
   } catch (error) {
 
-    console.log(error);
+    console.error(error);
 
     alert(
       "Erro ao salvar perfil"
@@ -260,11 +289,11 @@ setAvatarUrl(data.publicUrl);
 
       <div className="relative z-10 flex flex-col md:flex-row items-center gap-6 md:gap-8">
 
-        <img
-          src={
-            avatarUrl ||
-            "/placeholder.png"
-          }
+        <Image
+          src={avatarUrl || "/placeholder.png"}
+          alt="Avatar"
+          width={128}
+          height={128}
           className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4"
           style={{
             borderColor: themeColor,

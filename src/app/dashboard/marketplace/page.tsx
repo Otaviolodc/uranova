@@ -5,24 +5,56 @@ import { supabase } from "@/lib/supabase/client";
 import ProductCard from "@/components/marketplace/ProductCard";
 
 export default function MarketplacePage() {
-  const [products, setProducts] = useState<any[]>([]);
+  type Product = {
+  id: string;
+  title: string;
+  price: number;
+  image_url: string | null;
+  product_type: string | null;
+  checkout_slug: string;
+};
+
+  const [products, setProducts] =
+    useState<Product[]>([]);
+
   const [loading, setLoading] = useState(true);
+
   const [search, setSearch] = useState("");
+
   const [category, setCategory] = useState("Todos");
 
   async function fetchProducts() {
-    const { data, error } = await supabase
+    const {
+      data,
+      error,
+    } = await supabase
       .from("products_checkout")
-      .select("*")
+      .select(`
+        id,
+        title,
+        price,
+        image_url,
+        product_type,
+        checkout_slug
+      `)
       .eq("status", "active")
-      .order("created_at", { ascending: false });
+      .order("created_at", {
+        ascending: false,
+      });
 
     if (error) {
-      console.error(error);
-    }
 
-    setProducts(data || []);
-    setLoading(false);
+  console.error(error);
+
+  setLoading(false);
+
+  return;
+
+}
+
+setProducts(data || []);
+
+setLoading(false);;
   }
 
   useEffect(() => {

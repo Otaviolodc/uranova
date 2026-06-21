@@ -10,8 +10,19 @@ import { useEffect, useState } from "react";
 
 export default function StorePage() {
 
+  type Product = {
+  id: string;
+  title: string;
+  description: string | null;
+  price: string;
+  image_url: string | null;
+  affiliate_url: string | null;
+  product_type: string | null;
+  is_marketplace: boolean;
+};
+
   const [products, setProducts] =
-    useState<any[]>([]);
+    useState<Product[]>([]);
 
   const fetchProducts = async () => {
 
@@ -21,13 +32,33 @@ export default function StorePage() {
 
   if (!user) return;
 
-  const { data } = await supabase
-    .from("products_checkout")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", {
-      ascending: false,
-    });
+  const {
+  data,
+  error,
+} = await supabase
+  .from("products_checkout")
+  .select(`
+    id,
+    title,
+    description,
+    price,
+    image_url,
+    affiliate_url,
+    product_type,
+    is_marketplace
+  `)
+  .eq("user_id", user.id)
+  .order("created_at", {
+    ascending: false,
+  });
+
+if (error) {
+
+  console.error(error);
+
+  return;
+
+}
 
   setProducts(data || []);
 };
@@ -70,44 +101,43 @@ useEffect(() => {
 ] = useState<string | null>(null);
 
   async function handleUpload(
-    e: any
-  ) {
+  e: React.ChangeEvent<HTMLInputElement>
+) {
 
-    const file = e.target.files?.[0];
+  const file = e.target.files?.[0];
 
-    if (!file) return;
+  if (!file) return;
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    if (!user) return;
+  if (!user) return;
 
-    const fileExt =
-      file.name.split(".").pop();
+  const fileExt =
+    file.name.split(".").pop();
 
-    const fileName =
-      `${user.id}-${Date.now()}.${fileExt}`;
+  const fileName =
+    `${user.id}-${Date.now()}.${fileExt}`;
 
-    const { error } =
-      await supabase.storage
-        .from("products")
-        .upload(fileName, file);
+  const { error } =
+    await supabase.storage
+      .from("products")
+      .upload(fileName, file);
 
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    const { data } =
-      supabase.storage
-        .from("products")
-        .getPublicUrl(fileName);
-
-    setImageUrl(data.publicUrl);
-
+  if (error) {
+    alert(error.message);
+    return;
   }
 
+  const { data } =
+    supabase.storage
+      .from("products")
+      .getPublicUrl(fileName);
+
+  setImageUrl(data.publicUrl);
+
+}
   async function handleCreate() {
 
     try {
@@ -118,7 +148,13 @@ useEffect(() => {
         data: { user },
       } = await supabase.auth.getUser();
 
-      if (!user) return;
+      if (!user) {
+
+        setLoading(false);
+
+        return;
+
+      }
 
       const slug =
         title
@@ -214,6 +250,12 @@ if (editingId) {
 
       fetchProducts();
 
+    } catch (error) {
+
+      console.error(error);
+
+      alert("Erro ao salvar produto");
+
     } finally {
 
       setLoading(false);
@@ -222,7 +264,7 @@ if (editingId) {
 
   }
 
-  function editProduct(product: any) {
+  function editProduct(product: Product) {
   setEditingId(product.id);
 
   setTitle(product.title);
@@ -251,10 +293,18 @@ async function deleteProduct(id: string) {
 
   if (!confirmDelete) return;
 
-  await supabase
+  const { error } = await supabase
     .from("products_checkout")
     .delete()
     .eq("id", id);
+
+  if (error) {
+
+    alert(error.message);
+
+    return;
+
+  }
 
   fetchProducts();
 

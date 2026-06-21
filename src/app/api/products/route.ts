@@ -18,6 +18,35 @@ export async function POST(req: NextRequest) {
       marketplace,
     } = body;
 
+    if (!title || !price) {
+
+  return NextResponse.json(
+    {
+      error: "Título e preço são obrigatórios",
+    },
+    {
+      status: 400,
+    }
+  );
+
+}
+
+if (
+  typeof title !== "string" ||
+  typeof price !== "number"
+) {
+
+  return NextResponse.json(
+    {
+      error: "Dados inválidos",
+    },
+    {
+      status: 400,
+    }
+  );
+
+}
+
     const { data, error } = await supabase
       .from("products")
       .insert([
@@ -32,20 +61,43 @@ export async function POST(req: NextRequest) {
       .select();
 
     if (error) {
-      return NextResponse.json({
-        error,
-      });
-    }
 
-    return NextResponse.json({
-      success: true,
-      data,
-    });
-  } catch (error) {
-    return NextResponse.json({
+  return NextResponse.json(
+    {
       error,
-    });
+    },
+    {
+      status: 500,
+    }
+  );
+
+}
+
+    return NextResponse.json(
+  {
+    success: true,
+    data,
+  },
+  {
+    status: 201,
   }
+);
+
+  } catch (error) {
+
+  console.error(error);
+
+  return NextResponse.json(
+    {
+      error: "Erro interno",
+    },
+    {
+      status: 500,
+    }
+  );
+
+}
+
 }
 
 export async function GET() {
@@ -57,16 +109,34 @@ export async function GET() {
     await supabase
 
       .from("products")
-
-      .select("*")
-
+      .select(`
+        id,
+        title,
+        price,
+        image_url,
+        affiliate_url,
+        marketplace,
+        created_at
+      `)
       .order("created_at", {
         ascending: false,
       });
 
-  return NextResponse.json({
-    data,
-    error,
-  });
+  if (error) {
+
+  return NextResponse.json(
+    {
+      error,
+    },
+    {
+      status: 500,
+    }
+  );
+
+}
+
+return NextResponse.json({
+  data,
+});
 
 }

@@ -64,20 +64,29 @@ export async function POST(req: Request) {
     // PAGAMENTO CONFIRMADO
     // =========================
 
-    await supabase
+    const { error: paymentError } =
+await supabase
   .from("payments")
   .update({
     status: payment.status,
   })
-  .eq(
-    "asaas_payment_id",
-    payment.id
-  );
+  .eq("asaas_payment_id", payment.id);
+
+if (paymentError) {
+  console.error(paymentError);
+}
 
 if (
   body.event === "PAYMENT_RECEIVED" ||
   body.event === "PAYMENT_CONFIRMED"
 ) {
+
+  await supabase
+  .from("profiles")
+  .update({
+    is_pro: true,
+  })
+  .eq("id", userId);
 
   const { data: existingOrder } =
     await supabase
@@ -102,7 +111,8 @@ if (
         customer_name:
           payment.customer,
 
-        customer_email: "",
+        customer_email:
+          payment.customerEmail || "",
 
         status: "paid",
 

@@ -1,7 +1,5 @@
 "use client";
 
-import { supabase }
-from "@/lib/supabase/client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -212,23 +210,20 @@ export default function Sidebar() {
               py-4
 
               ${
-                pathname === item.href
+                pathname === item.href ||
+                (item.href !== "/dashboard" &&
+                 pathname.startsWith(item.href))
                   ? "bg-green-500 text-black border-green-400 shadow-[0_0_25px_rgba(34,197,94,0.45)]"
                   : "bg-zinc-900 border-zinc-800 text-white hover:bg-zinc-800 hover:border-green-500/30"
               }
             `}
-          >
-            <>
-              <span className="text-xl">
-                {item.icon}
-              </span>
+          >         
+              <span>{item.icon}</span>
 
-              {!collapsed && (
-               <span>
-                 {item.name}
-               </span>
-              )}
-            </>
+            {!collapsed && (
+              <span>{item.name}</span>
+            )}
+              
           </Link>
 
         ))}
