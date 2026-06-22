@@ -27,8 +27,14 @@ export default function LinksPage() {
     useState<Link[]>([]);
 
   type Profile = {
-    username: string;
-  };
+  username?: string | null;
+  name?: string | null;
+  bio?: string | null;
+  avatar_url?: string | null;
+  instagram?: string | null;
+  telegram?: string | null;
+  whatsapp?: string | null;
+};
 
   const [profile, setProfile] =
     useState<Profile | null>(null);
@@ -76,7 +82,15 @@ if (!user) {
       error: profileError,
     } = await supabase
       .from("profiles")
-      .select("username")
+      .select(`
+        username,
+        name,
+        bio,
+        avatar_url,
+        instagram,
+        telegram,
+        whatsapp
+      `)
       .eq("id", user.id)
       .single();
 
@@ -799,16 +813,8 @@ const handleGenerateMarketing =
 
 </div>
 
-  {/* PREVIEW MOBILE */}
-<div
-  className="
-    flex
-    flex-col
-    items-center
-    mt-8
-    xl:mt-0
-  "
->
+  {/* PREVIEW DESKTOP */}
+<div className="hidden xl:flex flex-col items-center">
 
   <MobilePreview
     profile={profile}
@@ -837,6 +843,16 @@ const handleGenerateMarketing =
   >
     + Novo Link
   </button>
+
+</div>
+
+{/* PREVIEW MOBILE */}
+<div className="xl:hidden mt-8 flex justify-center">
+
+  <MobilePreview
+    profile={profile}
+    links={links}
+  />
 
 </div>
 

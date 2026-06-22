@@ -28,21 +28,8 @@ export default function MobilePreview({
     <div className="xl:sticky xl:top-6">
 
       {/* CELULAR */}
-      <div
-        className="
-          w-full
-          max-w-[340px]
-          h-[650px]
-          xl:h-[700px]
-          bg-black
-          rounded-[40px]
-          border-8
-          border-zinc-800
-          shadow-2xl
-          overflow-hidden
-        "
-      >
-
+      <div className="w-[340px] h-[700px] bg-black rounded-[40px] border-8 border-zinc-800 shadow-2xl overflow-hidden">
+      
         {/* TOPO */}
         <div className="h-6 bg-zinc-900 flex items-center justify-center">
           <div className="w-24 h-1 bg-zinc-700 rounded-full"></div>
