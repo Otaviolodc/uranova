@@ -799,8 +799,16 @@ const handleGenerateMarketing =
 
 </div>
 
-       {/* PREVIEW MOBILE */}
-<div className="hidden xl:flex flex-col items-center">
+  {/* PREVIEW MOBILE */}
+<div
+  className="
+    flex
+    flex-col
+    items-center
+    mt-8
+    xl:mt-0
+  "
+>
 
   <MobilePreview
     profile={profile}
