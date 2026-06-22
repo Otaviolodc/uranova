@@ -31,7 +31,7 @@ export default function SettingsPage() {
   featured_text: string | null;
   featured_url: string | null;
   theme_color: string | null;
-  product_text_col: string | null;
+  product_text_color: string | null;
   template: string | null;
 
   background_style: string | null;
@@ -95,7 +95,7 @@ export default function SettingsPage() {
         featured_text,
         featured_url,
         theme_color,
-        product_text_col,
+        product_text_color,
         template,
         background_style,
         card_style,
@@ -145,7 +145,7 @@ export default function SettingsPage() {
       );
 
       setProductTextColor(
-        data.product_text_col || "#ffffff"
+        data.product_text_color || "#ffffff"
       );
     }
   };
@@ -232,7 +232,7 @@ setAvatarUrl(data.publicUrl);
             featuredUrl,
           theme_color:
             themeColor,
-          product_text_col: 
+          product_text_color: 
             productTextColor,
 
         })
