@@ -1,10 +1,19 @@
+type Props = {
+  username: string;
+  bio: string;
+  avatarUrl: string;
+  themeColor: string;
+  productTextColor: string;
+};
+
 export default function ProfilePreview({
   username,
   bio,
   avatarUrl,
   themeColor,
   productTextColor,
-}: any) {
+}: Props) {
+
   return (
     <div className="sticky top-10">
 
@@ -30,6 +39,7 @@ export default function ProfilePreview({
                 avatarUrl ||
                 "/placeholder.png"
               }
+              alt="Avatar do perfil"
               className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-2xl"
             />
 
@@ -55,6 +65,7 @@ export default function ProfilePreview({
 
                 <img
                   src="/logo.png"
+                  alt="Produto"
                   className="
                     w-16
                     h-16

@@ -16,7 +16,9 @@ interface Props {
   setProductType: (value: string) => void;
   setIsMarketplace: (value: boolean) => void;
 
-  handleUpload: (e: any) => void;
+  handleUpload: (
+  e: React.ChangeEvent<HTMLInputElement>
+) => void;
   handleCreate: () => void;
 }
 
@@ -132,6 +134,7 @@ export default function ProductForm({
         {imageUrl && (
           <img
             src={imageUrl}
+            alt="Capa do produto"
             className="w-48 rounded-2xl"
           />
         )}

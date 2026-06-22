@@ -33,6 +33,7 @@ export default function ProductPreview({
         {imageUrl ? (
           <img
             src={imageUrl}
+            alt={title || "Imagem do produto"}
             className="
               w-full
               h-52 md:h-72

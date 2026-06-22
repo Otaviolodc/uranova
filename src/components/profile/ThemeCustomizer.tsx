@@ -4,58 +4,74 @@ import { supabase }
 from "@/lib/supabase/client";
 import { useState } from "react";
 
+interface ThemeProfile {
+  background_style?: string;
+  card_style?: string;
+  button_style?: string;
+}
+
+interface ThemeCustomizerProps {
+  profile: ThemeProfile | null;
+  reloadProfile: () => Promise<void>;
+}
+
 export default function ThemeCustomizer({
   profile,
   reloadProfile,
-}: any) {
+}: ThemeCustomizerProps) {
 
   const [loading, setLoading] =
     useState(false);
 
-  async function updateTheme(
-    field: string,
-    value: string
-  ) {
+  type ThemeField =
+  | "background_style"
+  | "card_style"
+  | "button_style";
+
+async function updateTheme(
+  field: ThemeField,
+  value: string
+) {
 
     try {
 
-      setLoading(true);
+  setLoading(true);
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-      if (!user) return;
+  if (!user) return;
 
-      const { error } =
-        await supabase
-          .from("profiles")
-          .update({
-            [field]: value,
-          })
-          .eq("id", user.id);
+  const { error } =
+    await supabase
+      .from("profiles")
+      .update({
+        [field]: value,
+      })
+      .eq("id", user.id);
 
-      if (error) {
+  if (error) {
 
-        console.log(error);
+    console.log(error);
 
-        return;
-
-      }
-
-      await reloadProfile();
-
-    } catch (error) {
-
-      console.log(error);
-
-    } finally {
-
-      setLoading(false);
-
-    }
+    return;
 
   }
+
+  await reloadProfile();
+
+} catch (error) {
+
+  console.error(error);
+
+} finally {
+
+  setLoading(false);
+
+}
+
+}
 
   return (
 

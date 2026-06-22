@@ -4,9 +4,16 @@ import { useState } from 'react'
 import { supabase }
 from "@/lib/supabase/client";
 
+type Link = {
+  id: string;
+  title: string;
+  affiliate_url: string;
+  slug: string;
+};
+
 interface LinkFormProps {
-  onSuccess: () => void
-  editLink?: any
+  onSuccess: () => void;
+  editLink?: Link;
 }
 
 export default function LinkForm({ onSuccess, editLink }: LinkFormProps) {
@@ -40,12 +47,25 @@ export default function LinkForm({ onSuccess, editLink }: LinkFormProps) {
         if (error) throw error
       }
 
-      onSuccess()
+            onSuccess();
+
       if (!editLink) {
-        setFormData({ title: '', affiliate_url: '', slug: '' })
+        setFormData({
+          title: "",
+          affiliate_url: "",
+          slug: "",
+        });
       }
-    } catch (error: any) {
-      alert('Error: ' + error.message)
+
+    } catch (error) {
+
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Erro desconhecido";
+
+      alert("Error: " + message);
+
     } finally {
       setLoading(false)
     }
@@ -87,7 +107,7 @@ export default function LinkForm({ onSuccess, editLink }: LinkFormProps) {
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           placeholder="amazon-deal"
         />
-        <p className="text-xs text-gray-500 mt-1">Will be: {typeof window !== 'undefined' && `${window.location.origin}/go/${formData.slug || 'slug'}`}</p>
+        <p className="text-xs text-gray-500 mt-1">Will be: {typeof window !== 'undefined' && `${window.location.origin}/checkout/go/${formData.slug || "slug"}`}</p>
       </div>
 
       <button

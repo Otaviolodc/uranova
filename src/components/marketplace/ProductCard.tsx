@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type ProductCardProps = {
   product: any;
 };
@@ -16,6 +18,7 @@ export default function ProductCard({
         overflow-hidden
         hover:border-green-500/30
         hover:-translate-y-2
+        hover:shadow-2xl
         transition-all
         duration-300
       "
@@ -26,6 +29,7 @@ export default function ProductCard({
         {product.image_url ? (
           <img
             src={product.image_url}
+            alt={product.title}
             className="
               w-full
               h-56
@@ -125,10 +129,10 @@ export default function ProductCard({
             mt-6
           "
         >
-          R$ {product.price}
+          R$ {Number(product.price).toFixed(2)}
         </h3>
 
-        <a
+        <Link
           href={`/checkout/product/${product.checkout_slug}`}
           className="
             mt-6
@@ -139,6 +143,9 @@ export default function ProductCard({
             to-emerald-400
             hover:scale-[1.02]
             transition-all
+            duration-200
+            shadow-lg
+            shadow-green-500/20
             text-black
             text-center
             py-4
@@ -147,7 +154,7 @@ export default function ProductCard({
           "
         >
           Ver Produto
-        </a>
+        </Link>
 
       </div>
 

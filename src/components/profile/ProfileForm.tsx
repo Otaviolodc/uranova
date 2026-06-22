@@ -4,9 +4,14 @@ import { useState } from 'react'
 import { supabase }
 from "@/lib/supabase/client";
 
+type Profile = {
+  username: string;
+  bio: string;
+};
+
 interface ProfileFormProps {
-  profile: any
-  onSuccess: () => void
+  profile: Profile | null;
+  onSuccess: () => void;
 }
 
 export default function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
@@ -37,12 +42,23 @@ export default function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
       
       alert('Profile updated successfully!')
       onSuccess()
-    } catch (error: any) {
-      alert('Error: ' + error.message)
-    } finally {
-      setLoading(false)
-    }
-  }
+
+    } catch (error) {
+
+  const message =
+    error instanceof Error
+      ? error.message
+      : "Erro desconhecido";
+
+  alert("Error: " + message);
+
+} finally {
+
+  setLoading(false);
+
+}
+
+};
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -63,6 +79,7 @@ export default function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
         <label className="block text-sm font-medium text-gray-700">Bio</label>
         <textarea
           rows={3}
+          maxLength={200}
           value={formData.bio}
           onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"

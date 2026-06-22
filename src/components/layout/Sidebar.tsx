@@ -4,6 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+type MenuItem = {
+  icon: string;
+  name: string;
+  href: string;
+};
+
 export default function Sidebar() {
 
   const pathname = usePathname();
@@ -14,7 +20,7 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] =
     useState(false);
 
-  const menu = [
+  const menu: MenuItem[] = [
   { icon: "🏠", name: "Dashboard", href: "/dashboard" },
   { icon: "🔗", name: "Links", href: "/dashboard/links" },
   { icon: "📦", name: "Produtos", href: "/dashboard/products" },
@@ -112,7 +118,7 @@ export default function Sidebar() {
       </nav>
 
       <Link
-        href="/auth/login"
+        href="/auth/logout"
         prefetch={true}
         className="
           mt-10
@@ -208,11 +214,17 @@ export default function Sidebar() {
               ${collapsed ? "justify-center" : "gap-3"}
               px-5
               py-4
-
+              rounded-2xl
+              border
+              transition-all 
+              duration-200
+              
               ${
                 pathname === item.href ||
-                (item.href !== "/dashboard" &&
-                 pathname.startsWith(item.href))
+                (
+                  item.href !== "/dashboard" &&
+                  pathname.startsWith(item.href)
+                )
                   ? "bg-green-500 text-black border-green-400 shadow-[0_0_25px_rgba(34,197,94,0.45)]"
                   : "bg-zinc-900 border-zinc-800 text-white hover:bg-zinc-800 hover:border-green-500/30"
               }
@@ -231,7 +243,7 @@ export default function Sidebar() {
       </nav>
 
       <Link
-        href="/auth/login"
+        href="/auth/logout"
         prefetch={true}
         className="
           mt-auto

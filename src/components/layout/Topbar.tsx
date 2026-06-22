@@ -43,7 +43,7 @@ if (error) {
   return;
 }
 
-setProfile(data);
+setProfile(data as Profile);
   }
 
   fetchProfile();
@@ -93,6 +93,7 @@ setProfile(data);
 
         {/* Notificações */}
         <button
+          title="Notificações"
           className="
             w-12
             h-12
@@ -133,6 +134,7 @@ setProfile(data);
 <div className="relative">
 
 <button
+  title="Menu do usuário"
   onClick={() => setOpenMenu(!openMenu)}
   className="
     flex
@@ -182,7 +184,7 @@ setProfile(data);
         font-black
       "
     >
-      {profile?.name?.charAt(0) || "U"}
+      {profile?.name?.[0]?.toUpperCase() || "U"}
     </div>
 
   )}
@@ -205,9 +207,9 @@ setProfile(data);
 
 <div
   className="
-    fixed
-    top-24
-    right-8
+    absolute
+    top-20
+    right-0
     w-64
     bg-zinc-950
     border
@@ -215,11 +217,16 @@ setProfile(data);
     rounded-3xl
     shadow-2xl
     z-[99999]
+    animate-in 
+    fade-in 
+    zoom-in 
+    duration-200
   "
 >
 
   <Link
     href="/dashboard/profile"
+    onClick={() => setOpenMenu(false)}
     className="
       flex
       items-center
@@ -234,6 +241,7 @@ setProfile(data);
 
   <Link
     href="/dashboard/settings"
+    onClick={() => setOpenMenu(false)}
     className="
       flex
       items-center
@@ -248,6 +256,7 @@ setProfile(data);
 
   <Link
     href="/auth/logout"
+    onClick={() => setOpenMenu(false)}
     className="
       flex
       items-center

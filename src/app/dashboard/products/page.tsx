@@ -19,6 +19,8 @@ export default function StorePage() {
   affiliate_url: string | null;
   product_type: string | null;
   is_marketplace: boolean;
+  status: string;
+  checkout_slug: string;
 };
 
   const [products, setProducts] =
@@ -45,7 +47,9 @@ export default function StorePage() {
     image_url,
     affiliate_url,
     product_type,
-    is_marketplace
+    is_marketplace,
+    status,
+    checkout_slug
   `)
   .eq("user_id", user.id)
   .order("created_at", {

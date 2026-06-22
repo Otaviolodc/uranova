@@ -1,6 +1,17 @@
+type Product = {
+  id: string;
+  title: string;
+  image_url: string | null;
+  product_type: string | null;
+  is_marketplace: boolean;
+  status: string;
+  price: string;
+  checkout_slug: string;
+};
+
 interface Props {
-  products: any[];
-  editProduct: (product: any) => void;
+  products: Product[];
+  editProduct: (product: Product) => void;
   deleteProduct: (id: string) => void;
 }
 
@@ -34,7 +45,8 @@ export default function ProductList({
           >
 
             <img
-              src={product.image_url}
+              src={product.image_url || "/placeholder.png"}
+              alt={product.title}
               className="
                 w-full
                 h-56
@@ -122,7 +134,7 @@ export default function ProductList({
               </div>
 
               <a
-                href={`/product/${product.checkout_slug}`}
+                href={`/checkout/product/${product.checkout_slug}`}
                 target="_blank"
                 className="
                   mt-4

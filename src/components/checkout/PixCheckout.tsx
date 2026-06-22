@@ -8,6 +8,11 @@ interface PixCheckoutProps {
   userId: string;
 }
 
+type PaymentResponse = {
+  encodedImage?: string;
+  payload?: string;
+};
+
 export default function PixCheckout({
   price,
   userId,
@@ -28,6 +33,9 @@ export default function PixCheckout({
   const [cpfCnpj, setCpfCnpj] = useState("")
 
   async function handleCheckout() {
+
+  setQrCode("");
+  setPixCode("");
 
   if (!name || !email || !cpfCnpj) {
 
@@ -66,7 +74,8 @@ export default function PixCheckout({
 
       }
 
-      const data = await response.json()
+      const data: PaymentResponse =
+        await response.json();
 
 
 
@@ -103,13 +112,23 @@ export default function PixCheckout({
 
   async function copyPix() {
 
-    if (!pixCode) return
+  if (!pixCode) return;
 
-    await navigator.clipboard.writeText(pixCode)
+  try {
 
-    alert("PIX copiado!")
+    await navigator.clipboard.writeText(
+      pixCode
+    );
+
+    alert("PIX copiado!");
+
+  } catch {
+
+    alert("Erro ao copiar PIX");
 
   }
+
+}
 
   return (
 
@@ -147,6 +166,7 @@ export default function PixCheckout({
       />
 
       <input
+        type="email"
         value={email}
         onChange={(e) =>
           setEmail(e.target.value)
@@ -166,6 +186,8 @@ export default function PixCheckout({
       />
 
       <input
+        type="text"
+        inputMode="numeric"
         value={cpfCnpj}
         onChange={(e) =>
           setCpfCnpj(e.target.value)
@@ -185,6 +207,7 @@ export default function PixCheckout({
       />
 
       <input
+        type="text"
         value={localCouponCode}
         onChange={(e) =>
           setLocalCouponCode(
@@ -212,6 +235,8 @@ export default function PixCheckout({
           w-full
           bg-green-500
           hover:bg-green-400
+          disabled:opacity-50
+          disabled:cursor-not-allowed
           text-black
           font-bold
           py-4
@@ -225,7 +250,18 @@ export default function PixCheckout({
 
       {qrCode && (
 
-        <>
+  <>
+
+    <h3
+      className="
+        text-center
+        text-white
+        font-bold
+      "
+    >
+      Escaneie o QR Code para pagar
+    </h3>
+
           <Image
             src={qrCode}
             alt="QR Code PIX"
@@ -255,6 +291,7 @@ export default function PixCheckout({
               p-3
               rounded-xl
               resize-none
+              break-all
             "
           />
 

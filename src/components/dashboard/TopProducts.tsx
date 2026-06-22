@@ -5,9 +5,16 @@ import { supabase } from "@/lib/supabase/client";
 
 export default function TopProducts() {
 
-  const [products, setProducts] =
-    useState<any[]>([]);
+  type Product = {
+  id: string;
+  title: string;
+  product_type: string | null;
+  price: number;
+};
 
+ const [products, setProducts] =
+   useState<Product[]>([]);
+ 
   async function fetchProducts() {
 
     const {
@@ -16,14 +23,30 @@ export default function TopProducts() {
 
     if (!user) return;
 
-    const { data } = await supabase
+    const {
+      data,
+      error,
+    } = await supabase
       .from("products_checkout")
-      .select("*")
+      .select(`
+        id,
+        title,
+        product_type,
+        price
+      `)
       .eq("user_id", user.id)
       .order("created_at", {
         ascending: false,
       })
       .limit(5);
+
+    if (error) {
+
+  console.error(error);
+
+  return;
+
+}
 
     setProducts(data || []);
   }

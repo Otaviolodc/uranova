@@ -5,8 +5,17 @@ import { supabase } from "@/lib/supabase/client";
 
 export default function RecentSales() {
 
-  const [sales, setSales] =
-    useState<any[]>([]);
+  type Sale = {
+  id: string;
+  product_name: string | null;
+  customer_name: string | null;
+  amount: number;
+  status: string;
+  created_at: string;
+};
+
+ const [sales, setSales] =
+   useState<Sale[]>([]);
 
   async function fetchSales() {
 
@@ -16,14 +25,32 @@ export default function RecentSales() {
 
     if (!user) return;
 
-    const { data } = await supabase
+    const {
+      data,
+      error,
+    } = await supabase
       .from("orders")
-      .select("*")
+      .select(`
+        id,
+        product_name,
+        customer_name,
+        amount,
+        status,
+        created_at
+      `)
       .eq("user_id", user.id)
       .order("created_at", {
         ascending: false,
       })
       .limit(10);
+
+    if (error) {
+
+  console.error(error);
+
+  return;
+
+}
 
     setSales(data || []);
   }

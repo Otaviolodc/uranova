@@ -33,6 +33,10 @@ export default function SettingsPage() {
   theme_color: string | null;
   product_text_color: string | null;
   template: string | null;
+
+  background_style: string | null;
+  card_style: string | null;
+  button_style: string | null;
 };
 
   const [profile, setProfile] =
@@ -92,7 +96,10 @@ export default function SettingsPage() {
         featured_url,
         theme_color,
         product_text_color,
-        template
+        template,
+        background_style,
+        card_style,
+        button_style
       `)
       .eq("id", user.id)
       .single();

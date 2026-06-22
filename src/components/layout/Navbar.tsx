@@ -35,6 +35,8 @@ export default function Navbar() {
             to-fuchsia-500
             bg-clip-text
             text-transparent
+            transition
+            hover:opacity-90
           "
         >
           Uranova
@@ -48,36 +50,53 @@ export default function Navbar() {
             items-center
             gap-10
             text-sm
+            font-medium
             text-zinc-400
           "
         >
-          <a
+          <Link
             href="#produtos"
-            className="hover:text-white transition"
+            className="
+            hover:text-white
+            transition-colors
+            duration-200
+            "
           >
             Produtos
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="#recursos"
-            className="hover:text-white transition"
+            className="
+            hover:text-white
+            transition-colors
+            duration-200
+            "
           >
             Recursos
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="#membros"
-            className="hover:text-white transition"
+            className="
+            hover:text-white
+            transition-colors
+            duration-200
+            "
           >
             Área de Membros
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="#faq"
-            className="hover:text-white transition"
+            className="
+            hover:text-white
+            transition-colors
+            duration-200
+            "
           >
             FAQ
-          </a>
+          </Link>
         </nav>
 
         {/* Botões */}
@@ -91,7 +110,9 @@ export default function Navbar() {
               rounded-xl
               border
               border-zinc-700
+              font-medium
               hover:border-zinc-500
+              hover:bg-zinc-900
               transition
             "
           >
@@ -106,7 +127,9 @@ export default function Navbar() {
               rounded-xl
               bg-violet-600
               hover:bg-violet-700
+              hover:scale-[1.03]
               transition
+              duration-200
               font-semibold
               shadow-lg
               shadow-violet-600/20

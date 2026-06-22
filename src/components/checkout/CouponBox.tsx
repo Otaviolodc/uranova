@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 
-interface Props {
+interface CouponBoxProps {
   price: number;
 }
 
 export default function CouponBox({
   price,
-}: Props) {
+}: CouponBoxProps) {
 
   const [coupon, setCoupon] =
     useState("");
@@ -21,20 +21,46 @@ export default function CouponBox({
     useState(price);
 
   const [message, setMessage] =
-    useState("");
+    useState<string>("");
 
   async function applyCoupon() {
 
-    const { data } =
-      await supabase
-        .from("coupons")
-        .select("*")
-        .eq(
-          "code",
-          coupon.toUpperCase()
-        )
-        .eq("active", true)
-        .maybeSingle();
+    if (!coupon.trim()) {
+
+  setMessage("Digite um cupom");
+
+  return;
+
+}
+
+    type Coupon = {
+      discount: number;
+    };
+
+    const {
+      data,
+      error,
+    }: {
+      data: Coupon | null;
+      error: any;
+    } = await supabase
+      .from("coupons")
+      .select("discount")
+      .eq("code", coupon.toUpperCase())
+      .eq("active", true)
+      .maybeSingle();
+
+    if (error) {
+
+  console.error(error);
+
+  setMessage(
+    "Erro ao validar cupom"
+  );
+
+  return;
+
+}
 
     if (!data) {
 
@@ -67,7 +93,9 @@ export default function CouponBox({
         <input
           value={coupon}
           onChange={(e) =>
-            setCoupon(e.target.value)
+            setCoupon(
+              e.target.value.toUpperCase()
+            )
           }
           placeholder="Cupom de desconto"
           className="
@@ -82,12 +110,15 @@ export default function CouponBox({
 
         <button
           onClick={applyCoupon}
+          disabled={!coupon.trim()}
           className="
             bg-green-500
             text-black
             px-6
             rounded-2xl
             font-bold
+            disabled:opacity-50
+            disabled:cursor-not-allowed
           "
         >
           Aplicar
@@ -97,7 +128,17 @@ export default function CouponBox({
 
       {message && (
 
-        <p className="mt-3 text-sm">
+        <p
+          className={`
+            mt-3
+            text-sm
+            ${
+              message.includes("✅")
+                ? "text-green-400"
+                : "text-red-400"
+            }
+          `}
+        >
           {message}
         </p>
 
@@ -108,7 +149,7 @@ export default function CouponBox({
         <div className="mt-6">
 
           <p className="text-zinc-500 line-through">
-            R$ {price}
+            R$ {price.toFixed(2)}
           </p>
 
           <p className="text-4xl font-black text-green-400">

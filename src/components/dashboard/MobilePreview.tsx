@@ -1,6 +1,23 @@
+type Profile = {
+  avatar_url?: string | null;
+  username?: string | null;
+  name?: string | null;
+  bio?: string | null;
+  instagram?: string | null;
+  telegram?: string | null;
+  whatsapp?: string | null;
+};
+
+type LinkItem = {
+  id: string;
+  image_url: string | null;
+  title: string;
+  description: string | null;
+};
+
 type Props = {
-  profile: any;
-  links: any[];
+  profile: Profile | null;
+  links: LinkItem[];
 };
 
 export default function MobilePreview({
@@ -33,6 +50,7 @@ export default function MobilePreview({
             {profile?.avatar_url ? (
               <img
                 src={profile.avatar_url}
+                alt="Avatar"
                 className="w-24 h-24 rounded-full object-cover border-4 border-white"
               />
             ) : (
@@ -111,6 +129,7 @@ export default function MobilePreview({
 
       <img
         src={link.image_url}
+        alt={link.title}
         className="
           w-16
           h-16

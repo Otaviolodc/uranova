@@ -6,7 +6,11 @@ export default function Footer() {
 
       <div className="max-w-7xl mx-auto px-6 py-20">
 
-        <div className="grid md:grid-cols-4 gap-14">
+        <div className="
+               grid
+               md:grid-cols-4
+               gap-10
+               xl:gap-16">
 
           {/* LOGO */}
           <div>
@@ -21,6 +25,8 @@ export default function Footer() {
                 to-fuchsia-500
                 bg-clip-text
                 text-transparent
+                transition
+                hover:opacity-90
               "
             >
               Uranova
@@ -37,21 +43,76 @@ export default function Footer() {
           {/* PRODUTO */}
           <div>
 
-            <h4 className="font-bold mb-5">
+            <h4 className="font-bold mb-5 text-white">
               Produto
             </h4>
 
-            <ul className="space-y-3 text-zinc-400">
+            <ul className="space-y-3 text-zinc-400 text-sm">
 
-              <li>Área de Membros</li>
+              <li>
+                <Link
+                  href="/"
+                  className="
+                    hover:text-white
+                    transition-colors
+                    duration-200
+                  "
+                >
+                    Área de Membros
+                </Link>
+              </li>
 
-              <li>Analytics</li>
+              <li>
+                <Link
+                  href="/"
+                  className="
+                    hover:text-white
+                    transition-colors
+                    duration-200
+                  "
+                >
+                    Analytics
+                </Link>
+              </li>
 
-              <li>Checkout</li>
+              <li>
+                <Link
+                  href="/"
+                  className="
+                    hover:text-white
+                    transition-colors
+                    duration-200
+                  "
+                >
+                    Checkout
+                </Link>
+              </li>
 
-              <li>Marketplace</li>
+              <li>
+                <Link
+                  href="/"
+                  className="
+                    hover:text-white
+                    transition-colors
+                    duration-200
+                  "
+                >
+                    Marketplace
+                </Link>
+              </li>
 
-              <li>Página de Links</li>
+              <li>
+                <Link
+                  href="/"
+                  className="
+                    hover:text-white
+                    transition-colors
+                    duration-200
+                  "
+                >
+                    Página de Links
+                </Link>
+              </li>
 
             </ul>
 
@@ -60,11 +121,11 @@ export default function Footer() {
           {/* EMPRESA */}
           <div>
 
-            <h4 className="font-bold mb-5">
+            <h4 className="font-bold mb-5 text-white">
               Empresa
             </h4>
 
-            <ul className="space-y-3 text-zinc-400">
+            <ul className="space-y-3 text-zinc-400 text-sm">
 
               <li>Sobre</li>
 
@@ -81,11 +142,11 @@ export default function Footer() {
           {/* LEGAL */}
           <div>
 
-            <h4 className="font-bold mb-5">
+            <h4 className="font-bold mb-5 text-white">
               Legal
             </h4>
 
-            <ul className="space-y-3 text-zinc-400">
+            <ul className="space-y-3 text-zinc-400 text-sm">
 
               <li>Privacidade</li>
 
@@ -100,7 +161,20 @@ export default function Footer() {
         </div>
 
         {/* LINHA */}
-        <div className="border-t border-white/5 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div
+          className="
+            border-t
+            border-zinc-800
+            mt-16
+            pt-8
+            flex
+            flex-col
+            md:flex-row
+            justify-between
+            items-center
+            gap-4
+          "
+        >
 
           <p className="text-zinc-500 text-sm">
             © {new Date().getFullYear()} Uranova. Todos os direitos reservados.
