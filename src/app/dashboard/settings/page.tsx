@@ -31,7 +31,7 @@ export default function SettingsPage() {
   featured_text: string | null;
   featured_url: string | null;
   theme_color: string | null;
-  product_text_color: string | null;
+  product_text_col: string | null;
   template: string | null;
 
   background_style: string | null;
@@ -95,7 +95,7 @@ export default function SettingsPage() {
         featured_text,
         featured_url,
         theme_color,
-        product_text_color,
+        product_text_col,
         template,
         background_style,
         card_style,
@@ -109,8 +109,8 @@ export default function SettingsPage() {
       setProfile(data);
       
       setTemplate(
-  data.template || "default"
-);
+        data.template || "default"
+      );
       setUsername(data.username || "");
 
       setBio(data.bio || "");
@@ -145,8 +145,7 @@ export default function SettingsPage() {
       );
 
       setProductTextColor(
-        data.product_text_color ||
-          "#ffffff"
+        data.product_text_col || "#ffffff"
       );
     }
   };
@@ -233,7 +232,7 @@ setAvatarUrl(data.publicUrl);
             featuredUrl,
           theme_color:
             themeColor,
-          product_text_color:
+          product_text_col: 
             productTextColor,
 
         })

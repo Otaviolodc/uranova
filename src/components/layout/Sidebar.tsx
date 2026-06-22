@@ -117,26 +117,6 @@ export default function Sidebar() {
 
       </nav>
 
-      <Link
-        href="/auth/logout"
-        prefetch={true}
-        className="
-          mt-10
-          bg-red-500
-          hover:bg-red-400
-          transition
-          text-white
-          py-4
-          rounded-2xl
-          font-bold
-          w-full
-          text-center
-          block
-        "
-            >
-        {collapsed ? "🚪" : "Sair da conta"}
-      </Link>
-
       </div>
     )}
 
@@ -241,26 +221,6 @@ export default function Sidebar() {
         ))}
 
       </nav>
-
-      <Link
-        href="/auth/logout"
-        prefetch={true}
-        className="
-          mt-auto
-          bg-red-500
-          hover:bg-red-400
-          transition
-          text-white
-          py-4
-          rounded-2xl
-          font-bold
-          w-full
-          text-center
-          block
-        "
-      >
-        {collapsed ? "🚪" : "Sair da conta"}
-      </Link>
 
     </aside>
 
