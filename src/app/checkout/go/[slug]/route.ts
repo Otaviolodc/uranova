@@ -1,8 +1,5 @@
-import { NextResponse } 
-from "next/server";
-
-import { createClient }
-from "@/lib/supabase/server";
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 export async function GET(
   req: Request,
@@ -10,8 +7,7 @@ export async function GET(
 ) {
   try {
 
-    const supabase =
-      await createClient();
+    const supabase = await createClient();
 
     const { slug } = await context.params;
 
@@ -34,6 +30,9 @@ export async function GET(
       });
     }
 
+    console.log("LINK COMPLETO:");
+    console.log(link);
+
     // 🔥 atualizar total de clicks
     await supabase
       .from("links")
@@ -47,7 +46,6 @@ export async function GET(
       .toISOString()
       .split("T")[0];
 
-    // 🔎 verifica se já existe registro hoje
     const { data: existing } = await supabase
       .from("link_clicks_daily")
       .select("*")
@@ -56,15 +54,16 @@ export async function GET(
       .maybeSingle();
 
     if (existing) {
-      // ➕ soma click
+
       await supabase
         .from("link_clicks_daily")
         .update({
           clicks: existing.clicks + 1,
         })
         .eq("id", existing.id);
+
     } else {
-      // 🆕 cria registro
+
       await supabase
         .from("link_clicks_daily")
         .insert([
@@ -74,32 +73,28 @@ export async function GET(
             clicks: 1,
           },
         ]);
+
     }
 
-    // 🤖 analytics IA
+    console.log("LINK:", link);
+    console.log("URL:", link.affiliate_url);
 
-await supabase
-  .from("analytics")
-  .insert({
+    return NextResponse.redirect(
+      new URL(link.affiliate_url)
+    );
 
-    user_id: link.user_id,
+    } catch (err: any) {
 
-    product_id: link.id,
+      console.log("ERRO COMPLETO:");
+      console.log(err);
 
-    event_type: "link_click",
+    return new Response(
+      err?.message || "Erro interno",
+      {
+        status: 500,
+      }
+    );
 
-    page: "go",
-
-  });
-
-    // 🚀 redirecionar
-    return NextResponse.redirect(link.url);
-
-  } catch (err) {
-    console.log("ERRO:", err);
-
-    return new Response("Erro interno", {
-      status: 500,
-    });
   }
+
 }
