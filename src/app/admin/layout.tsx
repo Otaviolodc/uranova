@@ -29,10 +29,17 @@ export default async function AdminLayout({
     .eq("id", session.user.id)
     .single();
 
-  // NÃO ADMIN
-  if (!profile || profile.role !== "admin") {
+  const OWNER_EMAIL = process.env.OWNER_EMAIL;
+
+// NÃO ADMIN OU NÃO É O DONO
+if (
+  !profile ||
+  profile.role !== "admin" ||
+  !session.user.email ||
+  session.user.email !== OWNER_EMAIL
+) {
   redirect("/dashboard/links");
-  }
+}
 
   return (
 
