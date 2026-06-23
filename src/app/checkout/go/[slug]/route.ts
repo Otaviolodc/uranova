@@ -93,7 +93,7 @@ await supabase
   });
 
     // 🚀 redirecionar
-    return NextResponse.redirect(link.affiliate_url);
+    return NextResponse.redirect(link.url);
 
   } catch (err) {
     console.log("ERRO:", err);

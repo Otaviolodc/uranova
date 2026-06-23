@@ -506,7 +506,7 @@ const marketplaceProducts =
 
             <a
               key={link.id}
-              href={`/go/${link.slug}`}
+              href={`/checkout/go/${link.slug}`}
               className="
                 group
                 relative
