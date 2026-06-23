@@ -19,7 +19,7 @@ export default async function AdminLayout({
 
   // NÃO LOGADO
   if (!session) {
-    redirect("/auth/login");
+    redirect("/login");
   }
 
   // PROFILE
@@ -163,27 +163,6 @@ export default async function AdminLayout({
           </Link>
 
         </nav>
-
-          <Link
-            href="/dashboard/links"
-            className="
-              block
-              w-full
-              mt-6
-              bg-blue-500
-              hover:bg-blue-400
-              transition-all
-              duration-200
-              px-4
-              py-3
-              rounded-xl
-              font-medium
-              text-white
-              text-center
-            "
-          >
-            Ir para Dashboard
-          </Link>
 
      <a
   href="/auth/logout"
