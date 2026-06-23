@@ -86,7 +86,7 @@ export default async function CheckoutPage({
           <div>
 
             <Image
-              src={product.image_url || "/placeholder.png"}
+              src={product.image_url || "/logo.png"}
               alt={product.title}
               width={800}
               height={800}

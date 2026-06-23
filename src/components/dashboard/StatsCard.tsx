@@ -1,6 +1,6 @@
 interface StatsCardProps {
   title: string;
-  value: string;
+  value: string | number;
   subtitle?: string;
 }
 
@@ -43,10 +43,12 @@ export function StatsCard({
 
       <h2
         className="
-          text-4xl
+          text-3xl
+          md:text-4xl
           font-black
           mt-4
           text-white
+          break-all
         "
       >
         {value}

@@ -3,16 +3,20 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 
-export default function RecentSales() {
-
-  type Sale = {
+type Sale = {
   id: string;
-  product_name: string | null;
   customer_name: string | null;
   amount: number;
   status: string;
   created_at: string;
+  products:
+    | {
+        title: string;
+      }[]
+    | null;
 };
+
+export default function RecentSales() {
 
  const [sales, setSales] =
    useState<Sale[]>([]);
@@ -32,11 +36,13 @@ export default function RecentSales() {
       .from("orders")
       .select(`
         id,
-        product_name,
         customer_name,
         amount,
         status,
-        created_at
+        created_at,
+        products (
+        title
+        )
       `)
       .eq("user_id", user.id)
       .order("created_at", {
@@ -52,8 +58,9 @@ export default function RecentSales() {
 
 }
 
-    setSales(data || []);
-  }
+    setSales((data as Sale[]) || []);
+
+}
 
   useEffect(() => {
     fetchSales();
@@ -150,7 +157,7 @@ export default function RecentSales() {
               >
 
                 <td className="p-5 text-white font-medium">
-                  {sale.product_name || "Produto"}
+                  {sale.products?.[0]?.title || "Produto"}
                 </td>
 
                 <td className="p-5 text-white">

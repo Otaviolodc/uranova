@@ -228,7 +228,7 @@ const {
         <Image
           src={
             product.image_url ||
-            "/placeholder.png"
+            "/logo.png"
           }
           alt={product.title}
           width={500}

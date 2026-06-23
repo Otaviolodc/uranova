@@ -3,14 +3,14 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 
-export default function TopProducts() {
-
-  type Product = {
+type Product = {
   id: string;
   title: string;
   product_type: string | null;
   price: number;
 };
+
+export default function TopProducts() {
 
  const [products, setProducts] =
    useState<Product[]>([]);
@@ -48,7 +48,7 @@ export default function TopProducts() {
 
 }
 
-    setProducts(data || []);
+    setProducts((data as Product[]) || []);
   }
 
   useEffect(() => {
@@ -160,13 +160,8 @@ export default function TopProducts() {
                     {product.title}
                   </h3>
 
-                  <p
-                    className="
-                      text-zinc-400
-                      mt-1
-                    "
-                  >
-                    {product.product_type}
+                  <p className="text-zinc-400 mt-1">
+                    {product.product_type || "Produto digital"}
                   </p>
 
                 </div>
@@ -182,7 +177,7 @@ export default function TopProducts() {
                     font-black
                   "
                 >
-                  R$ {Number(product.price).toFixed(2)}
+                  R$ {(Number(product.price) || 0).toFixed(2)}
                 </h2>
 
                 <p className="text-zinc-500 text-sm mt-1">

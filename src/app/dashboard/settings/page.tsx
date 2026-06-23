@@ -151,7 +151,25 @@ export default function SettingsPage() {
   };
 
   useEffect(() => {
+
   fetchProfile();
+
+  async function test() {
+
+    const session =
+      await supabase.auth.getSession();
+
+    console.log("SESSION:", session);
+
+    const user =
+      await supabase.auth.getUser();
+
+    console.log("USER:", user);
+
+  }
+
+  test();
+
 }, []);
 
 // 📸 upload imagem
@@ -163,10 +181,15 @@ const handleUpload = async (
   if (!file) return;
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  data: { session },
+} = await supabase.auth.getSession();
 
-  if (!user) return;
+if (!session?.user) {
+  alert("Sessão não encontrada");
+  return;
+}
+
+const user = session.user;
 
   const fileExt =
     file.name.split(".").pop();
@@ -205,67 +228,74 @@ setAvatarUrl(data.publicUrl);
     setLoading(true);
 
     const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  data: { session },
+} = await supabase.auth.getSession();
 
-    if (!user) {
-      throw new Error(
-        "Usuário não encontrado"
-     );
-    }
+console.log("SESSION HANDLE SAVE:", session);
 
-    const { error } =
-      await supabase
-        .from("profiles")
-        .update({
+if (!session?.user) {
+  throw new Error("Sessão não encontrada");
+}
 
-          username,
-          bio,
-          template,
-          avatar_url: avatarUrl,
-          instagram,
-          telegram,
-          whatsapp,
-          featured_text:
-            featuredText,
-          featured_url:
-            featuredUrl,
-          theme_color:
-            themeColor,
-          product_text_color: 
-            productTextColor,
+const user = session.user;
 
-        })
-        .eq("id", user.id);
+    console.log("USER ID:", user.id);
 
-    if (error) {
+const { error } =
+  await supabase
+    .from("profiles")
+    .update({
 
-      console.error(error);
+      username,
+      bio,
+      template,
+      avatar_url: avatarUrl,
+      instagram,
+      telegram,
+      whatsapp,
+      featured_text: featuredText,
+      featured_url: featuredUrl,
+      theme_color: themeColor,
+      product_text_color: productTextColor,
 
-      alert(error.message);
+    })
+    .eq("id", user.id);
 
-      return;
+if (error) {
 
-    }
+  console.error("UPDATE ERROR:", error);
+
+  alert(`
+  Mensagem: ${error.message}
+
+  Código: ${error.code}
+
+  Detalhes: ${error.details}
+
+  Hint: ${error.hint}
+  `);
+
+  return;
+
+}
 
     alert(
       "Perfil atualizado 🚀"
     );
 
-  } catch (error) {
+  } catch (error: any) {
 
-    console.error(error);
+  console.error(error);
 
-    alert(
-      "Erro ao salvar perfil"
-    );
+  alert(
+    error?.message || JSON.stringify(error)
+  );
 
-  } finally {
+} finally {
 
-    // 🔥 ESSENCIAL
-    setLoading(false);
+  setLoading(false);
 
-  }
+}
 
 };
 
@@ -295,16 +325,41 @@ setAvatarUrl(data.publicUrl);
 
       <div className="relative z-10 flex flex-col md:flex-row items-center gap-6 md:gap-8">
 
-        <Image
-          src={avatarUrl || "/placeholder.png"}
-          alt="Avatar"
-          width={128}
-          height={128}
-          className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4"
-          style={{
-            borderColor: themeColor,
-          }}
-        />
+        {
+          avatarUrl ? (
+
+            <Image
+              src={avatarUrl}
+              alt="Avatar"
+              width={128}
+              height={128}
+              className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4"
+              style={{
+                borderColor: themeColor,
+              }}
+            />
+
+        ) : (
+
+            <div
+              className="
+                w-24 h-24 md:w-32 md:h-32
+                rounded-full
+                border-4
+                flex items-center justify-center
+                text-4xl font-bold
+                text-white
+              "
+              style={{
+                borderColor: themeColor,
+                backgroundColor: themeColor,
+              }}
+            >
+              {username?.[0]?.toUpperCase() || "U"}
+            </div>
+
+         )
+       }
 
         <div>
 

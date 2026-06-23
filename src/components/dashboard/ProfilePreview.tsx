@@ -37,7 +37,7 @@ export default function ProfilePreview({
             <img
               src={
                 avatarUrl ||
-                "/placeholder.png"
+                "/logo.png"
               }
               alt="Avatar do perfil"
               className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-2xl"

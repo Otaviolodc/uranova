@@ -45,7 +45,7 @@ export default function ProductList({
           >
 
             <img
-              src={product.image_url || "/placeholder.png"}
+              src={product.image_url || "/logo.png"}
               alt={product.title}
               className="
                 w-full

@@ -1,6 +1,43 @@
-export default function AIInsights() {
-  return (
+type Insight = {
+  icon: string;
+  title: string;
+  headline: string;
+  description: string;
+};
 
+const insights: Insight[] = [
+  {
+    icon: "📈",
+    title: "Melhor Horário",
+    headline: "19h às 22h",
+    description:
+      "Período com maior atividade dos usuários.",
+  },
+  {
+    icon: "🏆",
+    title: "Melhor Produto",
+    headline: "Produto em Destaque",
+    description:
+      "Maior potencial de vendas da operação.",
+  },
+  {
+    icon: "🎯",
+    title: "Conversão",
+    headline: "Crescimento constante",
+    description:
+      "Continue enviando tráfego para os produtos principais.",
+  },
+  {
+    icon: "💡",
+    title: "Sugestão IA",
+    headline: "Continue escalando",
+    description:
+      "Seus produtos possuem potencial para aumentar as vendas.",
+  },
+];
+
+export default function AllInsights() {
+  return (
     <div
       className="
         mt-10
@@ -11,7 +48,6 @@ export default function AIInsights() {
         overflow-hidden
       "
     >
-
       {/* HEADER */}
       <div
         className="
@@ -20,7 +56,6 @@ export default function AIInsights() {
           border-zinc-800
         "
       >
-
         <h2 className="text-2xl font-bold text-white">
           🤖 Insights IA
         </h2>
@@ -28,122 +63,38 @@ export default function AIInsights() {
         <p className="text-zinc-400 mt-2">
           Recomendações inteligentes da sua operação
         </p>
-
       </div>
 
       <div className="grid md:grid-cols-2 gap-5 p-6">
+        {insights.map((item) => (
+          <div
+            key={item.title}
+            className="
+              bg-black
+              border
+              border-zinc-800
+              rounded-3xl
+              p-6
+              hover:border-green-500/30
+              hover:-translate-y-1
+              transition-all
+              duration-300
+            "
+          >
+            <p className="text-zinc-400 text-sm">
+              {item.icon} {item.title}
+            </p>
 
-        {/* MELHOR HORÁRIO */}
-        <div
-          className="
-            bg-black
-            border
-            border-zinc-800
-            rounded-3xl
-            p-6
-            hover:border-green-500/30
-            transition
-          "
-        >
+            <h3 className="text-2xl font-black text-white mt-3">
+              {item.headline}
+            </h3>
 
-          <p className="text-zinc-400 text-sm">
-            📈 Melhor Horário
-          </p>
-
-          <h3 className="text-2xl font-black text-white mt-3">
-            19h às 22h
-          </h3>
-
-          <p className="text-zinc-500 mt-3">
-            Período com maior atividade dos usuários.
-          </p>
-
-        </div>
-
-        {/* MELHOR PRODUTO */}
-        <div
-          className="
-            bg-black
-            border
-            border-zinc-800
-            rounded-3xl
-            p-6
-            hover:border-green-500/30
-            transition
-          "
-        >
-
-          <p className="text-zinc-400 text-sm">
-            🏆 Melhor Produto
-          </p>
-
-          <h3 className="text-2xl font-black text-white mt-3">
-            Produto em Destaque
-          </h3>
-
-          <p className="text-zinc-500 mt-3">
-            Maior potencial de vendas da operação.
-          </p>
-
-        </div>
-
-        {/* CONVERSÃO */}
-        <div
-          className="
-            bg-black
-            border
-            border-zinc-800
-            rounded-3xl
-            p-6
-            hover:border-green-500/30
-            transition
-          "
-        >
-
-          <p className="text-zinc-400 text-sm">
-            🎯 Conversão
-          </p>
-
-          <h3 className="text-2xl font-black text-white mt-3">
-            Crescimento constante
-          </h3>
-
-          <p className="text-zinc-500 mt-3">
-            Continue enviando tráfego para os produtos principais.
-          </p>
-
-        </div>
-
-        {/* SUGESTÃO */}
-        <div
-          className="
-            bg-black
-            border
-            border-zinc-800
-            rounded-3xl
-            p-6
-            hover:border-green-500/30
-            transition
-          "
-        >
-
-          <p className="text-zinc-400 text-sm">
-            💡 Sugestão IA
-          </p>
-
-          <h3 className="text-2xl font-black text-white mt-3">
-            Continue escalando
-          </h3>
-
-          <p className="text-zinc-500 mt-3">
-            Seus produtos possuem potencial para aumentar as vendas.
-          </p>
-
-        </div>
-
+            <p className="text-zinc-500 mt-3">
+              {item.description}
+            </p>
+          </div>
+        ))}
       </div>
-
     </div>
-
   );
 }
