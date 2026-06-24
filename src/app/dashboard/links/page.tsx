@@ -165,15 +165,13 @@ const handleImageUpload = async (
   if (!file) return;
 
   const {
-  data: { session },
-} = await supabase.auth.getSession();
+  data: { user },
+} = await supabase.auth.getUser();
 
-if (!session?.user) {
-  alert("Sessão não encontrada");
+if (!user) {
+  alert("Usuário não encontrado");
   return;
 }
-
-const user = session.user;
 
   const fileExt =
     file.name.split(".").pop();
@@ -437,15 +435,13 @@ const handleGenerateMarketing =
   // 🚀 criar link
   const handleCreate = async () => {
     const {
-  data: { session },
-} = await supabase.auth.getSession();
+  data: { user },
+} = await supabase.auth.getUser();
 
-if (!session?.user) {
-  alert("Sessão não encontrada");
+if (!user) {
+  alert("Usuário não encontrado");
   return;
 }
-
-const user = session.user;
 
     if (!title || !url) {
       alert("Preencha os campos");

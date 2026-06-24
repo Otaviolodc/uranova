@@ -85,40 +85,38 @@ export default function SettingsPage() {
 
   // 🚀 carregar perfil
   const fetchProfile = async () => {
-    const {
-  data: { session },
-} = await supabase.auth.getSession();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-if (!session?.user) {
-  console.error("Sessão não encontrada");
-  return;
-}
+  if (!user) {
+    console.error("Usuário não encontrado");
+    return;
+  }
 
-const user = session.user;
-
-    const {
-  data,
-  error,
-} = await supabase
-  .from("profiles")
-  .select(`
-    username,
-    bio,
-    avatar_url,
-    instagram,
-    telegram,
-    whatsapp,
-    featured_text,
-    featured_url,
-    theme_color,
-    product_text_color,
-    template,
-    background_style,
-    card_style,
-    button_style
-  `)
-  .eq("id", user.id)
-  .single();
+  const {
+    data,
+    error,
+  } = await supabase
+    .from("profiles")
+    .select(`
+      username,
+      bio,
+      avatar_url,
+      instagram,
+      telegram,
+      whatsapp,
+      featured_text,
+      featured_url,
+      theme_color,
+      product_text_color,
+      template,
+      background_style,
+      card_style,
+      button_style
+    `)
+    .eq("id", user.id)
+    .single();
 
 if (error) {
   console.error(
@@ -206,15 +204,8 @@ const handleUpload = async (
   if (!file) return;
 
   const {
-  data: { session },
-} = await supabase.auth.getSession();
-
-if (!session?.user) {
-  alert("Sessão não encontrada");
-  return;
-}
-
-const user = session.user;
+  data: { user },
+} = await supabase.auth.getUser();
 
   const fileExt =
     file.name.split(".").pop();
@@ -254,14 +245,8 @@ setAvatarUrl(data.publicUrl);
     setLoading(true);
 
     const {
-  data: { session },
-} = await supabase.auth.getSession();
-
-if (!session?.user) {
-  throw new Error("Sessão não encontrada");
-}
-
-const user = session.user;
+  data: { user },
+} = await supabase.auth.getUser();
 
 const { error } =
   await supabase

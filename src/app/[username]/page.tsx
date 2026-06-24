@@ -15,6 +15,19 @@ export default async function PublicPage({
 
   const { username } = await params;
 
+  const reservedRoutes = [
+  "login",
+  "auth",
+  "dashboard",
+  "admin",
+  "checkout",
+  "api",
+];
+
+if (reservedRoutes.includes(username)) {
+  return null;
+}
+
   // PROFILE
   const {
     data: profile,

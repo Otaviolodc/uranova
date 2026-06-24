@@ -18,7 +18,7 @@ export default async function ProfilePage() {
   console.log("USER ERROR:", userError);
 
   if (!user) {
-    redirect("/login");
+    redirect("/auth/login");
   }
 
   const {

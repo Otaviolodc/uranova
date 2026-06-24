@@ -21,10 +21,8 @@ type Order = {
 
 async function fetchOrders() {
   const {
-  data: { session },
-} = await supabase.auth.getSession();
-
-const user = session?.user;
+  data: { user },
+} = await supabase.auth.getUser();
 
 if (!user) return;
 

@@ -14,29 +14,29 @@ export default async function AdminLayout({
 
   // SESSION
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  data: { user },
+} = await supabase.auth.getUser();
 
-  // NÃO LOGADO
-  if (!session) {
-    redirect("/login");
-  }
+// NÃO LOGADO
+if (!user) {
+  redirect("/auth/login");
+}
 
-  // PROFILE
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", session.user.id)
-    .single();
+// PROFILE
+const { data: profile } = await supabase
+  .from("profiles")
+  .select("role")
+  .eq("id", user.id)
+  .single();
 
-  const OWNER_EMAIL = process.env.OWNER_EMAIL;
+const OWNER_EMAIL = process.env.OWNER_EMAIL;
 
 // NÃO ADMIN OU NÃO É O DONO
 if (
   !profile ||
   profile.role !== "admin" ||
-  !session.user.email ||
-  session.user.email !== OWNER_EMAIL
+  !user.email ||
+  user.email !== OWNER_EMAIL
 ) {
   redirect("/dashboard/links");
 }
