@@ -26,7 +26,7 @@ export default function UserMenu({
       <button
         title="Menu do usuário"
         onClick={() =>
-          setOpenMenu(!openMenu)
+          setOpenMenu(prev => !prev)
         }
         className="
           flex
@@ -83,15 +83,13 @@ export default function UserMenu({
         <div className="hidden md:block text-left">
 
           <h2 className="font-bold text-white">
-            {profile?.name ?? "Carregando..."}
+            {profile?.name || "Usuário"}
           </h2>
 
-          <p className="text-zinc-500 text-sm">
-            {profile
-             ? profile.is_pro
+          <p className="text-zinc-500 text-sm">         
+             {profile?.is_pro
                ? "Plano PRO"
-               : "Plano FREE"
-             : "Carregando"}
+               : "Plano FREE"}
           </p>
 
         </div>

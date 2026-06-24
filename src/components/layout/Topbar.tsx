@@ -15,32 +15,40 @@ export default function Topbar() {
 
   useEffect(() => {
     async function fetchProfile() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
 
-      if (!user) {
-        setProfile(null);
-        return;
-      }
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select(`
-          name,
-          avatar_url,
-          is_pro
-        `)
-        .eq("id", user.id)
-        .single();
+  if (!session?.user) {
+    setProfile(null);
+    return;
+  }
 
-      if (error) {
-        console.error(error);
-        return;
-      }
+  const user = session.user;
 
-      setProfile(data as Profile);
-    }
+  const {
+    data,
+    error,
+  } = await supabase
+    .from("profiles")
+    .select(`
+      name,
+      avatar_url,
+      is_pro
+    `)
+    .eq("id", user.id)
+    .single();
+
+  if (error) {
+    console.error("Topbar:", error);
+    return;
+  }
+
+  if (data) {
+    setProfile(data);
+  }
+}
 
     fetchProfile();
 

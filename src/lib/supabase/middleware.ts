@@ -21,30 +21,41 @@ export async function updateSession(
 
         setAll(cookiesToSet) {
 
-          cookiesToSet.forEach(({ name, value }) => {
-            request.cookies.set(name, value);
-          });
+          cookiesToSet.forEach(
+            ({ name, value }) => {
+              request.cookies.set(name, value);
+            }
+          );
 
           response = NextResponse.next({
             request,
           });
 
           cookiesToSet.forEach(
-            ({ name, value, options }) =>
+            ({ name, value, options }) => {
               response.cookies.set(
                 name,
                 value,
                 options
-              )
+              );
+            }
           );
+
         },
       },
     }
   );
 
   // IMPORTANTE:
-  // nunca remover isso
-  await supabase.auth.getUser();
+  // use getUser para renovar a sessão
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  console.log(
+    "MIDDLEWARE USER:",
+    user?.email
+  );
 
   return response;
 }

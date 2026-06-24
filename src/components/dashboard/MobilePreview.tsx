@@ -55,13 +55,13 @@ export default function MobilePreview({
               />
             ) : (
               <div className="w-24 h-24 rounded-full bg-green-500 flex items-center justify-center text-3xl font-bold">
-                {profile?.username?.[0]?.toUpperCase()}
+                {profile?.username?.[0]?.toUpperCase() || "U"}
               </div>
             )}
 
             {/* NOME */}
             <h1 className="text-white text-2xl font-bold mt-4">
-              {profile?.name || profile?.username}
+              {profile?.name || profile?.username || "Usuário"}
             </h1>
 
             {/* BIO */}
@@ -107,7 +107,7 @@ export default function MobilePreview({
           {/* LINKS */}
         <div className="mt-8 space-y-4">
 
-        {links.map((link) => (
+        {(links || []).map((link) => (
 
       <div
         key={link.id}

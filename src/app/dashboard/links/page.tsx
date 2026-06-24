@@ -96,13 +96,26 @@ if (!user) {
 
     if (profileError) {
 
-      console.error(profileError);
+  console.error(
+    "Links profile:",
+    profileError
+  );
 
-      return;
+  return;
+}
 
-    }
+if (!profileData) {
 
-    setProfile(profileData);
+  console.error(
+    "Perfil não encontrado"
+  );
+
+  return;
+}
+
+    if (profileData) {
+  setProfile(profileData);
+}
 
     // 🔗 links
     const {
@@ -152,10 +165,15 @@ const handleImageUpload = async (
   if (!file) return;
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  data: { session },
+} = await supabase.auth.getSession();
 
-  if (!user) return;
+if (!session?.user) {
+  alert("Sessão não encontrada");
+  return;
+}
+
+const user = session.user;
 
   const fileExt =
     file.name.split(".").pop();
@@ -419,10 +437,15 @@ const handleGenerateMarketing =
   // 🚀 criar link
   const handleCreate = async () => {
     const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  data: { session },
+} = await supabase.auth.getSession();
 
-    if (!user) return;
+if (!session?.user) {
+  alert("Sessão não encontrada");
+  return;
+}
+
+const user = session.user;
 
     if (!title || !url) {
       alert("Preencha os campos");
@@ -606,11 +629,21 @@ const handleGenerateMarketing =
             </p>
 
             <a
-              href={`/${profile?.username}`}
+              href={`/${profile?.username || ""}`}
               target="_blank"
-              className="text-green-400 text-lg md:text-2xl font-bold mt-2 block break-all"
+              className="
+                text-green-400
+                text-lg
+                md:text-2xl
+                font-bold
+                mt-2
+                block
+                break-all
+              "
             >
-              Uranova.com/{profile?.username}
+              {profile?.username
+                ? `Uranova.com/${profile.username}`
+              : "Carregando URL..."}
             </a>
 
           </div>

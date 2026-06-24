@@ -1,8 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { supabase }
-from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 import ThemeCustomizer from "@/components/profile/ThemeCustomizer";
 import dynamic from "next/dynamic";
@@ -66,6 +65,15 @@ export default function SettingsPage() {
   const [featuredUrl, setFeaturedUrl] =
     useState("");
 
+  const [backgroundStyle, setBackgroundStyle] =
+    useState("");
+
+  const [cardStyle, setCardStyle] =
+    useState("");
+
+  const [buttonStyle, setButtonStyle] =
+    useState("");
+
   // 🎨 CORES
   const [themeColor, setThemeColor] =
     useState("#00ff88");
@@ -78,33 +86,54 @@ export default function SettingsPage() {
   // 🚀 carregar perfil
   const fetchProfile = async () => {
     const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  data: { session },
+} = await supabase.auth.getSession();
 
-    if (!user) return;
+if (!session?.user) {
+  console.error("Sessão não encontrada");
+  return;
+}
 
-    const { data } = await supabase
-      .from("profiles")
-      .select(`
-        username,
-        bio,
-        avatar_url,
-        instagram,
-        telegram,
-        whatsapp,
-        featured_text,
-        featured_url,
-        theme_color,
-        product_text_color,
-        template,
-        background_style,
-        card_style,
-        button_style
-      `)
-      .eq("id", user.id)
-      .single();
+const user = session.user;
 
-    if (data) {
+    const {
+  data,
+  error,
+} = await supabase
+  .from("profiles")
+  .select(`
+    username,
+    bio,
+    avatar_url,
+    instagram,
+    telegram,
+    whatsapp,
+    featured_text,
+    featured_url,
+    theme_color,
+    product_text_color,
+    template,
+    background_style,
+    card_style,
+    button_style
+  `)
+  .eq("id", user.id)
+  .single();
+
+if (error) {
+  console.error(
+    "Settings fetchProfile:",
+    error
+  );
+  return;
+}
+
+if (!data) {
+  console.error(
+    "Perfil não encontrado"
+  );
+  return;
+}
 
       setProfile(data);
       
@@ -147,28 +176,24 @@ export default function SettingsPage() {
       setProductTextColor(
         data.product_text_color || "#ffffff"
       );
-    }
+      
+      setBackgroundStyle(
+        data.background_style || ""
+      );
+
+      setCardStyle(
+        data.card_style || ""
+      );
+
+      setButtonStyle(
+        data.button_style || ""
+      );
+    
   };
 
   useEffect(() => {
 
   fetchProfile();
-
-  async function test() {
-
-    const session =
-      await supabase.auth.getSession();
-
-    console.log("SESSION:", session);
-
-    const user =
-      await supabase.auth.getUser();
-
-    console.log("USER:", user);
-
-  }
-
-  test();
 
 }, []);
 
@@ -218,6 +243,7 @@ const { data } = supabase.storage
   .getPublicUrl(fileName);
 
 setAvatarUrl(data.publicUrl);
+
 };
 
   // 💾 Salvar
@@ -231,33 +257,41 @@ setAvatarUrl(data.publicUrl);
   data: { session },
 } = await supabase.auth.getSession();
 
-console.log("SESSION HANDLE SAVE:", session);
-
 if (!session?.user) {
   throw new Error("Sessão não encontrada");
 }
 
 const user = session.user;
 
-    console.log("USER ID:", user.id);
-
 const { error } =
   await supabase
     .from("profiles")
     .update({
+      username: username || null,
+      bio: bio || null,
+      template: template || null,
 
-      username,
-      bio,
-      template,
-      avatar_url: avatarUrl,
-      instagram,
-      telegram,
-      whatsapp,
-      featured_text: featuredText,
-      featured_url: featuredUrl,
-      theme_color: themeColor,
-      product_text_color: productTextColor,
+      avatar_url: avatarUrl || null,
 
+      instagram: instagram || null,
+      telegram: telegram || null,
+      whatsapp: whatsapp || null,
+
+      featured_text: featuredText || null,
+      featured_url: featuredUrl || null,
+
+      theme_color: themeColor || "#00ff88",
+      product_text_color:
+        productTextColor || "#ffffff",
+
+      background_style:
+        backgroundStyle || null,
+
+      card_style:
+        cardStyle || null,
+
+      button_style:
+        buttonStyle || null,
     })
     .eq("id", user.id);
 

@@ -19,7 +19,7 @@ export async function createClient() {
               cookieStore.set(name, value, options);
             });
           } catch {
-            // Server Component não pode modificar cookies durante render
+            // Server Components não podem alterar cookies
           }
         },
       },

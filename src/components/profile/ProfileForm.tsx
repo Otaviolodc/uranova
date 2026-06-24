@@ -26,8 +26,15 @@ export default function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
+      const {
+  data: { session },
+} = await supabase.auth.getSession();
+
+if (!session?.user) {
+  throw new Error("Not authenticated");
+}
+
+const user = session.user;
 
       const { error } = await supabase
         .from('profiles')
@@ -40,7 +47,7 @@ export default function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
 
       if (error) throw error
       
-      alert('Profile updated successfully!')
+      alert("Perfil atualizado com sucesso!");
       onSuccess()
 
     } catch (error) {
@@ -50,7 +57,8 @@ export default function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
       ? error.message
       : "Erro desconhecido";
 
-  alert("Error: " + message);
+  console.error("ProfileForm:", error);
+  alert(message);
 
 } finally {
 

@@ -38,10 +38,12 @@ async function updateTheme(
   setLoading(true);
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  data: { session },
+} = await supabase.auth.getSession();
 
-  if (!user) return;
+const user = session?.user;
+
+if (!user) return;
 
   const { error } =
     await supabase
@@ -53,7 +55,7 @@ async function updateTheme(
 
   if (error) {
 
-    console.log(error);
+    console.error("ThemeCustomizer:", error);
 
     return;
 
@@ -63,7 +65,10 @@ async function updateTheme(
 
 } catch (error) {
 
-  console.error(error);
+  console.error(
+    "ThemeCustomizer:",
+    error
+  );
 
 } finally {
 
@@ -73,7 +78,7 @@ async function updateTheme(
 
 }
 
-  return (
+return (
 
     <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 space-y-6">
 
