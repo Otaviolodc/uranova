@@ -23,18 +23,22 @@ export default function ProfilePage() {
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
+        const sessionResult =
+          await supabase.auth.getSession();
 
-        console.log("USER:", user);
-        console.log("USER ERROR:", userError);
+console.log(
+  "SESSION RESULT:",
+  sessionResult
+);
 
-        if (!user) {
-          setLoading(false);
-          return;
-        }
+const user =
+  sessionResult.data.session?.user;
+
+if (!user) {
+  console.log("SEM USER");
+  setLoading(false);
+  return;
+}
 
         setEmail(user.email || "");
 
