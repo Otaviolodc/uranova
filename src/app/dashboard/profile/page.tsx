@@ -9,13 +9,14 @@ export const revalidate = 0;
 export default async function ProfilePage() {
   const supabase = await createClient();
 
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const authResponse = await supabase.auth.getUser();
 
-  console.log("USER PROFILE:", user);
-  console.log("USER ERROR:", userError);
+console.log(
+  "AUTH RESPONSE PROFILE:",
+  JSON.stringify(authResponse, null, 2)
+);
+
+const user = authResponse.data.user;
 
   if (!user) {
     redirect("/auth/login");

@@ -8,13 +8,14 @@ export default async function AccountPage() {
 
   const supabase = await createClient();
 
-  const {
-  data: { user },
-  error: userError,
-} = await supabase.auth.getUser();
+  const authResponse = await supabase.auth.getUser();
 
-console.log("USER ACCOUNT:", user);
-console.log("USER ERROR:", userError);
+console.log(
+  "AUTH RESPONSE ACCOUNT:",
+  JSON.stringify(authResponse, null, 2)
+);
+
+const user = authResponse.data.user;
 
   if (!user) {
     return (
