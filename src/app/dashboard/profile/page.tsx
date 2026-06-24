@@ -9,7 +9,7 @@ export default async function ProfilePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log("USER:", user);
+  console.log("USER PROFILE:", user);
 
   if (!user) {
   return (
