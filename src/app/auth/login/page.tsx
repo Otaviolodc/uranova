@@ -65,11 +65,15 @@ export default function LoginPage() {
 
   setLoading(false);
 
+  await new Promise((resolve) =>
+  setTimeout(resolve, 1000)
+);
+
   if (profile?.role === "admin") {
-    router.push("/admin");
-  } else {
-    router.push("/dashboard/links");
-  }
+  window.location.href = "/admin";
+} else {
+  window.location.href = "/dashboard/links";
+}
 };
 
   // 🚀 CADASTRO
