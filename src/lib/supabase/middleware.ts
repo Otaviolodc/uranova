@@ -53,6 +53,21 @@ export async function updateSession(
   } = await supabase.auth.getUser();
 
   console.log(
+  "MIDDLEWARE URL:",
+  request.nextUrl.pathname
+);
+
+console.log(
+  "MIDDLEWARE USER:",
+  user?.email
+);
+
+console.log(
+  "MIDDLEWARE COOKIES:",
+  request.cookies.getAll()
+);
+
+  console.log(
     "MIDDLEWARE USER:",
     user?.email
   );
