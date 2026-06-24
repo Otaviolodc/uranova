@@ -30,39 +30,62 @@ export default function ProfilePage() {
 
       setEmail(user.email || "");
 
-      const { data } = await supabase
-        .from("profiles")
-        .select(`
-          name,
-          username,
-          avatar_url,
-          phone,
-          city,
-          state,
-          address,
-          is_pro,
-          created_at
-        `)
-        .eq("id", user.id)
-        .single();
+      const {
+  data,
+  error,
+} = await supabase
+  .from("profiles")
+  .select(`
+    name,
+    username,
+    avatar_url,
+    phone,
+    city,
+    state,
+    address,
+    is_pro,
+    created_at
+  `)
+  .eq("id", user.id)
+  .single();
 
-      if (data) {
-        setProfile(data);
-      }
-    }
+console.log(data);
+console.log(error);
 
-    loadProfile();
-  }, []);
+if (error) {
+  console.error(error);
 
-  if (!profile) {
-    return (
-      <div className="text-zinc-400">
-        Carregando...
-      </div>
-    );
-  }
+  setProfile({
+    name: null,
+    username: null,
+    avatar_url: null,
+    phone: null,
+    city: null,
+    state: null,
+    address: null,
+    is_pro: false,
+    created_at: new Date().toISOString(),
+  });
 
+  return;
+}
+
+setProfile(data);
+}
+
+loadProfile();
+
+}, []);
+
+if (!profile) {
   return (
+    <div className="flex items-center justify-center h-[400px] text-zinc-400">
+      Carregando perfil...
+    </div>
+  );
+}
+
+return (
 
     <div className="space-y-8">
 
