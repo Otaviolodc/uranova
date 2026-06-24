@@ -1,6 +1,5 @@
 "use client";
 
-import ProfileTabs from "@/components/dashboard/ProfileTabs";
 import Image from "next/image";
 import { supabase }
 from "@/lib/supabase/client";
@@ -303,8 +302,6 @@ if (error) {
   return (
 
     <div className="space-y-8">
-
-  <ProfileTabs />
 
   <div className="flex bg-black text-white min-h-screen">
 

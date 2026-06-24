@@ -1,6 +1,5 @@
 "use client";
 
-import ProfileTabs from "@/components/dashboard/ProfileTabs";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 
@@ -52,8 +51,6 @@ export default function AccountPage() {
 
   return (
     <div className="space-y-8">
-
-      <ProfileTabs />
 
       <div>
         <h1 className="text-4xl font-bold text-white">

@@ -1,6 +1,5 @@
 "use client";
 
-import ProfileTabs from "@/components/dashboard/ProfileTabs";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
@@ -66,8 +65,6 @@ export default function ProfilePage() {
   return (
 
     <div className="space-y-8">
-
-      <ProfileTabs />
 
       {/* HEADER */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
