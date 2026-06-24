@@ -1,53 +1,44 @@
-"use client";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase/client";
+export default async function AccountPage() {
 
-export default function AccountPage() {
-  const [email, setEmail] = useState("");
-  const [isPro, setIsPro] = useState(false);
+  const supabase = await createClient();
 
-  useEffect(() => {
-    async function loadUser() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-      if (!user) return;
-
-      setEmail(user.email || "");
-
-      const { data } = await supabase
-        .from("profiles")
-        .select("is_pro")
-        .eq("id", user.id)
-        .single();
-
-      setIsPro(data?.is_pro || false);
-    }
-
-    loadUser();
-  }, []);
-
-  async function handleResetPassword() {
-    if (!email) return;
-
-    const { error } =
-      await supabase.auth.resetPasswordForEmail(
-        email,
-        {
-          redirectTo:
-            `${window.location.origin}/auth/login`,
-        }
-      );
-
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    alert("Email enviado para redefinição da senha.");
+  if (!user) {
+    return (
+      <div className="text-zinc-400">
+        Usuário não encontrado
+      </div>
+    );
   }
+
+  const {
+    data: profile,
+    error,
+  } = await supabase
+    .from("profiles")
+    .select("is_pro")
+    .eq("id", user.id)
+    .single();
+
+  if (error) {
+    console.error(error);
+  }
+
+  if (!profile) {
+  return (
+    <div className="text-zinc-400">
+      Perfil não encontrado
+    </div>
+  );
+}
+
+  const isPro = profile?.is_pro ?? false;
 
   return (
     <div className="space-y-8">
@@ -77,13 +68,14 @@ export default function AccountPage() {
             </p>
 
             <div className="mt-2 bg-black border border-zinc-800 rounded-2xl p-4 text-white">
-              {email}
+              {user.email}
             </div>
           </div>
 
-          <button
-            onClick={handleResetPassword}
+          <a
+            href="/auth/reset-password"
             className="
+              inline-block
               px-6
               py-3
               rounded-2xl
@@ -95,7 +87,7 @@ export default function AccountPage() {
             "
           >
             Alterar Senha
-          </button>
+          </a>
 
         </div>
 
@@ -108,7 +100,14 @@ export default function AccountPage() {
           ⭐ Plano
         </h2>
 
-        <div className="flex items-center justify-between">
+        <div className="
+          flex
+          flex-col
+          md:flex-row
+          md:items-center
+          md:justify-between
+          gap-6
+        ">
 
           <div>
 
@@ -123,7 +122,8 @@ export default function AccountPage() {
           </div>
 
           {!isPro && (
-            <button
+            <Link
+              href="/checkout/pro"
               className="
                 px-6
                 py-3
@@ -136,7 +136,8 @@ export default function AccountPage() {
               "
             >
               Upgrade para PRO
-            </button>
+            </Link>
+             
           )}
 
         </div>
