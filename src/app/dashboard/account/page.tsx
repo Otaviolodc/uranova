@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
@@ -8,6 +9,8 @@ export default async function AccountPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  console.log("USER ACCOUNT:", user);
 
   if (!user) {
     return (
@@ -25,6 +28,9 @@ export default async function AccountPage() {
     .select("is_pro")
     .eq("id", user.id)
     .single();
+
+  console.log("PROFILE ACCOUNT:", profile);
+  console.log("ERROR ACCOUNT:", error);
 
   if (error) {
     console.error(error);

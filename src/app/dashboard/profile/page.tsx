@@ -9,6 +9,8 @@ export default async function ProfilePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  console.log("USER:", user);
+
   if (!user) {
   return (
     <div className="text-zinc-400">
@@ -62,6 +64,8 @@ return (
             alt="Avatar"
             width={128}
             height={128}
+            loading="eager"
+            priority
             className="
               w-32
               h-32
