@@ -18,41 +18,66 @@ type Profile = {
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  async function fetchProfile() {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    async function fetchProfile() {
+      try {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
 
-    console.log("SESSION:", session);
+        console.log("USER:", user);
+        console.log("USER ERROR:", userError);
 
-    if (!session?.user) return;
+        if (!user) {
+          setLoading(false);
+          return;
+        }
 
-    setEmail(session.user.email || "");
+        setEmail(user.email || "");
 
-    const response = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", session.user.id)
-      .single();
+        const {
+          data,
+          error,
+        } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
 
-     console.log("PROFILE RESPONSE:", response);
-     console.log("PROFILE DATA:", response.data);
-     console.log("PROFILE ERROR:", response.error);
+        console.log("PROFILE DATA:", data);
+        console.log("PROFILE ERROR:", error);
 
-    if (response.data) {
-      setProfile(response.data);
+        if (error) {
+          setLoading(false);
+          return;
+        }
+
+        setProfile(data);
+      } catch (err) {
+        console.error("PROFILE PAGE:", err);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
 
-  fetchProfile();
-}, []);
+    fetchProfile();
+  }, []);
 
-  if (!profile) {
+  if (loading) {
     return (
       <div className="p-8 text-zinc-400">
         Carregando perfil...
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="p-8 text-red-400">
+        Perfil não encontrado
       </div>
     );
   }
@@ -66,6 +91,9 @@ export default function ProfilePage() {
       <div>Nome: {profile.name || "-"}</div>
       <div>Email: {email}</div>
       <div>Username: @{profile.username}</div>
+      <div>Telefone: {profile.phone || "-"}</div>
+      <div>Cidade: {profile.city || "-"}</div>
+      <div>Estado: {profile.state || "-"}</div>
       <div>Plano: {profile.is_pro ? "PRO" : "FREE"}</div>
     </div>
   );
