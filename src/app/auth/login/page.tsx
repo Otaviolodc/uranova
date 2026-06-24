@@ -19,7 +19,6 @@ export default function LoginPage() {
 
   // 🚀 LOGIN
   const handleLogin = async () => {
-
   setLoading(true);
 
   const { error } =
@@ -34,11 +33,26 @@ export default function LoginPage() {
     return;
   }
 
+  // TESTE
+  const sessionResult =
+    await supabase.auth.getSession();
+
+  console.log(
+    "LOGIN SESSION:",
+    sessionResult
+  );
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
+  console.log(
+    "LOGIN USER:",
+    user
+  );
+
   if (!user) {
+    alert("Usuário não encontrado após login");
     setLoading(false);
     return;
   }
@@ -49,20 +63,13 @@ export default function LoginPage() {
     .eq("id", user.id)
     .single();
 
+  setLoading(false);
+
   if (profile?.role === "admin") {
-
-  setLoading(false);
-
-  router.push("/admin");
-
-} else {
-
-  setLoading(false);
-
-  router.push("/dashboard/links");
-
-}
-
+    router.push("/admin");
+  } else {
+    router.push("/dashboard/links");
+  }
 };
 
   // 🚀 CADASTRO
