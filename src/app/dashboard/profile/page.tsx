@@ -7,33 +7,34 @@ export default function ProfilePage() {
 
   useEffect(() => {
 
-    async function test() {
+    const timer = setTimeout(async () => {
 
       const session =
         await supabase.auth.getSession();
 
       console.log(
-        "GET SESSION:",
+        "GET SESSION DELAY:",
         session
       );
 
-      const user =
-        await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       console.log(
-        "GET USER:",
+        "GET USER DELAY:",
         user
       );
 
-    }
+    }, 3000);
 
-    test();
+    return () => clearTimeout(timer);
 
   }, []);
 
   return (
     <div className="p-8 text-white">
-      TESTE PROFILE
+      TESTE PROFILE DELAY
     </div>
   );
 }
