@@ -18,10 +18,12 @@ export default function TopProducts() {
   async function fetchProducts() {
 
     const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  data: { session },
+} = await supabase.auth.getSession();
 
-    if (!user) return;
+if (!session?.user) return;
+
+const user = session.user;
 
     const {
       data,

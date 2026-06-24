@@ -24,38 +24,37 @@ export default function RecentSales() {
   async function fetchSales() {
 
     const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  data: { session },
+} = await supabase.auth.getSession();
 
-    if (!user) return;
+const user = session?.user;
+
+if (!user) return;
 
     const {
-      data,
-      error,
-    } = await supabase
-      .from("orders")
-      .select(`
-        id,
-        customer_name,
-        amount,
-        status,
-        created_at,
-        products (
-        title
-        )
-      `)
-      .eq("user_id", user.id)
-      .order("created_at", {
-        ascending: false,
-      })
-      .limit(10);
+  data,
+  error,
+} = await supabase
+  .from("orders")
+  .select(`
+    id,
+    customer_name,
+    amount,
+    status,
+    created_at,
+    products (
+      title
+    )
+  `)
+  .eq("user_id", user.id)
+  .order("created_at", {
+    ascending: false,
+  })
+  .limit(10);
 
-    if (error) {
-
-  console.error(error);
-
+if (error) {
+  console.error("RecentSales:", error);
   return;
-
 }
 
     setSales((data as Sale[]) || []);

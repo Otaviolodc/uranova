@@ -627,11 +627,19 @@ if (error) {
         <button
           onClick={handleSave}
           disabled={loading}
-          className="w-full mt-8 bg-green-500 hover:bg-green-400 transition text-black font-bold py-4 rounded-2xl text-lg"
+          className="
+          w-full 
+          mt-8 
+          bg-green-500 
+          hover:bg-green-400 
+          transition 
+          text-black 
+          font-bold 
+          py-4 
+          rounded-2xl 
+          text-lg"
         >
-          {loading
-            ? "Salvando..."
-            : "💾 Salvar Alterações"}
+          {loading ? "Salvando..." : "💾 Salvar Alterações"}
         </button>
 
       </div>

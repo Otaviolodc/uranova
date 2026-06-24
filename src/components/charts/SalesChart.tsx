@@ -14,26 +14,45 @@ import {
 
 export default function SalesChart() {
 
-  const [data, setData] = useState<any[]>([]);
+  type ChartData = {
+  day: string;
+  revenue: number;
+};
+
+const [data, setData] =
+  useState<ChartData[]>([]);
   const [mounted, setMounted] = useState(false);
 
   async function fetchSales() {
 
     const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  data: { session },
+} = await supabase.auth.getSession();
 
-    if (!user) return;
+const user = session?.user;
 
-    const { data: orders } = await supabase
-      .from("orders")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", {
-        ascending: true,
-      });
+if (!user) return;
 
-    const grouped: any = {};
+    const {
+  data: orders,
+  error,
+} = await supabase
+  .from("orders")
+  .select(`
+    amount,
+    created_at
+  `)
+  .eq("user_id", user.id)
+  .order("created_at", {
+    ascending: true,
+  });
+
+if (error) {
+  console.error(error);
+  return;
+}
+
+    const grouped: Record<string, number> = {};
 
     (orders || []).forEach((order) => {
 

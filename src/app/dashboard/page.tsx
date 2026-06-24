@@ -19,15 +19,14 @@ type Order = {
   created_at: string;
 };
 
-const [orders, setOrders] =
-  useState<Order[]>([]);
-
 async function fetchOrders() {
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  data: { session },
+} = await supabase.auth.getSession();
 
-  if (!user) return;
+const user = session?.user;
+
+if (!user) return;
 
   const {
   data,
@@ -42,13 +41,11 @@ async function fetchOrders() {
 
 if (error) {
 
-  console.error(error);
+  console.error("Dashboard:", error);
 
   return;
 
 }
-
-  setOrders(data || []);
 
   const totalRevenue =
     data?.reduce(

@@ -75,7 +75,7 @@ export default function UserMenu({
               font-black
             "
           >
-            {profile?.name?.[0]?.toUpperCase() || "U"}
+            {profile?.name?.[0]?.toUpperCase() || "..."}
           </div>
 
         )}
@@ -83,13 +83,15 @@ export default function UserMenu({
         <div className="hidden md:block text-left">
 
           <h2 className="font-bold text-white">
-            {profile?.name || "Usuário"}
+            {profile?.name ?? "Carregando..."}
           </h2>
 
           <p className="text-zinc-500 text-sm">
-            {profile?.is_pro
-              ? "Plano PRO"
-              : "Plano Free"}
+            {profile
+             ? profile.is_pro
+               ? "Plano PRO"
+               : "Plano FREE"
+             : "Carregando"}
           </p>
 
         </div>

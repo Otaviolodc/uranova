@@ -30,7 +30,7 @@ export default function Sidebar() {
   { icon: "👥", name: "Clientes", href: "/dashboard/customers" },
   { icon: "📋", name: "Pedidos", href: "/dashboard/orders" },
   { icon: "💰", name: "Financeiro", href: "/dashboard/finance" },
-  { icon: "⚙️", name: "Configurações", href: "/dashboard/settings" },
+  { icon: "🎨", name: "Editar Perfil", href: "/dashboard/settings" },
 ];
 
   return (

@@ -1,24 +1,59 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase/client";
 import UserMenu from "./UserMenu";
-import { createClient } from "@/lib/supabase/server";
 
-export default async function Topbar() {
-  const supabase = await createClient();
+type Profile = {
+  name: string | null;
+  avatar_url: string | null;
+  is_pro: boolean;
+};
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export default function Topbar() {
+  const [profile, setProfile] = useState<Profile | null>(null);
 
-  if (!user) return null;
+  useEffect(() => {
+    async function fetchProfile() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select(`
-      name,
-      avatar_url,
-      is_pro
-    `)
-    .eq("id", user.id)
-    .single();
+      if (!user) {
+        setProfile(null);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select(`
+          name,
+          avatar_url,
+          is_pro
+        `)
+        .eq("id", user.id)
+        .single();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setProfile(data as Profile);
+    }
+
+    fetchProfile();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      fetchProfile();
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   return (
     <header
@@ -56,10 +91,8 @@ export default async function Topbar() {
         />
       </div>
 
-      {/* Direita */}
       <div className="flex items-center gap-4">
 
-        {/* Notificações */}
         <button
           title="Notificações"
           className="
@@ -79,7 +112,6 @@ export default async function Topbar() {
           🔔
         </button>
 
-        {/* Badge PRO/FREE */}
         <div
           className={`
             hidden
@@ -99,7 +131,6 @@ export default async function Topbar() {
           {profile?.is_pro ? "💎 PRO" : "FREE"}
         </div>
 
-        {/* Menu do usuário */}
         <UserMenu profile={profile} />
 
       </div>
