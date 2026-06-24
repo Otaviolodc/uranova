@@ -20,38 +20,34 @@ export default function ProfilePage() {
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    async function fetchProfile() {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+  async function fetchProfile() {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-      if (!session?.user) return;
+    console.log("SESSION:", session);
 
-      setEmail(session.user.email || "");
+    if (!session?.user) return;
 
-      const { data } = await supabase
-        .from("profiles")
-        .select(`
-          name,
-          username,
-          avatar_url,
-          phone,
-          city,
-          state,
-          address,
-          is_pro,
-          created_at
-        `)
-        .eq("id", session.user.id)
-        .single();
+    setEmail(session.user.email || "");
 
-      if (data) {
-        setProfile(data);
-      }
+    const response = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", session.user.id)
+      .single();
+
+    console.log("PROFILE RESPONSE:", response);
+    console.log("PROFILE DATA:", response.data);
+    console.log("PROFILE ERROR:", response.error);
+
+    if (response.data) {
+      setProfile(response.data);
     }
+  }
 
-    fetchProfile();
-  }, []);
+  fetchProfile();
+}, []);
 
   if (!profile) {
     return (
