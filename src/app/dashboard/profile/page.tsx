@@ -37,9 +37,9 @@ export default function ProfilePage() {
       .eq("id", session.user.id)
       .single();
 
-    console.log("PROFILE RESPONSE:", response);
-    console.log("PROFILE DATA:", response.data);
-    console.log("PROFILE ERROR:", response.error);
+     console.log("PROFILE RESPONSE:", response);
+     console.log("PROFILE DATA:", response.data);
+     console.log("PROFILE ERROR:", response.error);
 
     if (response.data) {
       setProfile(response.data);
