@@ -1,40 +1,33 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 
 export default function ProfilePage() {
+  const [result, setResult] = useState("Carregando...");
 
   useEffect(() => {
-
-    const timer = setTimeout(async () => {
-
-      const session =
-        await supabase.auth.getSession();
-
-      console.log(
-        "GET SESSION DELAY:",
-        session
-      );
-
+    async function test() {
       const {
-        data: { user },
-      } = await supabase.auth.getUser();
+        data: { session },
+      } = await supabase.auth.getSession();
 
-      console.log(
-        "GET USER DELAY:",
-        user
-      );
+      if (session?.user) {
+        setResult(
+          `USUARIO: ${session.user.email}`
+        );
+        return;
+      }
 
-    }, 3000);
+      setResult("SEM SESSAO");
+    }
 
-    return () => clearTimeout(timer);
-
+    test();
   }, []);
 
   return (
     <div className="p-8 text-white">
-      TESTE PROFILE DELAY
+      {result}
     </div>
   );
 }
