@@ -1,86 +1,49 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/server";
 
-type Profile = {
-  name: string | null;
-  username: string | null;
-  avatar_url: string | null;
-  phone: string | null;
-  city: string | null;
-  state: string | null;
-  address: string | null;
-  is_pro: boolean;
-  created_at: string;
-};
+export default async function ProfilePage() {
+  const supabase = await createClient();
 
-export default function ProfilePage() {
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [email, setEmail] = useState("");
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  useEffect(() => {
-    async function loadProfile() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  if (!user) {
+  return (
+    <div className="text-zinc-400">
+      Usuário não encontrado
+    </div>
+  );
+}
 
-      if (!user) return;
+  const {
+    data: profile,
+    error,
+  } = await supabase
+    .from("profiles")
+    .select(`
+      name,
+      username,
+      avatar_url,
+      phone,
+      city,
+      state,
+      address,
+      is_pro,
+      created_at
+    `)
+    .eq("id", user.id)
+    .single();
 
-      setEmail(user.email || "");
-
-      const {
-  data,
-  error,
-} = await supabase
-  .from("profiles")
-  .select(`
-    name,
-    username,
-    avatar_url,
-    phone,
-    city,
-    state,
-    address,
-    is_pro,
-    created_at
-  `)
-  .eq("id", user.id)
-  .single();
-
-console.log(data);
-console.log(error);
-
-if (error) {
+    if (error) {
   console.error(error);
-
-  setProfile({
-    name: null,
-    username: null,
-    avatar_url: null,
-    phone: null,
-    city: null,
-    state: null,
-    address: null,
-    is_pro: false,
-    created_at: new Date().toISOString(),
-  });
-
-  return;
 }
-
-setProfile(data);
-}
-
-loadProfile();
-
-}, []);
 
 if (!profile) {
   return (
-    <div className="flex items-center justify-center h-[400px] text-zinc-400">
-      Carregando perfil...
+    <div className="text-zinc-400">
+      Perfil não encontrado
     </div>
   );
 }
@@ -94,9 +57,11 @@ return (
 
         <div className="flex flex-col md:flex-row items-center gap-8">
 
-          <img
+          <Image
             src={profile.avatar_url || "/logo.png"}
             alt="Avatar"
+            width={128}
+            height={128}
             className="
               w-32
               h-32
@@ -155,7 +120,7 @@ return (
             </p>
 
             <div className="mt-2 bg-black rounded-2xl p-4 text-white">
-              {email}
+              {user.email}
             </div>
           </div>
 
@@ -215,7 +180,9 @@ return (
         </p>
 
         <h3 className="text-xl font-bold text-green-400 mt-2">
-          {new Date(profile.created_at).toLocaleDateString("pt-BR")}
+          {profile.created_at
+            ? new Date(profile.created_at).toLocaleDateString("pt-BR")
+            : "-"}
         </h3>
 
       </div>
