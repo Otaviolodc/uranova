@@ -1,5 +1,6 @@
 "use client";
 
+import ProfileTabs from "@/components/dashboard/ProfileTabs";
 import Image from "next/image";
 import { supabase }
 from "@/lib/supabase/client";
@@ -220,7 +221,7 @@ const { data } = supabase.storage
 setAvatarUrl(data.publicUrl);
 };
 
-  // 💾 salvar
+  // 💾 Salvar
   const handleSave = async () => {
 
   try {
@@ -301,6 +302,10 @@ if (error) {
 
   return (
 
+    <div className="space-y-8">
+
+  <ProfileTabs />
+
   <div className="flex bg-black text-white min-h-screen">
 
     <div className="flex-1 p-4 md:p-8 pt-20 md:pt-8">
@@ -308,9 +313,13 @@ if (error) {
     {/* HEADER */}
     <div className="mb-10">
 
-      <h1 className="text-3xl md:text-5xl font-bold">
-        Editar Perfil
+      <h1 className="text-5xl font-black">
+        🎨 Aparência
       </h1>
+
+      <p className="text-zinc-400 mt-3">
+        Personalize sua página pública e identidade visual.
+      </p>
 
       <p className="text-gray-400 mt-2 text-lg">
         Personalize sua página pública
@@ -362,6 +371,21 @@ if (error) {
        }
 
         <div>
+
+          <div
+            className="
+              bg-green-500/20
+              text-green-400
+              px-4
+              py-1
+              rounded-full
+              w-fit
+              font-semibold
+              mb-4
+            "
+          >
+            🎨 Aparência da Página
+          </div>
 
           <div className="flex items-center gap-3">
 
@@ -600,6 +624,8 @@ if (error) {
 
 </div>
 
+</div>
+
         {/* BOTÃO */}
         <button
           onClick={handleSave}
@@ -608,26 +634,49 @@ if (error) {
         >
           {loading
             ? "Salvando..."
-            : "Salvar Perfil"}
+            : "💾 Salvar Alterações"}
         </button>
 
       </div>
 
       {/* PREVIEW */}
-      <ProfilePreview
-        username={username}
-        bio={bio}
-        avatarUrl={avatarUrl}
-        themeColor={themeColor}
-        productTextColor={
-          productTextColor
-        }
-      />
+<div>
 
-      <ThemeCustomizer
-  profile={profile}
-  reloadProfile={fetchProfile}
-/>
+  <ProfilePreview
+    username={username}
+    bio={bio}
+    avatarUrl={avatarUrl}
+    themeColor={themeColor}
+    productTextColor={productTextColor}
+  />
+
+  <div
+    className="
+      mt-5
+      bg-zinc-900
+      border
+      border-zinc-800
+      rounded-3xl
+      p-5
+    "
+  >
+    <h3 className="text-white font-bold mb-2">
+      👀 Prévia em tempo real
+    </h3>
+
+    <p className="text-zinc-400 text-sm">
+      As alterações feitas aqui serão exibidas na sua página pública.
+    </p>
+
+  </div>
+
+  <ThemeCustomizer
+    profile={profile}
+    reloadProfile={fetchProfile}
+  />
+
+</div>
+
     </div>
 
   </div>

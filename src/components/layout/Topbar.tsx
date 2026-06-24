@@ -240,19 +240,19 @@ setProfile(data as Profile);
   </Link>
 
   <Link
-    href="/dashboard/settings"
-    onClick={() => setOpenMenu(false)}
-    className="
-      flex
-      items-center
-      px-5
-      py-4
-      hover:bg-zinc-900
-      transition
-    "
-  >
-    ⚙️ Configurações
-  </Link>
+  href="/dashboard/account"
+  onClick={() => setOpenMenu(false)}
+  className="
+    flex
+    items-center
+    px-5
+    py-4
+    hover:bg-zinc-900
+    transition
+  "
+>
+  ⚙️ Configurações
+</Link>
 
   <Link
     href="/auth/logout"
