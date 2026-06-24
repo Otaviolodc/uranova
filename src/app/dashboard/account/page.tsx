@@ -9,12 +9,12 @@ export default async function AccountPage() {
   const supabase = await createClient();
 
   const {
-  data: { session },
-} = await supabase.auth.getSession();
+  data: { user },
+  error: userError,
+} = await supabase.auth.getUser();
 
-const user = session?.user;
-
-  console.log("USER ACCOUNT:", user);
+console.log("USER ACCOUNT:", user);
+console.log("USER ERROR:", userError);
 
   if (!user) {
     return (

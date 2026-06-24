@@ -1,12 +1,28 @@
 import { ReactNode } from "react";
+import { redirect } from "next/navigation";
+
 import Sidebar from "@/components/layout/Sidebar";
 import Topbar from "@/components/layout/Topbar";
+import { createClient } from "@/lib/supabase/server";
 
-export default function DashboardLayout({
+export const dynamic = "force-dynamic";
+
+export default async function DashboardLayout({
   children,
 }: {
   children: ReactNode;
 }) {
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   return (
     <div className="flex bg-black min-h-screen">
 
