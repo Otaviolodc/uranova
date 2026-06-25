@@ -165,13 +165,29 @@ if (subscriptionError) {
         {/* LOGO */}
         <div className="text-center mb-8">
 
-          <h1 className="text-4xl font-bold text-green-400">
+          <h1 className="text-5xl font-black text-green-400 tracking-tight">
             Uranova
           </h1>
 
-          <p className="text-gray-400 mt-2">
-            Crie sua página de links premium
-          </p>
+          <div className="mt-4 space-y-2 text-center">
+            <p className="text-white text-lg font-semibold">
+              A plataforma completa para criadores digitais.
+            </p>
+
+            <p className="text-zinc-400 text-sm leading-relaxed">
+              Venda cursos, e-books, assinaturas e muito mais.
+            </p>
+          </div>
+
+          <div className="text-center mt-3 space-y-2">
+            <p className="text-gray-300 text-lg font-semibold">
+              A plataforma completa para criadores digitais.
+            </p>
+
+            <p className="text-gray-500 text-sm">
+              Venda cursos, e-books, assinaturas e muito mais.
+            </p>
+          </div>
 
         </div>
 
