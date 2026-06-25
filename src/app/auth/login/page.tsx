@@ -179,16 +179,6 @@ if (subscriptionError) {
             </p>
           </div>
 
-          <div className="text-center mt-3 space-y-2">
-            <p className="text-gray-300 text-lg font-semibold">
-              A plataforma completa para criadores digitais.
-            </p>
-
-            <p className="text-gray-500 text-sm">
-              Venda cursos, e-books, assinaturas e muito mais.
-            </p>
-          </div>
-
         </div>
 
         {/* USERNAME */}
