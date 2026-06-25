@@ -320,7 +320,7 @@ if (error) {
 
   return (
 
-    <div className="space-y-8">
+  <div className="space-y-8">
 
   <div className="flex bg-black text-white min-h-screen">
 
@@ -426,84 +426,83 @@ if (error) {
 
     </div>
 
-    {/* GRID */}
-    <div className="grid grid-cols-1 xl:grid-cols-[1fr_350px] gap-6 md:gap-10">
+        {/* GRID */}
+    <div className="grid grid-cols-1 xl:grid-cols-[1fr_350px] gap-8 items-start">
 
-      {/* FORM */}
-      <div className="bg-zinc-900/70 backdrop-blur-xl border border-zinc-800 rounded-[32px] p-4 md:p-8 shadow-2xl">
+      {/* COLUNA ESQUERDA */}
+      <div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* FORM */}
+        <div className="bg-zinc-900/70 backdrop-blur-xl border border-zinc-800 rounded-[32px] p-4 md:p-8 shadow-2xl">
 
-          {/* USERNAME */}
-          <div>
-            <label className="text-sm text-zinc-400 mb-2 block">
-              Username
-            </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            <input
-              value={username}
-              onChange={(e) =>
-                setUsername(
-                  e.target.value
-                  .toLowerCase()
-                  .replace(/\s+/g, "_")
-                )
-              }
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4"
-            />
+            {/* USERNAME */}
+            <div>
+              <label className="text-sm text-zinc-400 mb-2 block">
+                Username
+              </label>
+
+              <input
+                value={username}
+                onChange={(e) =>
+                  setUsername(
+                    e.target.value
+                      .toLowerCase()
+                      .replace(/\s+/g, "_")
+                  )
+                }
+                className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4"
+              />
+            </div>
+
+            {/* COR */}
+            <div>
+              <label className="text-sm text-zinc-400 mb-2 block">
+                Cor do tema
+              </label>
+
+              <input
+                type="color"
+                value={themeColor}
+                onChange={(e) =>
+                  setThemeColor(e.target.value)
+                }
+                className="w-full h-16 rounded-2xl bg-zinc-800 border border-zinc-700"
+              />
+            </div>
+
+            {/* TEXTO PRODUTO */}
+            <div>
+              <label className="text-sm text-zinc-400 mb-2 block">
+                Cor texto produto
+              </label>
+
+              <input
+                type="color"
+                value={productTextColor}
+                onChange={(e) =>
+                  setProductTextColor(e.target.value)
+                }
+                className="w-full h-16 rounded-2xl bg-zinc-800 border border-zinc-700"
+              />
+            </div>
+
+            {/* FOTO */}
+            <div>
+              <label className="text-sm text-zinc-400 mb-2 block">
+                Upload da Foto
+              </label>
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleUpload}
+                className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4"
+              />
+            </div>
+
           </div>
-
-          {/* COR */}
-          <div>
-            <label className="text-sm text-zinc-400 mb-2 block">
-              Cor do tema
-            </label>
-
-            <input
-              type="color"
-              value={themeColor}
-              onChange={(e) =>
-                setThemeColor(
-                  e.target.value
-                )
-              }
-              className="w-full h-16 rounded-2xl bg-zinc-800 border border-zinc-700"
-            />
-          </div>
-
-          {/* TEXTO PRODUTO */}
-          <div>
-            <label className="text-sm text-zinc-400 mb-2 block">
-              Cor texto produto
-            </label>
-
-            <input
-              type="color"
-              value={productTextColor}
-              onChange={(e) =>
-                setProductTextColor(
-                  e.target.value
-                )
-              }
-              className="w-full h-16 rounded-2xl bg-zinc-800 border border-zinc-700"
-            />
-          </div>
-
-          {/* FOTO */}
-          <div>
-            <label className="text-sm text-zinc-400 mb-2 block">
-              Upload da Foto
-            </label>
-
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleUpload}
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4"
-           />
-         </div>
-
-        </div>
 
         {/* BIO */}
         <div className="mt-6">
@@ -640,72 +639,75 @@ if (error) {
 
 </div>
 
-</div>
-
-        {/* BOTÃO */}
-        <button
-          onClick={handleSave}
-          disabled={loading}
-          className="
-          w-full 
-          mt-8 
-          bg-green-500 
-          hover:bg-green-400 
-          transition 
-          text-black 
-          font-bold 
-          py-4 
-          rounded-2xl 
-          text-lg"
-        >
-          {loading ? "Salvando..." : "💾 Salvar Alterações"}
-        </button>
-
-      </div>
-
-      {/* PREVIEW */}
-<div>
-
-  <ProfilePreview
-    username={username}
-    bio={bio}
-    avatarUrl={avatarUrl}
-    themeColor={themeColor}
-    productTextColor={productTextColor}
-  />
-
-  <div
+{/* BOTÃO */}
+<div className="mt-8">
+  <button
+    onClick={handleSave}
+    disabled={loading}
     className="
-      mt-5
-      bg-zinc-900
-      border
-      border-zinc-800
-      rounded-3xl
-      p-5
+      w-full
+      bg-green-500
+      hover:bg-green-400
+      transition
+      text-black
+      font-bold
+      py-4
+      rounded-2xl
+      text-lg
     "
   >
-    <h3 className="text-white font-bold mb-2">
-      👀 Prévia em tempo real
-    </h3>
-
-    <p className="text-zinc-400 text-sm">
-      As alterações feitas aqui serão exibidas na sua página pública.
-    </p>
-
-  </div>
-
-  <ThemeCustomizer
-    profile={profile}
-    reloadProfile={fetchProfile}
-  />
-
+    {loading ? "Salvando..." : "💾 Salvar Alterações"}
+  </button>
 </div>
+
+</div> 
+
+</div> 
+
+      {/* COLUNA DIREITA */}
+      <div className="xl:sticky xl:top-8 self-start">
+
+        <ProfilePreview
+          username={username}
+          bio={bio}
+          avatarUrl={avatarUrl}
+          themeColor={themeColor}
+          productTextColor={productTextColor}
+        />
+
+        <div
+          className="
+            mt-5
+            bg-zinc-900
+            border
+            border-zinc-800
+            rounded-3xl
+            p-5
+          "
+        >
+          <h3 className="text-white font-bold mb-2">
+            👀 Prévia em tempo real
+          </h3>
+
+          <p className="text-zinc-400 text-sm">
+            As alterações feitas aqui serão exibidas na sua página pública.
+          </p>
+        </div>
+
+        <ThemeCustomizer
+          profile={profile}
+          reloadProfile={fetchProfile}
+        />
+
+      </div>
 
     </div>
 
   </div>
 
 </div>
-);
 
+</div> 
+
+);
 }
