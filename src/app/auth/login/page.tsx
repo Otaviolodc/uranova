@@ -160,10 +160,10 @@ if (subscriptionError) {
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
 
-      <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
+      <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
 
         {/* LOGO */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-10">
 
           <h1 className="text-5xl font-black text-green-400 tracking-tight">
             Uranova
@@ -175,7 +175,7 @@ if (subscriptionError) {
             </p>
 
             <p className="text-zinc-400 text-sm leading-relaxed">
-              Venda cursos, e-books, assinaturas e muito mais.
+              Venda cursos, e-books, mentorias, assinaturas e produtos digitais.
             </p>
           </div>
 
@@ -227,7 +227,7 @@ if (subscriptionError) {
           {loading
             ? "Carregando..."
             : isLogin
-            ? "Entrar"
+            ? "Acessar Plataforma"
             : "Criar Conta"}
         </button>
 
@@ -239,8 +239,8 @@ if (subscriptionError) {
           className="w-full mt-6 text-gray-400 hover:text-white transition"
         >
           {isLogin
-            ? "Não possui conta? Criar agora"
-            : "Já possui conta? Entrar"}
+            ? "Ainda não possui uma conta?"
+            : "Criar gratuitamente"}
         </button>
 
       </div>
