@@ -227,7 +227,7 @@ if (subscriptionError) {
           {loading
             ? "Carregando..."
             : isLogin
-            ? "Acessar Plataforma"
+            ? "Entrar"
             : "Criar Conta"}
         </button>
 

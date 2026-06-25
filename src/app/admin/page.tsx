@@ -1,4 +1,5 @@
-import { createClient }
+import AdminCard from "@/components/admin/AdminCard";
+import { createClient } 
 from "@/lib/supabase/server";
 
 export default async function AdminPage() {
@@ -31,35 +32,76 @@ export default async function AdminPage() {
     })
     .eq("role", "admin");
 
+    // RECEITA
+  const { data: paidOrders } = await supabase
+    .from("orders")
+    .select("amount")
+    .eq("status", "paid");
+
+  const revenue =
+    paidOrders?.reduce(
+      (total, order) => total + Number(order.amount),
+      0
+    ) ?? 0;
+
+    // PEDIDOS
+  const { count: orders } = await supabase
+    .from("orders")
+    .select("*", {
+      count: "exact",
+      head: true,
+    });
+
   return (
 
     <div>
 
       {/* HEADER */}
-      <div className="mb-10">
+<div className="mb-12">
 
-        <h1 className="
-          text-3xl
-          md:text-5xl
-          font-bold
-        ">
+  <span
+    className="
+      inline-flex
+      items-center
+      rounded-full
+      bg-green-500/10
+      border
+      border-green-500/20
+      px-4
+      py-2
+      text-sm
+      font-semibold
+      text-green-400
+      mb-5
+    "
+  >
+    🛡 Painel Administrativo
+  </span>
 
-          Dashboard Admin 🚀
+  <h1
+    className="
+      text-4xl
+      md:text-6xl
+      font-black
+      tracking-tight
+    "
+  >
+    Bem-vindo, Admin 👋
+  </h1>
 
-        </h1>
+  <p
+    className="
+      mt-4
+      max-w-2xl
+      text-zinc-400
+      text-lg
+      leading-relaxed
+    "
+  >
+    Controle usuários, produtos, vendas e acompanhe os principais indicadores da plataforma Uranova em tempo real.
+  </p>
 
-        <p className="
-          text-zinc-400
-          mt-3
-          text-base
-          md:text-lg
-        ">
-
-          Controle total da plataforma Uranova
-
-        </p>
-
-      </div>
+</div>
 
       {/* CARDS */}
       <div className="
@@ -69,192 +111,136 @@ export default async function AdminPage() {
         gap-6
       ">
 
-        {/* USERS */}
-        <div className="
-          bg-zinc-900
-          border
-          border-zinc-800
-          rounded-3xl
-          p-5 
-          md:p-8
-        ">
+        <AdminCard
+          icon="👥"
+          title="Usuários"
+          value={users ?? 0}
+        />
 
-          <p className="
-            text-zinc-400
-            mb-3
-          ">
+        <AdminCard
+          icon="📦"
+          title="Produtos"
+          value={products ?? 0}
+        />
 
-            Usuários
+        <AdminCard
+          icon="👑"
+          title="Admins"
+          value={admins ?? 0}
+        />
 
-          </p>
+        <AdminCard
+          icon="💳"
+          title="Pedidos"
+          value={orders ?? 0}
+        />
 
-          <h2 className="
-            text-4xl md:text-6xl
-            font-bold
-          ">
+        <AdminCard
+          icon="💰"
+          title="Receita"
+          value={`R$ ${revenue.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+          })}`}
+          valueColor="text-green-400"
+        />
 
-            {users}
+        <AdminCard
+          icon="🟢"
+          title="Sistema"
+          value="Online"
+          valueColor="text-green-400"
+        />
 
-          </h2>
+      </div>
 
+    {/* RESUMO */}
+<div className="mt-10">
+
+  <h2 className="text-2xl font-bold mb-6">
+    📋 Resumo da Plataforma
+  </h2>
+
+  <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
+
+    <div className="grid md:grid-cols-2 gap-6">
+
+      <div className="space-y-4">
+
+        <div className="flex justify-between">
+          <span className="text-zinc-400">
+            Usuários cadastrados
+          </span>
+
+          <span className="font-bold">
+            {users ?? 0}
+          </span>
         </div>
 
-        {/* PRODUCTS */}
-        <div className="
-          bg-zinc-900
-          border
-          border-zinc-800
-          rounded-3xl
-          p-5 
-          md:p-8
-        ">
+        <div className="flex justify-between">
+          <span className="text-zinc-400">
+            Produtos publicados
+          </span>
 
-          <p className="
-            text-zinc-400
-            mb-3
-          ">
-
-            Produtos
-
-          </p>
-
-          <h2 className="
-            text-4xl md:text-6xl
-            font-bold
-          ">
-
-            {products}
-
-          </h2>
-
+          <span className="font-bold">
+            {products ?? 0}
+          </span>
         </div>
 
-        {/* ADMINS */}
-        <div className="
-          bg-zinc-900
-          border
-          border-zinc-800
-          rounded-3xl
-          p-5 
-          md:p-8
-        ">
+        <div className="flex justify-between">
+          <span className="text-zinc-400">
+            Administradores
+          </span>
 
-          <p className="
-            text-zinc-400
-            mb-3
-          ">
-
-            Admins
-
-          </p>
-
-          <h2 className="
-            text-4xl md:text-6xl
-            font-bold
-          ">
-
-            {admins}
-
-          </h2>
-
+          <span className="font-bold">
+            {admins ?? 0}
+          </span>
         </div>
 
-        {/* CONVERSÃO */}
-        <div className="
-          bg-zinc-900
-          border
-          border-zinc-800
-          rounded-3xl
-          p-5 
-          md:p-8
-        ">
+      </div>
 
-          <p className="
-            text-zinc-400
-            mb-3
-          ">
+      <div className="space-y-4">
 
-            Conversão
+        <div className="flex justify-between">
+          <span className="text-zinc-400">
+            Pedidos realizados
+          </span>
 
-          </p>
-
-          <h2 className="
-            text-4xl md:text-6xl
-            font-bold
-            text-green-400
-          ">
-
-            4.8%
-
-          </h2>
-
+          <span className="font-bold">
+            {orders ?? 0}
+          </span>
         </div>
 
-        {/* RECEITA */}
-        <div className="
-          bg-zinc-900
-          border
-          border-zinc-800
-          rounded-3xl
-          p-5 
-          md:p-8
-        ">
+        <div className="flex justify-between">
+          <span className="text-zinc-400">
+            Receita total
+          </span>
 
-          <p className="
-            text-zinc-400
-            mb-3
-          ">
-
-            Receita
-
-          </p>
-
-          <h2 className="
-            text-4xl md:text-6xl
-            font-bold
-            text-green-400
-          ">
-
-            R$ 12K
-
-          </h2>
-
+          <span className="font-bold text-green-400">
+            R$ {revenue.toLocaleString("pt-BR", {
+              minimumFractionDigits: 2,
+            })}
+          </span>
         </div>
 
-        {/* STATUS */}
-        <div className="
-          bg-zinc-900
-          border
-          border-zinc-800
-          rounded-3xl
-          p-5 
-          md:p-8
-        ">
+        <div className="flex justify-between">
+          <span className="text-zinc-400">
+            Status do sistema
+          </span>
 
-          <p className="
-            text-zinc-400
-            mb-3
-          ">
-
-            Sistema
-
-          </p>
-
-          <h2 className="
-            text-3xl md:text-4xl
-            font-bold
-            text-green-400
-          ">
-
-            Online
-
-          </h2>
-
+          <span className="text-green-400 font-bold">
+            🟢 Operacional
+          </span>
         </div>
 
       </div>
 
     </div>
+
+  </div>
+
+</div>
+
+</div>
 
   );
 
