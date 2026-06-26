@@ -4,11 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import UserMenu from "./UserMenu";
 
-type Profile = {
-  name: string | null;
-  avatar_url: string | null;
-  is_pro: boolean;
-};
+import type { Profile } from "@/types/profile";
 
 export default function Topbar() {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -17,26 +13,20 @@ export default function Topbar() {
     async function fetchProfile() {
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  data: { user },
+} = await supabase.auth.getUser();
 
-  if (!session?.user) {
-    setProfile(null);
-    return;
-  }
-
-  const user = session.user;
+if (!user) {
+  setProfile(null);
+  return;
+}
 
   const {
     data,
     error,
   } = await supabase
     .from("profiles")
-    .select(`
-      name,
-      avatar_url,
-      is_pro
-    `)
+    .select("*")
     .eq("id", user.id)
     .single();
 
@@ -46,7 +36,7 @@ export default function Topbar() {
   }
 
   if (data) {
-    setProfile(data);
+    setProfile(data as Profile);
   }
 }
 

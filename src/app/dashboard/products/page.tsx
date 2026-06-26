@@ -1,108 +1,55 @@
 "use client";
 
+import { useProducts } from "@/hooks/useProducts";
+import type { Product } from "@/types/product";
 import ProductForm from "@/components/products/ProductForm";
 import ProductPreview from "@/components/products/ProductPreview";
 import ProductList from "@/components/products/ProductList";
 import ProductStats from "@/components/products/ProductStats";
 import { supabase }
 from "@/lib/supabase/client";
-import { useEffect, useState } from "react";
+
+import { useEffect } from "react";
 
 export default function StorePage() {
 
-  type Product = {
-  id: string;
-  title: string;
-  description: string | null;
-  price: string;
-  image_url: string | null;
-  affiliate_url: string | null;
-  product_type: string | null;
-  is_marketplace: boolean;
-  status: string;
-  checkout_slug: string;
-};
+  const {
+  product,
+  setProduct,
 
-  const [products, setProducts] =
-    useState<Product[]>([]);
+  products,
+  setProducts,
 
-  const fetchProducts = async () => {
+  loading,
+  setLoading,
 
+  updateField,
+
+  resetProduct,
+} = useProducts();
+
+const fetchProducts = async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) return;
 
-  const {
-  data,
-  error,
-} = await supabase
-  .from("products_checkout")
-  .select(`
-    id,
-    title,
-    description,
-    price,
-    image_url,
-    affiliate_url,
-    product_type,
-    is_marketplace,
-    status,
-    checkout_slug
-  `)
-  .eq("user_id", user.id)
-  .order("created_at", {
-    ascending: false,
-  });
+  const { data, error } = await supabase
+    .from("products_checkout")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", {
+      ascending: false,
+    });
 
-if (error) {
-
-  console.error(error);
-
-  return;
-
-}
+  if (error) {
+    console.error(error);
+    return;
+  }
 
   setProducts(data || []);
 };
-
-useEffect(() => {
-  fetchProducts();
-}, []);
-
-  const [title, setTitle] =
-    useState("");
-
-  const [description, setDescription] =
-    useState("");
-
-  const [price, setPrice] =
-    useState("");
-
-  const [
-  affiliateUrl,
-  setAffiliateUrl
-] = useState("");
-
-  const [productType, setProductType] =
-    useState("ebook");
-
-  const [imageUrl, setImageUrl] =
-    useState("");
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [
-  isMarketplace,
-  setIsMarketplace
-] = useState(false);
-
-  const [
-  editingId,
-  setEditingId
-] = useState<string | null>(null);
 
   async function handleUpload(
   e: React.ChangeEvent<HTMLInputElement>
@@ -139,7 +86,10 @@ useEffect(() => {
       .from("products")
       .getPublicUrl(fileName);
 
-  setImageUrl(data.publicUrl);
+  updateField(
+    "image_url",
+    data.publicUrl
+  );
 
 }
   async function handleCreate() {
@@ -161,7 +111,7 @@ useEffect(() => {
       }
 
       const slug =
-        title
+        product.title
           .toLowerCase()
           .replace(/\s+/g, "-") +
         "-" +
@@ -169,27 +119,29 @@ useEffect(() => {
 
       let error;
 
-if (editingId) {
+if (product.id) {
 
   const result =
     await supabase
       .from("products_checkout")
       .update({
-        title,
-        description,
-        price,
+        title: product.title,
+        description: product.description,
+        price: product.price,
 
         affiliate_url:
-          affiliateUrl,
+          product.affiliate_url,
 
-        product_type: productType,
+        product_type:
+          product.product_type,
 
         is_marketplace:
-          isMarketplace,
+          product.is_marketplace,
 
-        image_url: imageUrl,
-      })
-      .eq("id", editingId);
+        image_url:
+          product.image_url,
+})
+.eq("id", product.id);
 
   error = result.error;
 
@@ -202,23 +154,23 @@ if (editingId) {
         {
           user_id: user.id,
 
-          title,
-          description,
-          price,
+          title: product.title,
+          description: product.description,
+          price: product.price,
 
           affiliate_url:
-            affiliateUrl,
+            product.affiliate_url,
 
           product_type:
-            productType,
+            product.product_type,
 
           status: "active",
 
           is_marketplace:
-            isMarketplace,
+            product.is_marketplace,
 
           image_url:
-            imageUrl,
+            product.image_url,
 
           checkout_slug:
             slug,
@@ -235,24 +187,12 @@ if (editingId) {
       }
 
       alert(
-  editingId
-    ? "Produto atualizado ✅"
-    : "Produto criado 🚀"
-);
+        product.id
+          ? "Produto atualizado ✅"
+          : "Produto criado 🚀"
+      );
 
-      setTitle("");
-      setDescription("");
-      setPrice("");
-      setAffiliateUrl("");
-
-      setProductType("ebook");
-      setIsMarketplace(false);
-
-      setImageUrl("");
-
-      setEditingId(null);
-
-      fetchProducts();
+      resetProduct();
 
     } catch (error) {
 
@@ -269,26 +209,8 @@ if (editingId) {
   }
 
   function editProduct(product: Product) {
-  setEditingId(product.id);
-
-  setTitle(product.title);
-  setDescription(product.description);
-  setPrice(product.price);
-  setImageUrl(product.image_url);
-
-  setProductType(
-    product.product_type || "ebook"
-  );
-
-  setIsMarketplace(
-    product.is_marketplace || false
-  );
-
-  setAffiliateUrl(
-    product.affiliate_url || ""
-  );
-
-}
+    setProduct(product);
+  }
 
 async function deleteProduct(id: string) {
 
@@ -339,35 +261,24 @@ async function deleteProduct(id: string) {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
 
         <ProductForm
-  title={title}
-  description={description}
-  price={price}
-  affiliateUrl={affiliateUrl}
-  productType={productType}
-  isMarketplace={isMarketplace}
-  imageUrl={imageUrl}
-  loading={loading}
-  editingId={editingId}
-  setTitle={setTitle}
-  setDescription={setDescription}
-  setPrice={setPrice}
-  setAffiliateUrl={setAffiliateUrl}
-  setProductType={setProductType}
-  setIsMarketplace={setIsMarketplace}
-  handleUpload={handleUpload}
-  handleCreate={handleCreate}
-/>
+          product={product}
+          updateField={updateField}
+          loading={loading}
+          editingId={product.id || null}
+          handleUpload={handleUpload}
+          handleCreate={handleCreate}
+        />
 
-<div>
+      <div>
 
-<ProductPreview
-  title={title}
-  description={description}
-  price={price}
-  imageUrl={imageUrl}
-/>
+        <ProductPreview
+          title={product.title}
+          description={product.description ?? ""}
+          price={product.price}
+          imageUrl={product.image_url ?? ""}
+        />
 
-</div>
+      </div>
 
     <ProductList
       products={products}

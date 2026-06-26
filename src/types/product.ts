@@ -1,0 +1,27 @@
+export type Product = {
+  id: string;
+
+  user_id: string;
+
+  title: string;
+
+  description: string | null;
+
+  price: string;
+
+  image_url: string | null;
+
+  affiliate_url: string | null;
+
+  product_type: string;
+
+  is_marketplace: boolean;
+
+  checkout_slug: string;
+
+  status: string;
+
+  created_at: string;
+
+  updated_at: string | null;
+};

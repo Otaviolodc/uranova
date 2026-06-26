@@ -1,61 +1,47 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/server";
+import { getProfile } from "@/lib/services/profile.service";
 
-export default function AccountPage() {
-  const [email, setEmail] = useState("");
-  const [isPro, setIsPro] = useState(false);
+import AccountHeader from "@/components/dashboard/account/AccountHeader";
+import AccountInfo from "@/components/dashboard/account/AccountInfo";
+import AccountStats from "@/components/dashboard/account/AccountStats";
+import AccountActions from "@/components/dashboard/account/AccountActions";
 
-  useEffect(() => {
-    async function loadAccount() {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+export default async function AccountPage() {
+  const supabase = await createClient();
 
-      if (!session?.user) return;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-      setEmail(session.user.email || "");
+  if (!user) {
+    redirect("/auth/login");
+  }
 
-      const { data } = await supabase
-        .from("profiles")
-        .select("is_pro")
-        .eq("id", session.user.id)
-        .single();
+  const profile = await getProfile(user.id);
 
-      if (data) {
-        setIsPro(data.is_pro);
-      }
-    }
-
-    loadAccount();
-  }, []);
+  if (!profile) {
+    throw new Error("Perfil não encontrado.");
+  }
 
   return (
-    <div className="p-8 text-white space-y-6">
+    <div className="space-y-8 p-8">
+      <AccountHeader />
 
-      <h1 className="text-3xl font-bold">
-        Configurações da Conta
-      </h1>
+      <AccountInfo
+        profile={profile}
+        email={user.email ?? "-"}
+      />
 
-      <div className="bg-zinc-900 p-6 rounded-2xl">
-        <p className="text-zinc-400 mb-2">
-          Email
-        </p>
+      <AccountStats
+        products={0}
+        customers={0}
+        sales={0}
+        isPro={profile.is_pro}
+      />
 
-        <div>{email}</div>
-      </div>
-
-      <div className="bg-zinc-900 p-6 rounded-2xl">
-        <p className="text-zinc-400 mb-2">
-          Plano Atual
-        </p>
-
-        <div className="font-bold text-green-400">
-          {isPro ? "PRO" : "FREE"}
-        </div>
-      </div>
-
+      <AccountActions />
     </div>
   );
 }

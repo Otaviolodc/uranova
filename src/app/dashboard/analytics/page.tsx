@@ -32,6 +32,9 @@ type HeatmapItem = {
   total: number;
 };
 
+  const [mounted, setMounted] = 
+    useState(false);
+
   const [message, setMessage] =
     useState("");
 
@@ -57,10 +60,16 @@ type HeatmapItem = {
 
   async function fetchAnalytics() {
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const { data: userData } =
     await supabase.auth.getUser();
 
   const user = userData.user;
+
+  if (!mounted) return null;
 
   if (!user) return;
 
@@ -669,9 +678,12 @@ return (
           </div>
 
           {/* BARRAS */}
-          <div className="h-72">
+          <div className="w-full h-[300px] min-h-[300px]">
 
-  <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+            >
 
     <LineChart data={chartData}>
 

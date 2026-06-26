@@ -1,46 +1,32 @@
+import type { Product } from "@/types/product";
+
 interface Props {
-  title: string;
-  description: string;
-  price: string;
-  affiliateUrl: string;
-  productType: string;
-  isMarketplace: boolean;
-  imageUrl: string;
+  product: Product;
+
+  updateField: <K extends keyof Product>(
+    field: K,
+    value: Product[K]
+  ) => void;
+
   loading: boolean;
+
   editingId: string | null;
 
-  setTitle: (value: string) => void;
-  setDescription: (value: string) => void;
-  setPrice: (value: string) => void;
-  setAffiliateUrl: (value: string) => void;
-  setProductType: (value: string) => void;
-  setIsMarketplace: (value: boolean) => void;
-
   handleUpload: (
-  e: React.ChangeEvent<HTMLInputElement>
-) => void;
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => void;
+
   handleCreate: () => void;
 }
-
 export default function ProductForm({
-  title,
-  description,
-  price,
-  affiliateUrl,
-  productType,
-  isMarketplace,
-  imageUrl,
+  product,
+  updateField,
   loading,
   editingId,
-  setTitle,
-  setDescription,
-  setPrice,
-  setAffiliateUrl,
-  setProductType,
-  setIsMarketplace,
   handleUpload,
   handleCreate,
 }: Props) {
+  
   return (
     <div
       className="
@@ -59,35 +45,60 @@ export default function ProductForm({
 
         <input
           placeholder="Título"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={product.title}
+          onChange={(e) =>
+            updateField(
+              "title",
+              e.target.value
+            )
+          }
           className="w-full bg-zinc-800 p-4 rounded-2xl"
         />
 
         <textarea
           placeholder="Descrição"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          value={product.description ?? ""}
+          onChange={(e) =>
+            updateField(
+              "description",
+              e.target.value
+            )
+          }
           className="w-full bg-zinc-800 p-4 rounded-2xl h-32"
         />
 
         <input
           placeholder="Preço"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
+          value={product.price}
+          onChange={(e) =>
+            updateField(
+              "price",
+              e.target.value
+            )
+          }
           className="w-full bg-zinc-800 p-4 rounded-2xl"
         />
 
         <input
           placeholder="Link de Venda"
-          value={affiliateUrl}
-          onChange={(e) => setAffiliateUrl(e.target.value)}
+          value={product.affiliate_url ?? ""}
+          onChange={(e) =>
+            updateField(
+              "affiliate_url",
+              e.target.value
+            )
+          }
           className="w-full bg-zinc-800 p-4 rounded-2xl"
         />
 
         <select
-          value={productType}
-          onChange={(e) => setProductType(e.target.value)}
+          value={product.product_type}
+          onChange={(e) =>
+            updateField(
+              "product_type",
+              e.target.value
+            )
+          }
           className="w-full bg-zinc-800 p-4 rounded-2xl"
         >
           <option value="ebook">Ebook</option>
@@ -100,9 +111,12 @@ export default function ProductForm({
         <label className="flex items-center gap-3 text-sm text-zinc-300">
           <input
             type="checkbox"
-            checked={isMarketplace}
+            checked={product.is_marketplace}
             onChange={(e) =>
-              setIsMarketplace(e.target.checked)
+              updateField(
+                "is_marketplace",
+                e.target.checked
+              )
             }
           />
           Publicar no Marketplace
@@ -131,9 +145,9 @@ export default function ProductForm({
           />
         </label>
 
-        {imageUrl && (
+        {product.image_url && (
           <img
-            src={imageUrl}
+            src={product.image_url}
             alt="Capa do produto"
             className="w-48 rounded-2xl"
           />
