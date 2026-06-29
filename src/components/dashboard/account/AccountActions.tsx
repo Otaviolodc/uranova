@@ -9,8 +9,9 @@ export default function AccountActions() {
       description="Gerencie sua conta e assinatura."
     >
       <div className="grid gap-4 md:grid-cols-3">
+
         <Link
-          href="/dashboard/pricing"
+          href="/dashboard/account/upgrade"
           className="
             rounded-2xl
             border
@@ -22,7 +23,7 @@ export default function AccountActions() {
           "
         >
           <h3 className="font-bold text-white">
-            🚀 Upgrade PRO
+            💎 Upgrade PRO
           </h3>
 
           <p className="mt-2 text-sm text-zinc-400">
@@ -30,47 +31,48 @@ export default function AccountActions() {
           </p>
         </Link>
 
-        <button
+        <Link
+          href="/dashboard/account/password"
           className="
             rounded-2xl
             border
             border-zinc-800
             bg-zinc-950
             p-5
-            text-left
             transition
             hover:border-green-500
           "
         >
           <h3 className="font-bold text-white">
-            🔐 Alterar Senha
+            🔒 Alterar Senha
           </h3>
 
           <p className="mt-2 text-sm text-zinc-400">
             Atualize sua senha com segurança.
           </p>
-        </button>
+        </Link>
 
-        <button
+        <Link
+          href="/dashboard/account/delete"
           className="
             rounded-2xl
             border
-            border-zinc-800
+            border-red-500/30
             bg-zinc-950
             p-5
-            text-left
             transition
-            hover:border-green-500
+            hover:border-red-500
           "
         >
-          <h3 className="font-bold text-white">
-            📧 Alterar E-mail
+          <h3 className="font-bold text-red-400">
+            🗑 Excluir Conta
           </h3>
 
           <p className="mt-2 text-sm text-zinc-400">
-            Atualize o endereço de e-mail da sua conta.
+            Remova permanentemente sua conta.
           </p>
-        </button>
+        </Link>
+
       </div>
     </SectionCard>
   );
