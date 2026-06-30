@@ -90,16 +90,20 @@ if (!user) {
       return;
     }
 
-    // 👤 criar perfil
+    // 👤 atualizar perfil criado pelo Trigger
     const { error: profileError } =
-  await supabase
-    .from("profiles")
-    .insert([
-      {
-        id: user.id,
-        username: username.toLowerCase(),
-      },
-    ]);
+      await supabase
+        .from("profiles")
+        .update({
+          username: username.toLowerCase(),
+        })
+        .eq("id", user.id);
+
+     if (profileError) {
+       alert(profileError.message);
+       setLoading(false);
+       return;
+     }   
 
 if (profileError) {
 
