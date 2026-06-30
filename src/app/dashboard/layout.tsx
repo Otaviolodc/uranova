@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { redirect } from "next/navigation";
 
 import Sidebar from "@/components/layout/Sidebar";
 import Topbar from "@/components/layout/Topbar";
@@ -17,10 +18,9 @@ export default async function DashboardLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log(
-    "DASHBOARD LAYOUT USER:",
-    user?.email
-  );
+  if (!user) {
+  redirect("/auth/login");
+}
 
   return (
     <div className="flex bg-black min-h-screen">

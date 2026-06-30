@@ -34,28 +34,15 @@ export default function LoginPage() {
   }
 
   // TESTE
-  const sessionResult =
-    await supabase.auth.getSession();
-
-  console.log(
-    "LOGIN SESSION:",
-    sessionResult
-  );
-
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  data: { user },
+} = await supabase.auth.getUser();
 
-  console.log(
-    "LOGIN USER:",
-    user
-  );
-
-  if (!user) {
-    alert("Usuário não encontrado após login");
-    setLoading(false);
-    return;
-  }
+if (!user) {
+  alert("Usuário não encontrado após login");
+  setLoading(false);
+  return;
+}
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -64,10 +51,6 @@ export default function LoginPage() {
     .single();
 
   setLoading(false);
-
-  await new Promise((resolve) =>
-  setTimeout(resolve, 1000)
-);
 
   if (profile?.role === "admin") {
   window.location.href = "/admin";

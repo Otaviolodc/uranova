@@ -280,15 +280,18 @@ export default function DeleteAccountPage() {
 
           const response = await fetch("/api/account/delete", {
             method: "POST",
-        });
+          });
 
-        const result = await response.json();
+          const result = await response.json();
 
-        console.log(result);
+          if (!response.ok) {
+            alert(result.error ?? "Erro inesperado.");
+            return;
+          }
 
-        alert(result.message);
+          alert(result.message);
 
-        setShowModal(false);
+          setShowModal(false);
 
       }}
         className="flex-1 rounded-xl bg-red-600 py-3 font-semibold text-white transition hover:bg-red-500"
