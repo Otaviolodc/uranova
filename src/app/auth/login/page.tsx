@@ -1,31 +1,33 @@
 "use client";
 
-import { supabase }
-from "@/lib/supabase/client";
 import { useState } from "react";
+import Link from "next/link";
+
+import AuthCard from "@/components/auth/AuthCard";
+import AuthLogo from "@/components/auth/AuthLogo";
+import AuthInput from "@/components/auth/AuthInput";
+import PasswordInput from "@/components/auth/PasswordInput";
+import AuthButton from "@/components/auth/AuthButton";
+import AuthFooter from "@/components/auth/AuthFooter";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase/client";
 
 export default function LoginPage() {
+
   const router = useRouter();
-
-  const [isLogin, setIsLogin] = useState(true);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const [username, setUsername] = useState("");
-
   const [loading, setLoading] = useState(false);
 
-  // 🚀 LOGIN
-  const handleLogin = async () => {
+  async function handleLogin(e: React.FormEvent) {
+  e.preventDefault();
+
   setLoading(true);
 
-  const { error } =
-    await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
   if (error) {
     alert(error.message);
@@ -33,16 +35,15 @@ export default function LoginPage() {
     return;
   }
 
-  // TESTE
   const {
-  data: { user },
-} = await supabase.auth.getUser();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-if (!user) {
-  alert("Usuário não encontrado após login");
-  setLoading(false);
-  return;
-}
+  if (!user) {
+    alert("Usuário não encontrado.");
+    setLoading(false);
+    return;
+  }
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -53,185 +54,66 @@ if (!user) {
   setLoading(false);
 
   if (profile?.role === "admin") {
-  window.location.href = "/admin";
-} else {
-  window.location.href = "/dashboard/links";
-}
-};
-
-  // 🚀 CADASTRO
-  const handleSignup = async () => {
-    setLoading(true);
-
-    if (!username.trim()) {
-      alert("Digite username");
-      setLoading(false);
-      return;
-    }
-
-    // 🔥 criar conta
-    const { data, error } =
-      await supabase.auth.signUp({
-        email,
-        password,
-      });
-
-    if (error) {
-      alert(error.message);
-      setLoading(false);
-      return;
-    }
-
-    const user = data.user;
-
-    if (!user) {
-      alert("Erro ao criar usuário");
-      setLoading(false);
-      return;
-    }
-
-    // 👤 atualizar perfil criado pelo Trigger
-    const { error: profileError } =
-      await supabase
-        .from("profiles")
-        .update({
-          username: username.toLowerCase(),
-        })
-        .eq("id", user.id);
-
-     if (profileError) {
-       alert(profileError.message);
-       setLoading(false);
-       return;
-     }   
-
-if (profileError) {
-
-  alert(profileError.message);
-
-  setLoading(false);
-
-  return;
+    router.replace("/admin");
+  } else {
+    router.replace("/dashboard");
+  }
 
 }
-
-    // 💎 criar assinatura FREE
-    const { error: subscriptionError } =
-  await supabase
-    .from("subscriptions")
-    .insert([
-      {
-        user_id: user.id,
-        plan: "free",
-        status: "active",
-      },
-    ]);
-
-if (subscriptionError) {
-
-  alert(subscriptionError.message);
-
-  setLoading(false);
-
-  return;
-
-}
-
-    alert("Conta criada com sucesso!");
-
-    setLoading(false);
-
-    router.push("/dashboard/links");
-  };
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+    <main className="flex min-h-screen items-center justify-center bg-[#050505] px-6">
+      <AuthCard>
 
-      <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
+        <AuthLogo />
 
-        {/* LOGO */}
-        <div className="text-center mb-10">
+        <h1 className="mt-8 text-center text-3xl font-bold text-white">
+          Entrar na sua conta
+        </h1>
 
-          <h1 className="text-5xl font-black text-green-400 tracking-tight">
-            Uranova
-          </h1>
-
-          <div className="mt-4 space-y-2 text-center">
-            <p className="text-white text-lg font-semibold">
-              A plataforma completa para criadores digitais.
-            </p>
-
-            <p className="text-zinc-400 text-sm leading-relaxed">
-              Venda cursos, e-books, mentorias, assinaturas e produtos digitais.
-            </p>
-          </div>
-
+        <div className="mt-2">
+          <AuthFooter
+            text="Ainda não possui uma conta?"
+            linkText="Criar gratuitamente"
+            href="/auth/signup"
+          />
         </div>
 
-        {/* USERNAME */}
-        {!isLogin && (
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) =>
-              setUsername(e.target.value)
-            }
-            className="w-full bg-zinc-800 p-4 rounded-xl mb-4 outline-none"
+        <form
+          onSubmit={handleLogin}
+          className="mt-8 space-y-5"
+        >
+          <AuthInput
+            label="E-mail"
+            type="email"
+            placeholder="Digite seu e-mail"
+            value={email}
+            onChange={setEmail}
           />
-        )}
 
-        {/* EMAIL */}
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
-          className="w-full bg-zinc-800 p-4 rounded-xl mb-4 outline-none"
-        />
+          <PasswordInput
+            label="Senha"
+            placeholder="Digite sua senha"
+            value={password}
+            onChange={setPassword}
+          />
 
-        {/* SENHA */}
-        <input
-          type="password"
-          placeholder="Senha"
-          value={password}
-          onChange={(e) =>
-            setPassword(e.target.value)
-          }
-          className="w-full bg-zinc-800 p-4 rounded-xl mb-6 outline-none"
-        />
+          <div className="flex justify-end">
+            <Link
+              href="/auth/forgot-password"
+              className="text-sm text-zinc-400 hover:text-green-500 transition"
+            >
+              Esqueci minha senha
+            </Link>
+          </div>
 
-        {/* BOTÃO */}
-        <button
-          onClick={
-            isLogin ? handleLogin : handleSignup
-          }
-          disabled={loading}
-          className="w-full bg-green-500 hover:bg-green-400 transition text-black py-4 rounded-xl font-bold"
-        >
-          {loading
-            ? "Carregando..."
-            : isLogin
-            ? "Entrar"
-            : "Criar Conta"}
-        </button>
+          <AuthButton loading={loading}>
+            Entrar
+          </AuthButton>
 
-        {/* TROCAR LOGIN/CADASTRO */}
-        <button
-          onClick={() =>
-            setIsLogin(!isLogin)
-          }
-          className="w-full mt-6 text-gray-400 hover:text-white transition"
-        >
-          {isLogin
-            ? "Ainda não possui uma conta?"
-            : "Criar gratuitamente"}
-        </button>
+        </form>
 
-      </div>
-
-    </div>
+      </AuthCard>
+    </main>
   );
 }
