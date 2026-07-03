@@ -22,3 +22,22 @@ export async function uploadFile(
 
   return data.publicUrl;
 }
+
+export async function uploadPrivateFile(
+  bucket: string,
+  file: File,
+  fileName: string
+): Promise<string | null> {
+  const { error } = await supabase.storage
+    .from(bucket)
+    .upload(fileName, file, {
+      upsert: true,
+    });
+
+  if (error) {
+    console.error("uploadPrivateFile:", error);
+    return null;
+  }
+
+  return fileName;
+}

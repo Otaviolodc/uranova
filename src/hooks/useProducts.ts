@@ -15,6 +15,8 @@ const emptyProduct: Product = {
 
   image_url: null,
 
+  file_path: null,
+
   affiliate_url: null,
 
   product_type: "ebook",

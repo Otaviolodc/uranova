@@ -16,6 +16,10 @@ interface Props {
     e: React.ChangeEvent<HTMLInputElement>
   ) => void;
 
+  handleProductFileUpload: (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => void;
+
   handleCreate: () => void;
 }
 export default function ProductForm({
@@ -24,6 +28,7 @@ export default function ProductForm({
   loading,
   editingId,
   handleUpload,
+  handleProductFileUpload,
   handleCreate,
 }: Props) {
   
@@ -144,6 +149,35 @@ export default function ProductForm({
             className="hidden"
           />
         </label>
+
+        <label
+          className="
+            border-2
+            border-dashed
+            border-zinc-700
+            rounded-2xl
+            p-8
+            flex
+            justify-center
+            items-center
+            cursor-pointer
+          "
+        >
+          📄 Enviar Produto Digital
+
+          <input
+            type="file"
+            accept=".pdf,.zip,.epub,.doc,.docx,.xls,.xlsx"
+            onChange={handleProductFileUpload}
+            className="hidden"
+          />
+        </label>
+
+        {product.file_path && (
+          <p className="text-green-400 text-sm break-all">
+            📄 {product.file_path}
+          </p>
+        )}
 
         {product.image_url && (
           <img

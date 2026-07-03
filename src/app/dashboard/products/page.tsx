@@ -1,5 +1,6 @@
 "use client";
 
+import { uploadPrivateFile } from "@/lib/services/storage.service";
 import { useProducts } from "@/hooks/useProducts";
 import type { Product } from "@/types/product";
 import ProductForm from "@/components/products/ProductForm";
@@ -35,6 +36,8 @@ const fetchProducts = async () => {
 
   if (!user) return;
 
+  console.log("USER:", user.id);
+
   const { data, error } = await supabase
     .from("products_checkout")
     .select("*")
@@ -42,6 +45,9 @@ const fetchProducts = async () => {
     .order("created_at", {
       ascending: false,
     });
+
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
 
   if (error) {
     console.error(error);
@@ -51,10 +57,64 @@ const fetchProducts = async () => {
   setProducts(data || []);
 };
 
+  useEffect(() => {
+  fetchProducts();
+}, []);
+   
   async function handleUpload(
   e: React.ChangeEvent<HTMLInputElement>
 ) {
+  console.log("UPLOAD INICIADO");
 
+  const file = e.target.files?.[0];
+
+  console.log("ARQUIVO:", file);
+
+  if (!file) return;
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  console.log("USER:", user);
+
+  if (!user) return;
+
+  const fileExt = file.name.split(".").pop();
+
+  const fileName =
+    `${user.id}-${Date.now()}.${fileExt}`;
+
+  console.log("NOME:", fileName);
+
+  const { error } =
+    await supabase.storage
+      .from("products-images")
+      .upload(fileName, file);
+
+  console.log("UPLOAD ERROR:", error);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  const { data } =
+    supabase.storage
+      .from("products-images")
+      .getPublicUrl(fileName);
+
+  console.log("PUBLIC URL:", data.publicUrl);
+
+  updateField(
+    "image_url",
+    data.publicUrl
+  );
+}
+
+async function handleProductFileUpload(
+  e: React.ChangeEvent<HTMLInputElement>
+) {
   const file = e.target.files?.[0];
 
   if (!file) return;
@@ -65,33 +125,25 @@ const fetchProducts = async () => {
 
   if (!user) return;
 
-  const fileExt =
-    file.name.split(".").pop();
+  const fileExt = file.name.split(".").pop();
 
   const fileName =
     `${user.id}-${Date.now()}.${fileExt}`;
 
-  const { error } =
-    await supabase.storage
-      .from("products")
-      .upload(fileName, file);
+  const filePath = await uploadPrivateFile(
+    "products",
+    file,
+    fileName
+  );
 
-  if (error) {
-    alert(error.message);
+  if (!filePath) {
+    alert("Erro ao enviar o arquivo.");
     return;
   }
 
-  const { data } =
-    supabase.storage
-      .from("products")
-      .getPublicUrl(fileName);
+  updateField("file_path", filePath);
+} 
 
-  updateField(
-    "image_url",
-    data.publicUrl
-  );
-
-}
   async function handleCreate() {
 
     try {
@@ -138,8 +190,10 @@ if (product.id) {
         is_marketplace:
           product.is_marketplace,
 
-        image_url:
+        image_url: 
           product.image_url,
+
+        file_path: product.file_path,
 })
 .eq("id", product.id);
 
@@ -169,11 +223,13 @@ if (product.id) {
           is_marketplace:
             product.is_marketplace,
 
-          image_url:
+          image_url: 
             product.image_url,
 
-          checkout_slug:
-            slug,
+          file_path: 
+            product.file_path,
+
+          checkout_slug: slug,
         },
       ]);
 
@@ -193,6 +249,8 @@ if (product.id) {
       );
 
       resetProduct();
+
+      await fetchProducts();
 
     } catch (error) {
 
@@ -266,11 +324,9 @@ async function deleteProduct(id: string) {
           loading={loading}
           editingId={product.id || null}
           handleUpload={handleUpload}
+          handleProductFileUpload={handleProductFileUpload}
           handleCreate={handleCreate}
         />
-
-      <div>
-
         <ProductPreview
           title={product.title}
           description={product.description ?? ""}
@@ -290,7 +346,6 @@ async function deleteProduct(id: string) {
 
 </div>
 
-</div>
 
 );
 

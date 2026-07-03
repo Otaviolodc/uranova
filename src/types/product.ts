@@ -11,6 +11,8 @@ export type Product = {
 
   image_url: string | null;
 
+  file_path: string | null;
+
   affiliate_url: string | null;
 
   product_type: string;
