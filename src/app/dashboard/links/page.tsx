@@ -194,10 +194,10 @@ if (!user) {
   }
 
   const { data } = supabase.storage
-    .from("products")
-    .getPublicUrl(fileName);
+  .from("products")
+  .getPublicUrl(fileName);
 
-  setImageUrl(data.publicUrl);
+setImageUrl(data.publicUrl);
 };
 
 // 🤖 gerar título IA
