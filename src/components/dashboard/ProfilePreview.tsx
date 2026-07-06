@@ -82,9 +82,7 @@ export default function ProfilePreview({
 
           {/* Produtos simulados */}
           <div className="mt-8 space-y-4">
-
             {[1, 2, 3].map((item) => (
-
               <div
                 key={item}
                 className="
@@ -93,47 +91,23 @@ export default function ProfilePreview({
                   border
                   border-white/10
                   rounded-2xl
-                  p-4
+                  px-6
+                  py-5
                   flex
+                  justify-center
                   items-center
-                  gap-4
                 "
               >
-
-                <img
-                  src="/logo.png"
-                  alt="Produto"
-                  className="
-                    w-16
-                    h-16
-                    rounded-xl
-                    object-cover
-                    border
-                    border-zinc-700
-                  "
-                />
-
-                <div>
-
-                  <h3
-                    className="font-bold"
-                    style={{
-                      color: productTextColor || "#ffffff",
-                    }}
-                  >
-                    Produto Digital
-                  </h3>
-
-                  <p className="text-xs text-white/60">
-                    Link afiliado
-                  </p>
-
-                </div>
-
+                <h3
+                  className="text-lg font-semibold text-center"
+                  style={{
+                    color: productTextColor || "#ffffff",
+                  }}
+                >
+                  Produto Digital
+                </h3>
               </div>
-
             ))}
-
           </div>
 
         </div>
