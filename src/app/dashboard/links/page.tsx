@@ -1056,7 +1056,7 @@ if (!user) {
 
               {/* URL */}
               <input
-                placeholder="URL afiliado"
+                placeholder="URL do Link"
                 value={url}
                 onChange={(e) =>
                   setUrl(e.target.value)
