@@ -6,6 +6,7 @@ import {
   Draggable,
 } from "@hello-pangea/dnd";
 
+import { slugify } from "@/lib/slug";
 import { supabase }
 from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
@@ -180,7 +181,7 @@ if (!user) {
 
   const { error } =
     await supabase.storage
-      .from("products")
+      .from("products-images")
       .upload(fileName, file, {
         upsert: true,
       });
@@ -194,7 +195,7 @@ if (!user) {
   }
 
   const { data } = supabase.storage
-  .from("products")
+  .from("products-images")
   .getPublicUrl(fileName);
 
 setImageUrl(data.publicUrl);
@@ -449,13 +450,7 @@ if (!user) {
     }
 
     const slug =
-      title
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/\s+/g, "-") +
-      "-" +
-      Date.now();
+      `${slugify(title)}-${Date.now()}`;
 
     const { error } = await supabase
       .from("links")
