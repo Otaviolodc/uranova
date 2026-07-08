@@ -14,11 +14,6 @@ import {
 
 export default function AnalyticsPage() {
 
-  type AnalyticsItem = {
-  created_at: string;
-  product_id: string;
-};
-
 type ProductRanking = {
   id: string;
   title: string;
@@ -58,18 +53,18 @@ type HeatmapItem = {
   const [heatmapData, setHeatmapData] =
     useState<HeatmapItem[]>([]);
 
-  async function fetchAnalytics() {
-
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  async function fetchAnalytics() {
 
   const { data: userData } =
     await supabase.auth.getUser();
 
   const user = userData.user;
 
-  if (!mounted) return null;
+  if (!mounted) return;
 
   if (!user) return;
 
@@ -254,6 +249,13 @@ setHeatmapData(formattedHeatmap);
     a: ProductRanking,
     b: ProductRanking
     ) => b.total - a.total);
+
+    if (ranking.length === 0) {
+      setTopProducts([]);
+      setViralProducts([]);
+      setViralProduct(null);
+      return;
+    }
 
     // 🤖 gerar insights IA
 

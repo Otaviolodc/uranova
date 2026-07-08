@@ -20,18 +20,40 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] =
     useState(false);
 
-  const menu: MenuItem[] = [
+  const creatorMenu: MenuItem[] = [
   { icon: "🏠", name: "Dashboard", href: "/dashboard" },
   { icon: "🔗", name: "Links", href: "/dashboard/links" },
   { icon: "📦", name: "Produtos", href: "/dashboard/products" },
   { icon: "💳", name: "Checkouts", href: "/dashboard/checkouts" },
-  { icon: "📈", name: "Analytics IA", href: "/dashboard/analytics" },
   { icon: "🛒", name: "Marketplace", href: "/dashboard/marketplace" },
   { icon: "👥", name: "Clientes", href: "/dashboard/customers" },
   { icon: "📋", name: "Pedidos", href: "/dashboard/orders" },
   { icon: "💰", name: "Financeiro", href: "/dashboard/finance" },
-  { icon: "🎨", name: "Aparência", href: "/dashboard/settings",
-},
+  { icon: "📈", name: "Analytics", href: "/dashboard/analytics" },
+];
+  const customerMenu: MenuItem[] = [
+  {
+    icon: "📚",
+    name: "Meus Produtos",
+    href: "/dashboard/customer/products",
+  },
+  {
+    icon: "🧾",
+    name: "Minhas Compras",
+    href: "/dashboard/customer/purchases",
+  },
+  {
+    icon: "⬇️",
+    name: "Downloads",
+    href: "/dashboard/customer/downloads",
+  },
+];
+  const customizationMenu: MenuItem[] = [
+  {
+    icon: "🎨",
+    name: "Aparência",
+    href: "/dashboard/settings",
+  },
 ];
 
   return (
@@ -85,7 +107,25 @@ export default function Sidebar() {
       >
         <nav className="flex flex-col gap-3">
 
-        {menu.map((item) => (
+          {!collapsed && (
+            <div className="mb-2">
+
+              <p
+                className="
+                  text-xs
+                  font-bold
+                  uppercase
+                  tracking-widest
+                  text-green-400
+                "
+              >
+                CRIADOR
+              </p>
+
+            </div>
+          )}
+
+        {creatorMenu.map((item) => (
 
           <Link
             key={item.href}
@@ -116,10 +156,132 @@ export default function Sidebar() {
 
         ))}
 
+          {!collapsed && (
+  <>
+    <div className="border-t border-zinc-800 my-5" />
+
+    <p
+      className="
+        text-xs
+        font-bold
+        uppercase
+        tracking-widest
+        text-green-400
+      "
+    >
+      CLIENTE
+    </p>
+
+  </>
+)}
+
+{customerMenu.map((item) => (
+
+  <Link
+    key={item.href}
+    href={item.href}
+    prefetch={true}
+    title={item.name}
+    className={`
+      flex
+      items-center
+      ${collapsed ? "justify-center" : "gap-3"}
+      px-5
+      py-4
+      rounded-2xl
+      border
+      transition-all
+      duration-200
+
+      ${
+        pathname === item.href ||
+        (
+          item.href !== "/dashboard" &&
+          pathname.startsWith(item.href)
+        )
+          ? "bg-green-500 text-black border-green-400 shadow-[0_0_25px_rgba(34,197,94,0.45)]"
+          : "bg-zinc-900 border-zinc-800 text-white hover:bg-zinc-800 hover:border-green-500/30"
+      }
+    `}
+  >
+    <span>{item.icon}</span>
+
+    {!collapsed && (
+      <span>{item.name}</span>
+    )}
+
+  </Link>
+
+))}
+
+    {!collapsed && (
+  <>
+    <div className="border-t border-zinc-800 my-5" />
+
+    <p
+      className="
+        text-xs
+        font-bold
+        uppercase
+        tracking-widest
+        text-green-400
+      "
+    >
+      PERSONALIZAÇÃO
+    </p>
+
+  </>
+)}
+
+{customizationMenu.map((item) => (
+
+  <Link
+    key={item.href}
+    href={item.href}
+    prefetch={true}
+    title={item.name}
+    className={`
+      flex
+      items-center
+      ${collapsed ? "justify-center" : "gap-3"}
+      px-5
+      py-4
+      rounded-2xl
+      border
+      transition-all
+      duration-200
+
+      ${
+        pathname === item.href ||
+        (
+          item.href !== "/dashboard" &&
+          pathname.startsWith(item.href)
+        )
+          ? "bg-green-500 text-black border-green-400 shadow-[0_0_25px_rgba(34,197,94,0.45)]"
+          : "bg-zinc-900 border-zinc-800 text-white hover:bg-zinc-800 hover:border-green-500/30"
+      }
+    `}
+  >
+    <span>{item.icon}</span>
+
+    {!collapsed && (
+      <span>{item.name}</span>
+    )}
+
+  </Link>
+
+))}
+
       </nav>
 
       </div>
     )}
+
+
+
+
+
+
 
     <aside
       className={`
@@ -182,7 +344,24 @@ export default function Sidebar() {
 
       <nav className="flex flex-col gap-3">
 
-        {menu.map((item) => (
+        {!collapsed && (
+  <>
+    <p
+      className="
+        text-xs
+        font-bold
+        uppercase
+        tracking-widest
+        text-green-400
+        mb-2
+      "
+    >
+      CRIADOR
+    </p>
+  </>
+)}
+
+        {creatorMenu.map((item) => (
 
           <Link
             key={item.href}
@@ -197,9 +376,9 @@ export default function Sidebar() {
               py-4
               rounded-2xl
               border
-              transition-all 
+              transition-all
               duration-200
-              
+
               ${
                 pathname === item.href ||
                 (
@@ -210,16 +389,134 @@ export default function Sidebar() {
                   : "bg-zinc-900 border-zinc-800 text-white hover:bg-zinc-800 hover:border-green-500/30"
               }
             `}
-          >         
-              <span>{item.icon}</span>
+          >
+
+            <span>{item.icon}</span>
 
             {!collapsed && (
               <span>{item.name}</span>
             )}
-              
+
           </Link>
 
         ))}
+
+        {!collapsed && (
+  <>
+    <div className="border-t border-zinc-800 my-5" />
+
+    <p
+      className="
+        text-xs
+        font-bold
+        uppercase
+        tracking-widest
+        text-green-400
+        mb-2
+      "
+    >
+      CLIENTE
+    </p>
+  </>
+)}
+
+{customerMenu.map((item) => (
+
+  <Link
+    key={item.href}
+    href={item.href}
+    prefetch={true}
+    title={item.name}
+    className={`
+      flex
+      items-center
+      ${collapsed ? "justify-center" : "gap-3"}
+      px-5
+      py-4
+      rounded-2xl
+      border
+      transition-all
+      duration-200
+
+      ${
+        pathname === item.href ||
+        (
+          item.href !== "/dashboard" &&
+          pathname.startsWith(item.href)
+        )
+          ? "bg-green-500 text-black border-green-400 shadow-[0_0_25px_rgba(34,197,94,0.45)]"
+          : "bg-zinc-900 border-zinc-800 text-white hover:bg-zinc-800 hover:border-green-500/30"
+      }
+    `}
+  >
+
+    <span>{item.icon}</span>
+
+    {!collapsed && (
+      <span>{item.name}</span>
+    )}
+
+  </Link>
+
+))}
+  
+   {!collapsed && (
+  <>
+    <div className="border-t border-zinc-800 my-5" />
+
+    <p
+      className="
+        text-xs
+        font-bold
+        uppercase
+        tracking-widest
+        text-green-400
+        mb-2
+      "
+    >
+      PERSONALIZAÇÃO
+    </p>
+  </>
+)}
+
+{customizationMenu.map((item) => (
+
+  <Link
+    key={item.href}
+    href={item.href}
+    prefetch={true}
+    title={item.name}
+    className={`
+      flex
+      items-center
+      ${collapsed ? "justify-center" : "gap-3"}
+      px-5
+      py-4
+      rounded-2xl
+      border
+      transition-all
+      duration-200
+
+      ${
+        pathname === item.href ||
+        (
+          item.href !== "/dashboard" &&
+          pathname.startsWith(item.href)
+        )
+          ? "bg-green-500 text-black border-green-400 shadow-[0_0_25px_rgba(34,197,94,0.45)]"
+          : "bg-zinc-900 border-zinc-800 text-white hover:bg-zinc-800 hover:border-green-500/30"
+      }
+    `}
+  >
+    <span>{item.icon}</span>
+
+    {!collapsed && (
+      <span>{item.name}</span>
+    )}
+
+  </Link>
+
+))}
 
       </nav>
 

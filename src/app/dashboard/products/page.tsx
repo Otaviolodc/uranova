@@ -115,13 +115,19 @@ const fetchProducts = async () => {
 async function handleProductFileUpload(
   e: React.ChangeEvent<HTMLInputElement>
 ) {
+  console.log("=== UPLOAD PRODUTO ===");
+
   const file = e.target.files?.[0];
+
+  console.log("FILE:", file);
 
   if (!file) return;
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  console.log("USER:", user);
 
   if (!user) return;
 
@@ -130,11 +136,15 @@ async function handleProductFileUpload(
   const fileName =
     `${user.id}-${Date.now()}.${fileExt}`;
 
+  console.log("FILE NAME:", fileName);
+
   const filePath = await uploadPrivateFile(
     "products",
     file,
     fileName
   );
+
+  console.log("FILE PATH:", filePath);
 
   if (!filePath) {
     alert("Erro ao enviar o arquivo.");
@@ -142,7 +152,9 @@ async function handleProductFileUpload(
   }
 
   updateField("file_path", filePath);
-} 
+
+  console.log("STATE ATUALIZADO");
+}
 
   async function handleCreate() {
 
