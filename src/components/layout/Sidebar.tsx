@@ -188,6 +188,7 @@ export default function Sidebar() {
     href={item.href}
     prefetch={true}
     title={item.name}
+    onClick={() => setMobileOpen(false)}
     className={`
       flex
       items-center
@@ -246,6 +247,7 @@ export default function Sidebar() {
     href={item.href}
     prefetch={true}
     title={item.name}
+    onClick={() => setMobileOpen(false)}
     className={`
       flex
       items-center
