@@ -1,9 +1,6 @@
 import CouponBox
 from "@/components/checkout/CouponBox";
 
-import PixCheckout
-from "@/components/checkout/PixCheckout";
-
 import { createClient }
 from "@/lib/supabase/server";
 import Image from "next/image";
@@ -154,10 +151,25 @@ export default async function CheckoutPage({
             {/* BOTÃO */}
             <div className="mt-12">
 
-              <PixCheckout
-                price={Number(product.price)}
-                userId={product.user_id}
-              />
+              <div
+                className="
+                  mt-8
+                  rounded-2xl
+                  border
+                  border-zinc-800
+                  bg-zinc-900
+                  p-6
+                  text-center
+                "
+              >
+                <p className="text-zinc-300">
+                  Checkout em atualização.
+                </p>
+
+                <p className="text-sm text-zinc-500 mt-2">
+                  Em breve os pagamentos estarão disponíveis via Stripe.
+                </p>
+              </div>
 
             </div>
             

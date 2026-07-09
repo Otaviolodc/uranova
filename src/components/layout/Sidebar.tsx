@@ -100,12 +100,18 @@ export default function Sidebar() {
           fixed
           inset-0
           z-40
-          bg-black/95
+          bg-zinc-950
           pt-20
           px-4
+          overflow-y-auto
+          overscroll-contain
+          pb-10
+          [scrollbar-width:none]
+          [-ms-overflow-style:none]
+          [-webkit-overflow-scrolling:touch]
         "
       >
-        <nav className="flex flex-col gap-3">
+        <nav className="flex flex-col gap-3 pb-20">
 
           {!collapsed && (
             <div className="mb-2">
@@ -139,7 +145,7 @@ export default function Sidebar() {
               border-zinc-800
               rounded-2xl
               px-5
-              py-4
+              py-3
               text-white
             "
           >
@@ -187,7 +193,7 @@ export default function Sidebar() {
       items-center
       ${collapsed ? "justify-center" : "gap-3"}
       px-5
-      py-4
+      py-3
       rounded-2xl
       border
       transition-all
@@ -245,7 +251,7 @@ export default function Sidebar() {
       items-center
       ${collapsed ? "justify-center" : "gap-3"}
       px-5
-      py-4
+      py-3
       rounded-2xl
       border
       transition-all
@@ -373,7 +379,7 @@ export default function Sidebar() {
               items-center
               ${collapsed ? "justify-center" : "gap-3"}
               px-5
-              py-4
+              py-3
               rounded-2xl
               border
               transition-all
@@ -432,7 +438,7 @@ export default function Sidebar() {
       items-center
       ${collapsed ? "justify-center" : "gap-3"}
       px-5
-      py-4
+      py-3
       rounded-2xl
       border
       transition-all
@@ -491,7 +497,7 @@ export default function Sidebar() {
       items-center
       ${collapsed ? "justify-center" : "gap-3"}
       px-5
-      py-4
+      py-3
       rounded-2xl
       border
       transition-all
