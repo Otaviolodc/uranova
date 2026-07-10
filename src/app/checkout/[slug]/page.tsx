@@ -1,8 +1,7 @@
-import CouponBox
-from "@/components/checkout/CouponBox";
+import CouponBox from "@/components/checkout/CouponBox";
+import StripeCheckout from "@/components/checkout/StripeCheckout";
 
-import { createClient }
-from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
 
 interface Props {
@@ -14,74 +13,60 @@ interface Props {
 export default async function CheckoutPage({
   params,
 }: Props) {
-
   const { slug } = await params;
 
-  console.log("SLUG:", slug);
-
-  const supabase =
-    await createClient();
+  const supabase = await createClient();
 
   const {
     data: product,
     error,
-  } =
-
-    await supabase
-      .from("products_checkout")
-      .select("*")
-      .eq(
-        "checkout_slug",
-        slug
-      )
-      .maybeSingle();
-
-  console.log("PRODUCT:", product);
-  console.log("ERROR:", error);
+  } = await supabase
+    .from("products_checkout")
+    .select("*")
+    .eq("checkout_slug", slug)
+    .maybeSingle();
 
   if (error) {
-
-  return (
-    <div className="
-      min-h-screen
-      bg-black
-      text-white
-      flex
-      items-center
-      justify-center
-    ">
-      Erro ao carregar produto
-    </div>
-  );
-
-}
+    return (
+      <div
+        className="
+          min-h-screen
+          bg-black
+          text-white
+          flex
+          items-center
+          justify-center
+        "
+      >
+        Erro ao carregar produto
+      </div>
+    );
+  }
 
   if (!product) {
-
     return (
-
-      <div className="bg-black text-white min-h-screen flex items-center justify-center">
-
+      <div
+        className="
+          min-h-screen
+          bg-black
+          text-white
+          flex
+          items-center
+          justify-center
+        "
+      >
         Produto não encontrado
-
       </div>
-
     );
-
   }
 
   return (
-
     <div className="bg-black text-white min-h-screen">
-
-      {/* HERO */}
       <div className="max-w-6xl mx-auto px-6 py-16">
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
           {/* IMAGEM */}
           <div>
-
             <Image
               src={product.image_url || "/logo.png"}
               alt={product.title}
@@ -96,7 +81,6 @@ export default async function CheckoutPage({
                 shadow-2xl
               "
             />
-
           </div>
 
           {/* CONTEÚDO */}
@@ -118,7 +102,7 @@ export default async function CheckoutPage({
             <div className="mt-10">
 
               <div className="text-6xl font-black text-green-400 mt-2">
-                R$ {product.price}
+                R$ {Number(product.price).toFixed(2)}
               </div>
 
               <CouponBox
@@ -148,46 +132,24 @@ export default async function CheckoutPage({
 
             </div>
 
-            {/* BOTÃO */}
+            {/* BOTÃO STRIPE */}
             <div className="mt-12">
 
-              <div
-                className="
-                  mt-8
-                  rounded-2xl
-                  border
-                  border-zinc-800
-                  bg-zinc-900
-                  p-6
-                  text-center
-                "
-              >
-                <p className="text-zinc-300">
-                  Checkout em atualização.
-                </p>
-
-                <p className="text-sm text-zinc-500 mt-2">
-                  Em breve os pagamentos estarão disponíveis via Stripe.
-                </p>
-              </div>
+              <StripeCheckout
+                checkoutSlug={product.checkout_slug}
+              />
 
             </div>
-            
+
             {/* PROVA SOCIAL */}
             <div className="mt-8 text-sm text-zinc-500">
-
               🔥 1.247 pessoas compraram nas últimas semanas
-
             </div>
 
           </div>
 
         </div>
-
       </div>
-
     </div>
-
   );
-
 }

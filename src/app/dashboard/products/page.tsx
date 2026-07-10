@@ -213,39 +213,69 @@ if (product.id) {
 
 } else {
 
-  const result =
-    await supabase
-      .from("products_checkout")
-      .insert([
-        {
-          user_id: user.id,
+  // 1 - Criar produto principal
+  const {
+    data: createdProduct,
+    error: productError,
+  } = await supabase
+    .from("products")
+    .insert([
+      {
+        user_id: user.id,
+        title: product.title,
+        price: String(product.price),
+        image_url: product.image_url,
+        affiliate_url: product.affiliate_url,
+        file_path: product.file_path,
+      },
+    ])
+    .select()
+    .single();
 
-          title: product.title,
-          description: product.description,
-          price: product.price,
+  if (productError) {
 
-          affiliate_url:
-            product.affiliate_url,
+    error = productError;
 
-          product_type:
-            product.product_type,
+  } else {
 
-          status: "active",
+    // 2 - Criar checkout ligado ao produto
+    const result =
+      await supabase
+        .from("products_checkout")
+        .insert([
+          {
+            product_id: createdProduct.id,
 
-          is_marketplace:
-            product.is_marketplace,
+            user_id: user.id,
 
-          image_url: 
-            product.image_url,
+            title: product.title,
+            description: product.description,
+            price: product.price,
 
-          file_path: 
-            product.file_path,
+            affiliate_url:
+              product.affiliate_url,
 
-          checkout_slug: slug,
-        },
-      ]);
+            product_type:
+              product.product_type,
 
-  error = result.error;
+            status: "active",
+
+            is_marketplace:
+              product.is_marketplace,
+
+            image_url:
+              product.image_url,
+
+            file_path:
+              product.file_path,
+
+            checkout_slug: slug,
+          },
+        ]);
+
+    error = result.error;
+
+  }
 
 }
 

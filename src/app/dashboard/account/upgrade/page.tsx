@@ -137,7 +137,7 @@ export default function UpgradePage() {
           </button>
 
           <p className="mt-4 text-sm text-zinc-500">
-            Integração com Asaas será ativada na próxima etapa.
+            Em breve você poderá realizar pagamentos com Stripe.
           </p>
 
         </div>
