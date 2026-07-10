@@ -8,7 +8,7 @@ export default function Hero() {
 
         <div>
 
-          <span className="text-violet-400 font-medium">
+          <span className="text-green-500 font-medium">
             Plataforma completa para criadores digitais
           </span>
 
@@ -28,7 +28,21 @@ export default function Hero() {
 
             <Link
               href="/auth/login"
-              className="bg-violet-600 hover:bg-violet-700 px-8 py-4 rounded-2xl font-semibold flex items-center gap-2 transition"
+              className="
+                bg-green-500
+                hover:bg-green-600
+                hover:shadow-lg
+                hover:shadow-green-500/20
+                px-8
+                py-4
+                rounded-2xl
+                font-semibold
+                flex
+                items-center
+                gap-2
+                transition-all
+                duration-300
+              "
             >
               Criar conta
               <ArrowRight size={18} />

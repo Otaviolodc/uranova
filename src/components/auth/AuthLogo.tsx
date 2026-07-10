@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function AuthLogo() {
   return (
-    <div className="mb-8 flex flex-col items-center">
+    <div className="mb-6 flex flex-col items-center">
       <Image
         src="/logo-transparent.png"
         alt="Uranova"
@@ -11,7 +11,7 @@ export default function AuthLogo() {
         priority
       />
 
-      <p className="mt-5 text-center text-zinc-400">
+      <p className="mt-1 text-center text-zinc-400">
         A plataforma completa para criadores digitais.
       </p>
     </div>
