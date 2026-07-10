@@ -9,8 +9,7 @@ type Product = {
   id: string;
   title: string;
   description: string | null;
-  image_url: string | null;
-  product_type: string;
+  image_url: string |null;
   file_path: string | null;
 };
 
@@ -83,13 +82,12 @@ export default function CustomerProductPage() {
 
   const { data, error } =
     await supabase
-      .from("products_checkout")
+      .from("products")
       .select(`
         id,
         title,
         description,
         image_url,
-        product_type,
         file_path
       `)
       .eq("id", id)
@@ -213,22 +211,7 @@ if (!product) {
         />
 
         <div className="p-8">
-
-          <span
-            className="
-              inline-block
-              px-3
-              py-1
-              rounded-full
-              bg-green-500/20
-              text-green-400
-              text-xs
-              uppercase
-            "
-          >
-            {product.product_type}
-          </span>
-
+         
           <h1
             className="
               text-4xl
@@ -266,11 +249,11 @@ if (!product) {
               "
             >
               <p className="text-zinc-500 text-sm">
-                Tipo
+                Produto
               </p>
 
               <h3 className="text-xl font-bold mt-2">
-                {product.product_type.toUpperCase()}
+                Digital
               </h3>
             </div>
 
@@ -336,7 +319,7 @@ if (!product) {
                 </h3>
 
                 <p className="text-green-400 mt-2">
-                  {product.product_type.toUpperCase()}
+                  Conteúdo disponível
                 </p>
 
               </div>

@@ -8,8 +8,7 @@ type Product = {
   id: string;
   title: string;
   image_url: string | null;
-  product_type: string;
-  checkout_slug: string;
+  description: string | null;
 };
 
 export default function CustomerProductsPage() {
@@ -48,13 +47,12 @@ if (!customerProducts?.length) {
 );
   
   const { data, error } = await supabase
-  .from("products_checkout")
+  .from("products")
   .select(`
     id,
     title,
     image_url,
-    product_type,
-    checkout_slug
+    description
   `)
   .in("id", productIds);
 
@@ -147,21 +145,6 @@ setProducts(data || []);
 
         <div className="p-6">
 
-          <span
-            className="
-              inline-block
-              px-3
-              py-1
-              rounded-full
-              bg-green-500/20
-              text-green-400
-              text-xs
-              uppercase
-            "
-          >
-            {product.product_type}
-          </span>
-
           <h2
             className="
               text-2xl
@@ -171,6 +154,10 @@ setProducts(data || []);
           >
             {product.title}
           </h2>
+
+          <p className="mt-3 text-zinc-400 line-clamp-2">
+            {product.description || "Sem descrição."}
+          </p>
 
           <Link
             href={`/dashboard/customer/products/${product.id}`}
