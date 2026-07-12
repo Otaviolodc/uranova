@@ -31,8 +31,8 @@ export default function Navbar() {
             text-3xl
             font-extrabold
             bg-gradient-to-r
-            from-violet-400
-            to-fuchsia-500
+            from-green-400
+            to-green-600
             bg-clip-text
             text-transparent
             transition
@@ -125,14 +125,14 @@ export default function Navbar() {
               px-5
               py-2.5
               rounded-xl
-              bg-violet-600
-              hover:bg-violet-700
+              bg-green-500
+              hover:bg-green-600
               hover:scale-[1.03]
-              transition
-              duration-200
+              transition-all
+              duration-300
               font-semibold
               shadow-lg
-              shadow-violet-600/20
+              shadow-green-500/20
             "
           >
             Criar Conta
