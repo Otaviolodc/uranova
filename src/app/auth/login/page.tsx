@@ -67,7 +67,7 @@ export default function LoginPage() {
 
         <AuthLogo />
 
-        <h1 className="mt-8 text-center text-3xl font-bold text-white">
+        <h1 className="mt-2 text-center text-3xl font-bold text-white">
           Entrar na sua conta
         </h1>
 
