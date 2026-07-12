@@ -46,7 +46,7 @@ export default function Products() {
               >
                 <Icon
                   size={32}
-                  className="text-violet-400 mb-6"
+                  className="text-green-400 mb-6"
                 />
 
                 <h3 className="text-2xl font-bold">
