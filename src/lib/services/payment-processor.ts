@@ -12,9 +12,15 @@ export async function processCheckoutCompleted({
 
   const productId = session.metadata?.product_id;
 
-  const userId = session.metadata?.user_id;
+  const sellerId = session.metadata?.seller_id;
 
-  if (!productId || !userId) {
+  const customerId = session.metadata?.customer_id;
+
+  if (
+    !productId ||
+    !sellerId ||
+    !customerId
+  ) {
     console.log("Metadata inválida.");
 
     return;
@@ -71,7 +77,7 @@ export async function processCheckoutCompleted({
   const { error: paymentError } = await admin
   .from("payments")
   .insert({
-    user_id: product.user_id,
+    user_id: sellerId,
     payment_provider_id: String(session.payment_intent),
     status: "PAID",
     value: product.price,
@@ -94,7 +100,7 @@ console.log("Pagamento salvo com sucesso.");
 const { data: order, error: orderError } = await admin
   .from("orders")
   .insert({
-    user_id: product.user_id,
+    user_id: sellerId,
 
     product_id: product.product_id,
 
@@ -123,7 +129,7 @@ console.log(order.id);
 const { error: customerProductError } = await admin
   .from("customer_products")
   .insert({
-    customer_id: userId,
+    customer_id: customerId,
 
     product_id: product.product_id,
 

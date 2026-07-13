@@ -23,6 +23,21 @@ export async function POST(req: Request) {
 
     const supabase = await createClient();
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          error: "Usuário não autenticado.",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
     const { data: product, error } = await supabase
       .from("products_checkout")
       .select("*")
@@ -78,7 +93,11 @@ export async function POST(req: Request) {
 
       metadata: {
         product_id: product.id,
-        user_id: product.user_id,
+
+        seller_id: product.user_id,
+
+        customer_id: user.id,
+
         checkout_slug: product.checkout_slug,
       },
 
