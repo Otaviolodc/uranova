@@ -230,39 +230,39 @@ if (!product) {
             </div>
 
             {/* BOTÃO COMPRAR */}
-<a
-  href={product.affiliate_url}
-  target="_blank"
-  className="
-    mt-10
-    block
-    w-full
-    bg-gradient-to-r
-    from-green-500
-    to-emerald-400
-    hover:scale-[1.02]
-    transition-all
-    text-black
-    text-center
-    py-5
-    rounded-2xl
-    font-black
-    text-xl
-  "
->
-  Comprar Agora
-</a>
 
-<p
-  className="
-    text-center
-    text-zinc-500
-    text-sm
-    mt-3
-  "
->
-  Pagamento seguro • Liberação imediata
-</p>
+    <a
+      href={`/checkout/${product.checkout_slug}`}
+      className="
+        mt-10
+        block
+        w-full
+        bg-gradient-to-r
+        from-green-500
+        to-emerald-400
+        hover:scale-[1.02]
+        transition-all
+        text-black
+        text-center
+        py-5
+        rounded-2xl
+        font-black
+        text-xl
+      "
+    >
+      Comprar Agora
+    </a>
+
+    <p
+      className="
+        text-center
+        text-zinc-500
+        text-sm
+        mt-3
+      "
+    >
+      Pagamento seguro • Liberação imediata
+    </p>
 
 <div className="flex gap-3 mt-4">
 
