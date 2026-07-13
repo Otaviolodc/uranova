@@ -2,9 +2,9 @@ import Image from "next/image";
 
 export default function AuthLogo() {
   return (
-    <div className="mb-4 flex flex-col items-center">
+    <div className="mb-1 flex justify-center">
       <Image
-        src="/logo-transparent.png"
+        src="/logo-new.png"
         alt="Uranova"
         width={360}
         height={100}

@@ -14,7 +14,9 @@ export default function AuthCard({
         border
         border-zinc-800
         bg-zinc-950
-        p-12
+        px-12
+        pt-8
+        pb-12
         shadow-[0_0_50px_rgba(0,0,0,.45)]
       "
     >
