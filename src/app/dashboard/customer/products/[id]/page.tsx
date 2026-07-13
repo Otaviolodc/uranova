@@ -1,6 +1,5 @@
 "use client";
 
-import ProductViewer from "@/components/customer/ProductViewer";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
@@ -11,6 +10,9 @@ type Product = {
   description: string | null;
   image_url: string |null;
   file_path: string | null;
+
+  purchased_at?: string;
+  order_id?: string;
 };
 
 export default function CustomerProductPage() {
@@ -62,7 +64,11 @@ export default function CustomerProductPage() {
   const { data: access, error: accessError } =
   await supabase
     .from("customer_products")
-    .select("id")
+    .select(`
+      id,
+      unlocked_at,
+      order_id
+    `)
     .eq("customer_id", user.id)
     .eq("product_id", id)
     .eq("status", "active")
@@ -99,7 +105,11 @@ export default function CustomerProductPage() {
     return;
   }
 
-  setProduct(data);
+  setProduct({
+    ...data,
+    purchased_at: access.unlocked_at,
+    order_id: access.order_id,
+  });
 
   setLoading(false);
 
@@ -291,6 +301,41 @@ if (!product) {
 
           </div>
 
+        <div
+          className="
+            mt-8
+            rounded-2xl
+            border
+            border-zinc-800
+            bg-zinc-950
+            p-6
+            space-y-4
+          "
+        >
+          <div className="flex items-center gap-2 text-green-400">
+            <span>🟢</span>
+            <span className="font-semibold">
+              Produto liberado para sua conta
+            </span>
+          </div>
+
+          <div className="text-zinc-400 text-sm">
+            <strong>Data da compra:</strong>{" "}
+            {product.purchased_at
+              ? new Date(product.purchased_at).toLocaleDateString("pt-BR")
+              : "-"}
+          </div>
+
+          <div className="text-zinc-400 text-sm">
+            <strong>Pedido:</strong>{" "}
+            {product.order_id ?? "-"}
+          </div>
+
+          <div className="text-zinc-400 text-sm">
+            Este produto ficará disponível na sua biblioteca sempre que você acessar sua conta.
+          </div>
+        </div>
+
           {product.file_path ? (
 
             <div
@@ -336,7 +381,7 @@ if (!product) {
                   rounded-2xl
                 "
               >
-                Abrir
+                ⬇ Baixar Produto
               </button>
 
             </div>

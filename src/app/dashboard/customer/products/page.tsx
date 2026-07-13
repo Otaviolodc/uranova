@@ -9,6 +9,7 @@ type Product = {
   title: string;
   image_url: string | null;
   description: string | null;
+  unlocked_at?: string;
 };
 
 export default function CustomerProductsPage() {
@@ -26,11 +27,14 @@ export default function CustomerProductsPage() {
     if (!user) return;
 
     const { data: customerProducts, error: customerError } =
-  await supabase
-    .from("customer_products")
-    .select("product_id")
-    .eq("customer_id", user.id)
-    .eq("status", "active");
+      await supabase
+        .from("customer_products")
+        .select(`
+          product_id,
+          unlocked_at
+        `)
+        .eq("customer_id", user.id)
+        .eq("status", "active");
 
 if (customerError) {
   console.error(customerError);
@@ -61,7 +65,24 @@ if (!customerProducts?.length) {
   return;
 }
 
-setProducts(data || []);
+const formattedProducts =
+  (data || []).map((product) => {
+
+    const customer =
+      customerProducts.find(
+        (item) =>
+          item.product_id === product.id
+      );
+
+    return {
+      ...product,
+      unlocked_at:
+        customer?.unlocked_at,
+    };
+
+  });
+
+setProducts(formattedProducts);
 
 }
 
@@ -127,6 +148,11 @@ setProducts(data || []);
           border-zinc-800
           rounded-3xl
           overflow-hidden
+          transition-all
+          duration-300
+          hover:border-green-500/40
+          hover:-translate-y-1
+          hover:shadow-2xl
         "
       >
 
@@ -159,20 +185,46 @@ setProducts(data || []);
             {product.description || "Sem descrição."}
           </p>
 
+      <div className="mt-6 space-y-3">
+
+  <div className="flex items-center gap-2 text-green-400 text-sm">
+    <span>🟢</span>
+    <span>Produto liberado</span>
+  </div>
+
+  <div className="flex items-center gap-2 text-zinc-400 text-sm">
+    <span>📅</span>
+
+    <span>
+      Comprado em{" "}
+      {product.unlocked_at
+        ? new Date(product.unlocked_at).toLocaleDateString("pt-BR")
+        : "-"}
+    </span>
+  </div>
+
+  <div className="flex items-center gap-2 text-zinc-400 text-sm">
+    <span>📦</span>
+    <span>Conteúdo disponível</span>
+  </div>
+
+</div>
+
           <Link
             href={`/dashboard/customer/products/${product.id}`}
             className="
-              mt-6
+              mt-8
               block
               w-full
               text-center
+              rounded-2xl
               bg-green-500
               hover:bg-green-400
               text-black
               font-bold
               py-3
-              rounded-2xl
-              transition
+              transition-all
+              duration-300
             "
           >
             Abrir Produto
