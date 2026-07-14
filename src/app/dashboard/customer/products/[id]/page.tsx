@@ -311,28 +311,36 @@ if (!hasAccess) {
             space-y-4
           "
         >
-          <div className="flex items-center gap-2 text-green-400">
-            <span>🟢</span>
-            <span className="font-semibold">
-              Produto liberado para sua conta
-            </span>
+          <h2 className="text-lg font-bold text-green-400">
+            🟢 Produto liberado para sua conta
+          </h2>
+
+          <div className="space-y-2 text-zinc-300">
+
+            <p>
+              📅 <span className="font-medium">Liberado em:</span>{" "}
+              {product.purchased_at
+                ? new Date(product.purchased_at).toLocaleDateString("pt-BR")
+                : "-"}
+            </p>
+
+            <p>
+              📄 <span className="font-medium">Arquivo:</span>{" "}
+              {product.title}.pdf
+             </p>
+
+            <p>
+              ☁️ <span className="font-medium">
+                Download disponível
+              </span>
+            </p>
+
           </div>
 
-          <div className="text-zinc-400 text-sm">
-            <strong>Data da compra:</strong>{" "}
-            {product.purchased_at
-              ? new Date(product.purchased_at).toLocaleDateString("pt-BR")
-              : "-"}
-          </div>
-
-          <div className="text-zinc-400 text-sm">
-            <strong>Pedido:</strong>{" "}
-            {product.order_id ?? "-"}
-          </div>
-
-          <div className="text-zinc-400 text-sm">
-            Este produto ficará disponível na sua biblioteca sempre que você acessar sua conta.
-          </div>
+          <p className="text-sm text-zinc-500">
+            Este conteúdo permanecerá disponível na sua biblioteca
+            enquanto sua conta estiver ativa.
+          </p>
         </div>
 
           {product.file_path ? (
