@@ -23,28 +23,16 @@ export default function CustomerProductsPage() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-
-    console.log("ID usuário logado:", user.id);
-
+   
     if (!user) return;
-
-    console.log("ID usuário:", user.id);
-
-    const query = supabase
-      .from("customer_products")
-      .select("*")
-      .eq("customer_id", user.id);
-
+    
     const {
       data: customerProducts,
       error: customerError,
-    } = await query;
-
-    console.log("Resultado completo:", customerProducts);
-    console.log("Erro:", customerError);
-
-    console.log("Customer Products:", customerProducts);
-    console.log("IDs encontrados:", customerProducts?.map(p => p.product_id));
+    } = await supabase
+      .from("customer_products")
+      .select("*")
+      .eq("customer_id", user.id);
 
 if (customerError) {
   console.error(customerError);
@@ -69,12 +57,8 @@ if (!customerProducts?.length) {
     `)
     .in("id", productIds);
 
-console.log("Products:", data);
-console.log("Products Error:", error);
-
 if (error) {
   console.error(error);
-  alert(JSON.stringify(error, null, 2));
   return;
 }
 
