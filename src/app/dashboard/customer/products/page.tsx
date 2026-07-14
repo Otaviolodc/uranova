@@ -30,15 +30,18 @@ export default function CustomerProductsPage() {
 
     console.log("ID usuário:", user.id);
 
-    const { data: customerProducts, error: customerError } =
-      await supabase
-        .from("customer_products")
-        .select(`
-          product_id,
-          unlocked_at
-        `)
-        .eq("customer_id", user.id)
-        .eq("status", "active");
+    const query = supabase
+      .from("customer_products")
+      .select("*")
+      .eq("customer_id", user.id);
+
+    const {
+      data: customerProducts,
+      error: customerError,
+    } = await query;
+
+    console.log("Resultado completo:", customerProducts);
+    console.log("Erro:", customerError);
 
     console.log("Customer Products:", customerProducts);
     console.log("IDs encontrados:", customerProducts?.map(p => p.product_id));
