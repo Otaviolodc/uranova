@@ -92,7 +92,6 @@ export default function CustomerProductPage() {
       .select(`
         id,
         title,
-        description,
         image_url,
         file_path
       `)
@@ -106,7 +105,11 @@ export default function CustomerProductPage() {
   }
 
   setProduct({
-    ...data,
+    id: data.id,
+    title: data.title,
+    image_url: data.image_url,
+    file_path: data.file_path,
+    description: null,
     purchased_at: access.unlocked_at,
     order_id: access.order_id,
   });
@@ -239,7 +242,7 @@ if (!product) {
               leading-8
             "
           >
-            {product.description}
+            {product.description ?? "Sem descrição."}
           </p>
 
           <div
