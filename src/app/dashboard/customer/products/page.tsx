@@ -24,6 +24,8 @@ export default function CustomerProductsPage() {
       data: { user },
     } = await supabase.auth.getUser();
 
+    console.log("Usuário logado:", user);
+
     if (!user) return;
 
     const { data: customerProducts, error: customerError } =
@@ -35,6 +37,8 @@ export default function CustomerProductsPage() {
         `)
         .eq("customer_id", user.id)
         .eq("status", "active");
+
+    console.log("Customer Products:", customerProducts);
 
 if (customerError) {
   console.error(customerError);
@@ -59,6 +63,8 @@ if (!customerProducts?.length) {
     description
   `)
   .in("id", productIds);
+
+  console.log("Products:", data);
 
   if (error) {
   console.error(error);
