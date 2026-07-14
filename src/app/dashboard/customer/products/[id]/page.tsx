@@ -73,6 +73,11 @@ export default function CustomerProductPage() {
     .eq("product_id", id)
     .eq("status", "active")
     .maybeSingle();
+
+  console.log("Access:", access);
+  console.log("Access Error:", accessError);
+  console.log("User:", user.id);
+  console.log("Product ID:", id);
   
   if (accessError) {
     console.error(accessError);
@@ -97,6 +102,10 @@ export default function CustomerProductPage() {
       `)
       .eq("id", id)
       .single();
+
+  console.log("Produto encontrado:", data);
+  console.log("Erro produto:", error);
+  console.log("ID recebido:", id);
 
   if (error) {
     console.error(error);
@@ -126,18 +135,9 @@ export default function CustomerProductPage() {
   );
 }
 
-if (!product) {
-  return (
-    <div className="p-10">
-      Produto não encontrado.
-    </div>
-  );
-}
-
-  if (!hasAccess) {
+if (!hasAccess) {
   return (
     <div className="max-w-3xl mx-auto py-16">
-
       <div
         className="
           bg-zinc-900
@@ -148,7 +148,6 @@ if (!product) {
           text-center
         "
       >
-
         <div className="text-6xl mb-6">
           🔒
         </div>
@@ -178,9 +177,7 @@ if (!product) {
         >
           Ir para Marketplace
         </a>
-
       </div>
-
     </div>
   );
 }
