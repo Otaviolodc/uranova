@@ -28,6 +28,8 @@ export default function CustomerProductsPage() {
 
     if (!user) return;
 
+    console.log("ID usuário:", user.id);
+
     const { data: customerProducts, error: customerError } =
       await supabase
         .from("customer_products")
