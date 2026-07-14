@@ -24,7 +24,7 @@ export default function CustomerProductsPage() {
       data: { user },
     } = await supabase.auth.getUser();
 
-    console.log("Usuário logado:", user);
+    console.log("ID usuário logado:", user.id);
 
     if (!user) return;
 
@@ -39,6 +39,7 @@ export default function CustomerProductsPage() {
         .eq("status", "active");
 
     console.log("Customer Products:", customerProducts);
+    console.log("IDs encontrados:", customerProducts?.map(p => p.product_id));
 
 if (customerError) {
   console.error(customerError);
