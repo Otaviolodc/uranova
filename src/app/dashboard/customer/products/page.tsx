@@ -61,37 +61,36 @@ if (!customerProducts?.length) {
 );
   
   const { data, error } = await supabase
-  .from("products")
-  .select(`
-    id,
-    title,
-    image_url,
-    description
-  `)
-  .in("id", productIds);
+    .from("products")
+    .select(`
+      id,
+      title,
+      image_url
+    `)
+    .in("id", productIds);
 
-  console.log("Products:", data);
+console.log("Products:", data);
+console.log("Products Error:", error);
 
-  if (error) {
+if (error) {
   console.error(error);
+  alert(JSON.stringify(error, null, 2));
   return;
 }
 
-const formattedProducts =
+const formattedProducts: Product[] =
   (data || []).map((product) => {
-
-    const customer =
-      customerProducts.find(
-        (item) =>
-          item.product_id === product.id
-      );
+    const customer = customerProducts.find(
+      (item) => item.product_id === product.id
+    );
 
     return {
-      ...product,
-      unlocked_at:
-        customer?.unlocked_at,
+      id: product.id,
+      title: product.title,
+      image_url: product.image_url,
+      description: null,
+      unlocked_at: customer?.unlocked_at,
     };
-
   });
 
 setProducts(formattedProducts);
