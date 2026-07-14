@@ -91,17 +91,15 @@ export default function CustomerProductPage() {
     return;
   }
 
-  const { data, error } =
-    await supabase
-      .from("products")
-      .select(`
-        id,
-        title,
-        image_url,
-        file_path
-      `)
-      .eq("id", id)
-      .single();
+  const result = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", id);
+
+  console.log(result);
+
+  const data = result.data?.[0];
+  const error = result.error;
 
   console.log("Produto encontrado:", data);
   console.log("Erro produto:", error);
@@ -113,8 +111,14 @@ export default function CustomerProductPage() {
     return;
   }
 
-  setProduct({
-    id: data.id,
+  if (!data) {
+  console.log("Produto não retornado pelo banco.");
+  setLoading(false);
+  return;
+}
+
+setProduct({
+  id: data.id,
     title: data.title,
     image_url: data.image_url,
     file_path: data.file_path,
