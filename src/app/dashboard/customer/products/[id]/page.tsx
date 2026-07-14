@@ -61,45 +61,40 @@ export default function CustomerProductPage() {
     return;
   }
 
-  const { data: access, error: accessError } =
-  await supabase
-    .from("customer_products")
-    .select(`
-      id,
-      unlocked_at,
-      order_id
-    `)
-    .eq("customer_id", user.id)
-    .eq("product_id", id)
-    .eq("status", "active")
-    .maybeSingle();
+  const { data: accesses, error: accessError } =
+    await supabase
+      .from("customer_products")
+      .select(`
+        id,
+        unlocked_at,
+        order_id
+      `)
+      .eq("customer_id", user.id)
+      .eq("product_id", id)
+      .eq("status", "active");
 
-  console.log("Access:", access);
-  console.log("Access Error:", accessError);
-  console.log("User:", user.id);
-  console.log("Product ID:", id);
-  
   if (accessError) {
-    console.error(accessError);
-    setLoading(false);
-    return;
-  }
+  console.error(accessError);
+  setLoading(false);
+  return;
+}
 
-  if (!access) {
-    setHasAccess(false);
-    setLoading(false);
-    return;
-  }
+const access = accesses?.[0];
 
-  const result = await supabase
+if (!access) {
+  setHasAccess(false);
+  setLoading(false);
+  return;
+}
+  
+  const {
+    data,
+    error,
+  } = await supabase
     .from("products")
     .select("*")
-    .eq("id", id);
-
-  console.log(result);
-
-  const data = result.data?.[0];
-  const error = result.error;
+    .eq("id", id)
+    .single();
 
   console.log("Produto encontrado:", data);
   console.log("Erro produto:", error);
@@ -112,10 +107,10 @@ export default function CustomerProductPage() {
   }
 
   if (!data) {
-  console.log("Produto não retornado pelo banco.");
-  setLoading(false);
-  return;
-}
+    setHasAccess(false);
+    setLoading(false);
+    return;
+  }
 
 setProduct({
   id: data.id,
