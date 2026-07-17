@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient }
 from "@/lib/supabase/server";
 
@@ -11,7 +12,10 @@ export default async function UsersPage() {
     .from("profiles")
     .select(`
       id,
+      name,
       username,
+      phone,
+      city,
       role,
       created_at
     `);
@@ -76,7 +80,7 @@ export default async function UsersPage() {
         {/* HEADER */}
         <div className="
           grid
-          grid-cols-4
+          grid-cols-6
           gap-4
           p-5
           border-b
@@ -86,9 +90,11 @@ export default async function UsersPage() {
           font-medium
         ">
 
+          <div>Nome</div>
           <div>Username</div>
-          <div>Role</div>
-          <div>Criado em</div>
+          <div>Telefone</div>
+          <div>Cidade</div>
+          <div>Cadastro</div>
           <div>Ações</div>
 
         </div>
@@ -100,7 +106,7 @@ export default async function UsersPage() {
             key={user.id}
             className="
               grid
-              grid-cols-4
+              grid-cols-6
               gap-4
               p-5
               border-b
@@ -110,46 +116,36 @@ export default async function UsersPage() {
               transition
             "
           >
+            {/* NAME */}
+            <div className="font-semibold">
+              {user.name || "Sem nome"}
+            </div>
 
             {/* USERNAME */}
-            <div className="font-medium">
-
-              {user.username || "Sem username"}
-
+            <div className="text-zinc-300">
+              @{user.username || "-"}
             </div>
 
-            {/* ROLE */}
-            <div>
-
-              <span className="
-                bg-zinc-800
-                border
-                border-zinc-700
-                px-3
-                py-1
-                rounded-lg
-                text-sm
-              ">
-
-                {user.role || "user"}
-
-              </span>
-
+            {/* PHONE */}
+            <div className="text-zinc-400">
+              {user.phone || "-"}
             </div>
 
-            {/* CREATED */}
+            {/* CITY */}
+            <div className="text-zinc-400">
+              {user.city || "-"}
+            </div>
+
             <div className="text-zinc-400 text-sm">
-
-              {new Date(
-                user.created_at
-              ).toLocaleDateString("pt-BR")}
-
+              {user.created_at
+                ? new Date(user.created_at).toLocaleDateString("pt-BR")
+                : "-"}
             </div>
 
-            {/* ACTIONS */}
-            <div className="flex gap-2">
-
-              <button className="
+          <div className="flex">
+            <Link
+              href={`/admin/users/${user.id}`}
+              className="
                 bg-blue-500
                 hover:bg-blue-400
                 transition
@@ -158,30 +154,15 @@ export default async function UsersPage() {
                 rounded-lg
                 text-sm
                 font-medium
-              ">
-
-                Admin
-
-              </button>
-
-              <button className="
-                bg-red-500
-                hover:bg-red-400
-                transition
-                px-3
-                py-2
-                rounded-lg
-                text-sm
-                font-medium
-              ">
-
-                Banir
-
-              </button>
-
-            </div>
-
+                inline-flex
+                items-center
+              "
+            >
+              Visualizar
+            </Link>
           </div>
+
+        </div>
 
         ))}
 

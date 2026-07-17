@@ -15,22 +15,13 @@ export default async function AdminPage() {
       head: true,
     });
 
-  // PRODUCTS
-  const { count: products } = await supabase
-    .from("links")
+  // MARKETPLACE PRODUCTS
+  const { count: marketplaceProducts } = await supabase
+    .from("products")
     .select("*", {
       count: "exact",
       head: true,
     });
-
-  // ADMINS
-  const { count: admins } = await supabase
-    .from("profiles")
-    .select("*", {
-      count: "exact",
-      head: true,
-    })
-    .eq("role", "admin");
 
     // RECEITA
   const { data: paidOrders } = await supabase
@@ -120,13 +111,7 @@ export default async function AdminPage() {
         <AdminCard
           icon="📦"
           title="Produtos"
-          value={products ?? 0}
-        />
-
-        <AdminCard
-          icon="👑"
-          title="Admins"
-          value={admins ?? 0}
+          value={marketplaceProducts ?? 0}
         />
 
         <AdminCard
@@ -182,17 +167,7 @@ export default async function AdminPage() {
           </span>
 
           <span className="font-bold">
-            {products ?? 0}
-          </span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="text-zinc-400">
-            Administradores
-          </span>
-
-          <span className="font-bold">
-            {admins ?? 0}
+            {marketplaceProducts ?? 0}
           </span>
         </div>
 

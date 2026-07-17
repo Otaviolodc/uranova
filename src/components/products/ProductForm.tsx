@@ -46,6 +46,55 @@ export default function ProductForm({
         Novo Produto
       </h2>
 
+    <div className="space-y-2 mb-6">
+
+  <label className="text-sm text-zinc-400">
+    Tipo do Produto
+  </label>
+
+  <select
+    value={product.type}
+    onChange={(e) =>
+      updateField(
+        "type",
+        e.target.value as Product["type"]
+      )
+    }
+    className="
+      w-full
+      bg-zinc-800
+      border
+      border-zinc-700
+      rounded-2xl
+      p-4
+      focus:border-green-500
+      outline-none
+    "
+  >
+    <option value="course">
+      📚 Curso
+    </option>
+
+    <option value="pdf">
+      📄 PDF
+    </option>
+
+    <option value="ebook">
+      📘 E-book
+    </option>
+
+    <option value="mentoring">
+      🎥 Mentoria
+    </option>
+
+    <option value="bundle">
+      📦 Pack de Arquivos
+    </option>
+
+  </select>
+
+</div>
+
       <div className="space-y-4">
 
         <input
@@ -96,23 +145,6 @@ export default function ProductForm({
           className="w-full bg-zinc-800 p-4 rounded-2xl"
         />
 
-        <select
-          value={product.product_type}
-          onChange={(e) =>
-            updateField(
-              "product_type",
-              e.target.value
-            )
-          }
-          className="w-full bg-zinc-800 p-4 rounded-2xl"
-        >
-          <option value="ebook">Ebook</option>
-          <option value="curso">Curso</option>
-          <option value="pdf">PDF</option>
-          <option value="ferramenta">Ferramenta</option>
-          <option value="mentoria">Mentoria</option>
-        </select>
-
         <label className="flex items-center gap-3 text-sm text-zinc-300">
           <input
             type="checkbox"
@@ -150,28 +182,132 @@ export default function ProductForm({
           />
         </label>
 
-        <label
-          className="
-            border-2
-            border-dashed
-            border-zinc-700
-            rounded-2xl
-            p-8
-            flex
-            justify-center
-            items-center
-            cursor-pointer
-          "
-        >
-          📄 Enviar Produto Digital
+        {product.type === "pdf" && (
 
-          <input
-            type="file"
-            accept=".pdf,.zip,.epub,.doc,.docx,.xls,.xlsx"
-            onChange={handleProductFileUpload}
-            className="hidden"
-          />
-        </label>
+  <label
+    className="
+      border-2
+      border-dashed
+      border-zinc-700
+      rounded-2xl
+      p-8
+      flex
+      justify-center
+      items-center
+      cursor-pointer
+    "
+  >
+    📄 Enviar Produto PDF
+
+    <input
+      type="file"
+      accept=".pdf"
+      onChange={handleProductFileUpload}
+      className="hidden"
+    />
+
+  </label>
+
+)}
+
+{product.type === "course" && (
+
+  <div
+    className="
+      rounded-2xl
+      border
+      border-green-500/30
+      bg-green-500/10
+      p-6
+      text-center
+    "
+  >
+    <h3 className="font-bold text-green-400">
+      📚 Área de Membros
+    </h3>
+
+    <p className="text-zinc-400 mt-2">
+      Depois de criar o produto,
+      você poderá adicionar módulos,
+      aulas e vídeos.
+    </p>
+
+  </div>
+
+)}
+
+{product.type === "mentoring" && (
+
+  <div
+    className="
+      rounded-2xl
+      border
+      border-blue-500/30
+      bg-blue-500/10
+      p-6
+      text-center
+    "
+  >
+    <h3 className="font-bold text-blue-400">
+      🎥 Mentoria
+    </h3>
+
+    <p className="text-zinc-400 mt-2">
+      Depois de criar o produto,
+      configure datas,
+      horários e links das reuniões.
+    </p>
+
+  </div>
+
+)}
+
+{product.type === "bundle" && (
+
+  <div
+    className="
+      rounded-2xl
+      border
+      border-orange-500/30
+      bg-orange-500/10
+      p-6
+      text-center
+    "
+  >
+    <h3 className="font-bold text-orange-400">
+      📦 Pack de Arquivos
+    </h3>
+
+    <p className="text-zinc-400 mt-2">
+      Após salvar,
+      será possível enviar
+      vários arquivos.
+    </p>
+
+  </div>
+
+)}
+
+{product.type === "ebook" && (
+  <div
+    className="
+      bg-blue-950/40
+      border
+      border-blue-700
+      rounded-2xl
+      p-6
+      text-center
+    "
+  >
+    <h3 className="text-blue-400 font-bold">
+      📘 E-book
+    </h3>
+
+    <p className="text-zinc-400 mt-2">
+      Após criar o produto, envie a versão final do seu e-book.
+    </p>
+  </div>
+)}
 
         {product.file_path && (
           <p className="text-green-400 text-sm break-all">

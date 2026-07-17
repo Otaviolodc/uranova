@@ -192,20 +192,12 @@ if (product.id) {
         title: product.title,
         description: product.description,
         price: product.price,
-
-        affiliate_url:
-          product.affiliate_url,
-
-        product_type:
-          product.product_type,
-
-        is_marketplace:
-          product.is_marketplace,
-
-        image_url: 
-          product.image_url,
-
+        affiliate_url: product.affiliate_url,
+        product_type: product.product_type,
+        is_marketplace: product.is_marketplace,
+        image_url: product.image_url,
         file_path: product.file_path,
+
 })
 .eq("id", product.id);
 
@@ -227,6 +219,7 @@ if (product.id) {
         image_url: product.image_url,
         affiliate_url: product.affiliate_url,
         file_path: product.file_path,
+        product_type: product.product_type,
       },
     ])
     .select()

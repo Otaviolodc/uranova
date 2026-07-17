@@ -19,6 +19,8 @@ const emptyProduct: Product = {
 
   affiliate_url: null,
 
+  type: "pdf",
+
   product_type: "ebook",
 
   is_marketplace: false,

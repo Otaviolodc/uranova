@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient }
 from "@/lib/supabase/server";
 
@@ -6,9 +7,20 @@ export default async function ProductsPage() {
   const supabase =
     await createClient();
 
-  const { data: links } = await supabase
-    .from("links")
-    .select("*");
+  const { data: products } = await supabase
+    .from("products")
+    .select(`
+      id,
+      title,
+      price,
+      image_url,
+      type,
+      user_id,
+      created_at
+    `)
+    .order("created_at", {
+      ascending: false,
+    });
 
   return (
 
@@ -38,7 +50,7 @@ export default async function ProductsPage() {
             mt-2
           ">
 
-            Gerencie todos os produtos e links
+            Gerencie todos os produtos do Marketplace
 
           </p>
 
@@ -53,7 +65,7 @@ export default async function ProductsPage() {
           rounded-xl
         ">
 
-          Total: {links?.length || 0}
+          Total: {products?.length || 0}
 
         </div>
 
@@ -71,7 +83,7 @@ export default async function ProductsPage() {
         {/* HEADER */}
         <div className="
           grid
-          grid-cols-4
+          grid-cols-5
           gap-4
           p-5
           border-b
@@ -81,21 +93,22 @@ export default async function ProductsPage() {
           font-medium
         ">
 
-          <div>Título</div>
-          <div>Slug</div>
-          <div>Status</div>
+          <div>Produto</div>
+          <div>Preço</div>
+          <div>Tipo</div>
+          <div>Cadastro</div>
           <div>Ações</div>
 
         </div>
 
         {/* PRODUCTS */}
-        {links?.map((link) => (
+        {products?.map((product) => (
 
           <div
-            key={link.id}
+            key={product.id}
             className="
               grid
-              grid-cols-4
+              grid-cols-5
               gap-4
               p-5
               border-b
@@ -109,70 +122,48 @@ export default async function ProductsPage() {
             {/* TITLE */}
             <div className="font-medium">
 
-              {link.title || "Sem título"}
+              {product.title || "Sem título"}
 
             </div>
 
-            {/* SLUG */}
-            <div className="text-zinc-400">
-
-              {link.slug || "-"}
-
+            {/* PRICE */}
+            <div className="text-zinc-300">
+              R$ {Number(product.price).toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+              })}
             </div>
 
-            {/* STATUS */}
+            {/* TYPE */}
             <div>
-
-              <span className="
-                bg-green-500/20
-                text-green-400
-                border
-                border-green-500/20
-                px-3
-                py-1
-                rounded-lg
-                text-sm
-              ">
-
-                Ativo
-
-              </span>
-
+              {product.type || "-"}
             </div>
+
+            {/* CREATED */}
+            <div className="text-zinc-400 text-sm">
+              {product.created_at
+                ? new Date(product.created_at).toLocaleDateString("pt-BR")
+                : "-"}
+              </div>
 
             {/* ACTIONS */}
-            <div className="flex gap-2">
-
-              <button className="
-                bg-blue-500
-                hover:bg-blue-400
-                transition
-                px-3
-                py-2
-                rounded-lg
-                text-sm
-                font-medium
-              ">
-
-                Editar
-
-              </button>
-
-              <button className="
-                bg-red-500
-                hover:bg-red-400
-                transition
-                px-3
-                py-2
-                rounded-lg
-                text-sm
-                font-medium
-              ">
-
-                Excluir
-
-              </button>
-
+            <div className="flex">
+              <Link
+                href={`/admin/products/${product.id}`}
+                className="
+                  bg-blue-500
+                  hover:bg-blue-400
+                  transition
+                  px-3
+                  py-2
+                  rounded-lg
+                  text-sm
+                  font-medium
+                  inline-flex
+                  items-center
+                "
+              >
+                Visualizar
+              </Link>
             </div>
 
           </div>
