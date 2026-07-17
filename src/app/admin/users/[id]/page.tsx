@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { admin } from "@/lib/supabase/admin";
 
 interface UserPageProps {
   params: Promise<{
@@ -12,7 +12,7 @@ export default async function UserPage({
 }: UserPageProps) {
   const { id } = await params;
 
-  const supabase = await createClient();
+  const supabase = admin;
 
   const { data: user } = await supabase
     .from("profiles")
