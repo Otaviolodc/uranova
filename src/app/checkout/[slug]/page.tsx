@@ -15,7 +15,10 @@ export default async function CheckoutPage({
 }: Props) {
   const { slug } = await params;
 
+  const decodedSlug = decodeURIComponent(slug);
+
   console.log("Slug recebido:", slug);
+  console.log("Slug decodificado:", decodedSlug);
 
   const supabase = await createClient();
 
@@ -25,7 +28,7 @@ export default async function CheckoutPage({
   } = await supabase
     .from("products_checkout")
     .select("*")
-    .eq("checkout_slug", slug)
+    .eq("checkout_slug", decodedSlug)
     .maybeSingle();
 
   console.log("Produto:", product);
