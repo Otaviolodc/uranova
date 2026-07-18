@@ -1,3 +1,4 @@
+import { processSale } from "@/lib/services/financial";
 import { stripe } from "@/lib/stripe";
 import { admin } from "@/lib/supabase/admin";
 import Stripe from "stripe";
@@ -146,5 +147,14 @@ if (customerProductError) {
 }
 
 console.log("Produto liberado para o cliente.");
+
+const financialResult = await processSale({
+  userId: sellerId,
+  orderId: order.id,
+  amount: Number(product.price),
+  description: `Venda: ${product.title}`,
+});
+
+console.log(financialResult.message);
 
 }
