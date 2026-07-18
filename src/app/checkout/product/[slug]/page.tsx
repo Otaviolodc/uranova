@@ -29,6 +29,10 @@ const fetchProduct = async () => {
       .eq("checkout_slug", slug)
       .maybeSingle();
 
+console.log("Slug recebido:", slug);
+console.log("Produto encontrado:", data);
+console.log("Erro:", error);
+
     if (error) {
       console.error(error);
     }
