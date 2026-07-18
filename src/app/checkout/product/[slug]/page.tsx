@@ -12,6 +12,10 @@ const slug = Array.isArray(params.slug)
   ? params.slug[0]
   : params.slug;
 
+const decodedSlug = slug
+  ? decodeURIComponent(slug)
+  : "";
+
 const [product, setProduct] =
   useState<any>(null);
 
@@ -26,10 +30,11 @@ const fetchProduct = async () => {
     const { data, error } = await supabase
       .from("products_checkout")
       .select("*")
-      .eq("checkout_slug", slug)
+      .eq("checkout_slug", decodedSlug)
       .maybeSingle();
 
 console.log("Slug recebido:", slug);
+console.log("Slug decodificado:", decodedSlug);
 console.log("Produto encontrado:", data);
 console.log("Erro:", error);
 
