@@ -28,7 +28,6 @@ export async function processSale({
   console.log("Amount:", amount);
   console.log("Description:", description);
 
-  // Validação básica
   if (!userId || !orderId) {
     throw new Error("Dados financeiros inválidos.");
   }
@@ -66,4 +65,24 @@ export async function processSale({
     success: true,
     message: "Transação financeira processada com sucesso.",
   };
+}
+
+// ======================================================
+// HISTÓRICO FINANCEIRO
+// ======================================================
+
+export async function getFinancialHistory(userId: string) {
+  const { data, error } = await admin
+    .from("financial_transactions")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", {
+      ascending: false,
+    });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
 }
