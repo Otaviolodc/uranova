@@ -15,6 +15,8 @@ export default async function CheckoutPage({
 }: Props) {
   const { slug } = await params;
 
+  console.log("Slug recebido:", slug);
+
   const supabase = await createClient();
 
   const {
@@ -25,6 +27,9 @@ export default async function CheckoutPage({
     .select("*")
     .eq("checkout_slug", slug)
     .maybeSingle();
+
+  console.log("Produto:", product);
+  console.log("Erro:", error);
 
   if (error) {
     return (
