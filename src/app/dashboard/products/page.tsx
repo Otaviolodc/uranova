@@ -219,7 +219,7 @@ if (product.id) {
         image_url: product.image_url,
         affiliate_url: product.affiliate_url,
         file_path: product.file_path,
-        product_type: product.product_type,
+        type: product.product_type,
       },
     ])
     .select()
