@@ -1,6 +1,7 @@
+import WithdrawHistory from "@/components/finance/WithdrawHistory";
 import FinanceCards from "@/components/finance/FinanceCards";
 import FinancialHistory from "@/components/finance/FinancialHistory";
-import WithdrawButton from "@/components/finance/WithdrawButton";
+import WithdrawSection from "@/components/finance/WithdrawSection";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function FinancePage() {
@@ -32,12 +33,13 @@ export default async function FinancePage() {
 
       {/* BOTÃO DE SAQUE */}
       <div className="mt-8">
-        <WithdrawButton />
+        <WithdrawSection userId={user.id} />
       </div>
 
       {/* HISTÓRICO */}
       <div className="mt-10">
         <FinancialHistory userId={user.id} />
+        <WithdrawHistory userId={user.id} />
       </div>
     </div>
   );
