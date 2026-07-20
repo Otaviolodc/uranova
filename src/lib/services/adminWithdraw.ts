@@ -38,3 +38,143 @@ export async function getWithdrawRequests() {
       profiles?.find((p) => p.id === withdraw.user_id) ?? null,
   }));
 }
+
+/* ===========================
+   APROVAR SAQUE
+=========================== */
+
+export async function approveWithdraw(id: string) {
+  const { error } = await admin
+    .from("withdraw_requests")
+    .update({
+      status: "approved",
+      approved_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function rejectWithdraw(id: string) {
+  const { error } = await admin
+    .from("withdraw_requests")
+    .update({
+      status: "rejected",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function markWithdrawAsPaid(id: string) {
+  // Busca o saque
+  const { data: withdraw, error: withdrawError } = await admin
+    .from("withdraw_requests")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (withdrawError || !withdraw) {
+    throw new Error("Saque não encontrado.");
+  }
+
+  // O saque deve estar aprovado
+  if (withdraw.status !== "approved") {
+    switch (withdraw.status) {
+      case "pending":
+        throw new Error("O saque ainda não foi aprovado.");
+
+      case "rejected":
+        throw new Error("Este saque foi recusado.");
+
+      case "paid":
+        throw new Error("Este saque já foi pago.");
+
+      default:
+        throw new Error("Status do saque inválido.");
+    }
+  }
+
+  // O valor precisa ser maior que zero
+  if (Number(withdraw.amount) <= 0) {
+    throw new Error("Valor do saque inválido.");
+  }
+
+  // Busca o saldo do produtor
+  const { data: balance, error: balanceError } = await admin
+    .from("balances")
+    .select("*")
+    .eq("user_id", withdraw.user_id)
+    .single();
+
+  if (balanceError || !balance) {
+    throw new Error("Saldo do produtor não encontrado.");
+  }
+
+  // Confere saldo disponível
+  if (Number(balance.available_balance) < Number(withdraw.amount)) {
+    throw new Error("Saldo insuficiente para concluir este pagamento.");
+  }
+
+  // ==========================
+  // ETAPA 2 COMEÇA AQUI
+  // ==========================
+
+const { error: updateBalanceError } = await admin
+  .from("balances")
+  .update({
+    available_balance:
+      Number(balance.available_balance) - Number(withdraw.amount),
+
+    total_withdrawn:
+      Number(balance.total_withdrawn) + Number(withdraw.amount),
+
+    updated_at: new Date().toISOString(),
+  })
+  .eq("user_id", withdraw.user_id);
+
+if (updateBalanceError) {
+  throw new Error(updateBalanceError.message);
+}
+
+// ==========================
+// ETAPA 3 COMEÇA AQUI
+// ==========================
+
+const { error: transactionError } = await admin
+  .from("financial_transactions")
+  .insert({
+    user_id: withdraw.user_id,
+    withdrawal_id: withdraw.id,
+    type: "withdraw",
+    amount: withdraw.amount,
+    description: "Saque realizado via PIX",
+  });
+
+if (transactionError) {
+  throw new Error(transactionError.message);
+}
+
+// ==========================
+// ETAPA 4 COMEÇA AQUI
+// ==========================
+
+const { error: updateWithdrawError } = await admin
+  .from("withdraw_requests")
+  .update({
+    status: "paid",
+    paid_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  })
+  .eq("id", withdraw.id);
+
+if (updateWithdrawError) {
+  throw new Error(updateWithdrawError.message);
+}
+
+}

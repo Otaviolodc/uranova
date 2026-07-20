@@ -61,7 +61,10 @@ export default function WithdrawRow({
 
       {/* AÇÕES */}
       <td className="p-4 text-right">
-        <WithdrawActions />
+        <WithdrawActions
+          withdrawId={withdraw.id}
+          status={withdraw.status}
+        />
       </td>
     </tr>
   );
