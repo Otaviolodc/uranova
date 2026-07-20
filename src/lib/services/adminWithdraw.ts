@@ -152,7 +152,7 @@ const { error: transactionError } = await admin
   .insert({
     user_id: withdraw.user_id,
     withdrawal_id: withdraw.id,
-    type: "withdraw",
+    type: "withdrawal",
     amount: withdraw.amount,
     description: "Saque realizado via PIX",
   });
