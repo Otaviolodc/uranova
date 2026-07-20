@@ -139,7 +139,8 @@ const { error: updateBalanceError } = await admin
   .eq("user_id", withdraw.user_id);
 
 if (updateBalanceError) {
-  throw new Error(updateBalanceError.message);
+  console.error("Erro ao atualizar balances:", updateBalanceError);
+  throw updateBalanceError;
 }
 
 // ==========================
@@ -157,7 +158,11 @@ const { error: transactionError } = await admin
   });
 
 if (transactionError) {
-  throw new Error(transactionError.message);
+  console.error(
+    "Erro ao inserir financial_transactions:",
+    transactionError
+  );
+  throw transactionError;
 }
 
 // ==========================
@@ -174,7 +179,11 @@ const { error: updateWithdrawError } = await admin
   .eq("id", withdraw.id);
 
 if (updateWithdrawError) {
-  throw new Error(updateWithdrawError.message);
+  console.error(
+    "Erro ao atualizar withdraw_requests:",
+    updateWithdrawError
+  );
+  throw updateWithdrawError;
 }
 
 }
