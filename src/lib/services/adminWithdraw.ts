@@ -121,30 +121,8 @@ export async function markWithdrawAsPaid(id: string) {
     throw new Error("Saldo insuficiente para concluir este pagamento.");
   }
 
-  // ==========================
-  // ETAPA 2 COMEÇA AQUI
-  // ==========================
-
-const { error: updateBalanceError } = await admin
-  .from("balances")
-  .update({
-    available_balance:
-      Number(balance.available_balance) - Number(withdraw.amount),
-
-    total_withdrawn:
-      Number(balance.total_withdrawn) + Number(withdraw.amount),
-
-    updated_at: new Date().toISOString(),
-  })
-  .eq("user_id", withdraw.user_id);
-
-if (updateBalanceError) {
-  console.error("Erro ao atualizar balances:", updateBalanceError);
-  throw updateBalanceError;
-}
-
 // ==========================
-// ETAPA 3 COMEÇA AQUI
+// ETAPA 2 - Inserir financial_transactions
 // ==========================
 
 const { error: transactionError } = await admin
@@ -166,7 +144,7 @@ if (transactionError) {
 }
 
 // ==========================
-// ETAPA 4 COMEÇA AQUI
+// ETAPA 3 - Atualizar withdraw_requests
 // ==========================
 
 const { error: updateWithdrawError } = await admin
@@ -184,6 +162,28 @@ if (updateWithdrawError) {
     updateWithdrawError
   );
   throw updateWithdrawError;
+}
+
+  // ==========================
+  // ETAPA 4 - Atualizar balances
+  // ==========================
+
+const { error: updateBalanceError } = await admin
+  .from("balances")
+  .update({
+    available_balance:
+      Number(balance.available_balance) - Number(withdraw.amount),
+
+    total_withdrawn:
+      Number(balance.total_withdrawn) + Number(withdraw.amount),
+
+    updated_at: new Date().toISOString(),
+  })
+  .eq("user_id", withdraw.user_id);
+
+if (updateBalanceError) {
+  console.error("Erro ao atualizar balances:", updateBalanceError);
+  throw updateBalanceError;
 }
 
 }
