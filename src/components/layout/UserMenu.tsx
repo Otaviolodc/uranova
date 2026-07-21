@@ -31,13 +31,25 @@ export default function UserMenu({ profile }: Props) {
       "
     >
       {profile?.avatar_url ? (
-        <Image
-          src={profile.avatar_url}
-          alt={profile.name || "Avatar"}
-          width={48}
-          height={48}
-          className="rounded-full object-cover border border-zinc-700"
-        />
+        <div
+          className="
+            w-12
+            h-12
+            rounded-full
+            overflow-hidden
+            border
+            border-zinc-700
+            flex-shrink-0
+          "
+        >
+          <Image
+            src={profile.avatar_url}
+            alt={profile.name || "Avatar"}
+            width={48}
+            height={48}
+            className="w-full h-full object-cover"
+          />
+        </div>
       ) : (
         <div
           className="
