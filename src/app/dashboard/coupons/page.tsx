@@ -55,28 +55,25 @@ const [coupons, setCoupons] =
     setCoupons(data || []);
   }
 
-  async function toggleCoupon(
-  id: string,
-  active: boolean
-) {
+  async function deleteCoupon(id: string) {
+
+  const confirmDelete = window.confirm(
+    "Tem certeza que deseja excluir este cupom?\n\nEssa ação não poderá ser desfeita."
+  );
+
+  if (!confirmDelete) return;
 
   const { error } = await supabase
     .from("coupons")
-    .update({
-      active: !active,
-    })
+    .delete()
     .eq("id", id);
 
   if (error) {
-
     console.error(error);
-
     return;
-
   }
 
   fetchCoupons();
-
 }
 
   async function createCoupon() {
@@ -223,6 +220,10 @@ if (error) {
                 Status
               </th>
 
+              <th className="p-4 text-center">
+                Ações
+              </th>
+
             </tr>
 
           </thead>
@@ -231,50 +232,63 @@ if (error) {
 
             {coupons.map((coupon) => (
 
-              <tr
-                key={coupon.id}
-                className="
-                  border-b
-                  border-zinc-800
-                "
-              >
+            <tr
+              key={coupon.id}
+              className="
+                border-b
+                border-zinc-800
+              "
+            >
 
-                <td className="p-4">
-                  {coupon.code}
-                </td>
+              <td className="p-4">
+                {coupon.code}
+              </td>
 
-                <td className="p-4">
-                  {coupon.discount}%
-                </td>
+              <td className="p-4">
+                {coupon.discount}%
+              </td>
 
-                <td className="p-4">
+              <td className="p-4">
 
-                  <button
-                    onClick={() =>
-                      toggleCoupon(
-                        coupon.id,
-                        coupon.active
-                      )
+                <span
+                  className={`
+                    inline-flex
+                    px-3
+                    py-1
+                    rounded-full
+                    text-xs
+                    font-bold
+
+                    ${
+                      coupon.active
+                        ? "bg-green-500/10 text-green-400"
+                        : "bg-red-500/10 text-red-400"
                     }
-                    className={`
-                      px-3
-                      py-1
-                      rounded-full
-                      text-xs
-                      font-bold
+                  `}
+                > 
+                  {coupon.active ? "Ativo" : "Inativo"}
+                </span>
 
-                      ${
-                        coupon.active
-                          ? "bg-green-500/10 text-green-400"
-                          : "bg-red-500/10 text-red-400"
-                      }
-                    `}
+              </td>
+
+              <td className="p-4 text-center">
+
+                <button
+                  onClick={() => deleteCoupon(coupon.id)}
+                  title="Excluir cupom"
+                  className="
+                    w-10
+                    h-10
+                    rounded-xl
+                    bg-red-500/10
+                    text-red-400
+                    hover:bg-red-500
+                    hover:text-white
+                    transition
+                    text-lg
+                  "
                 >
-
-                  {coupon.active
-                    ? "Ativo"
-                    : "Inativo"}
-
+                  🗑️
                 </button>
 
               </td>
