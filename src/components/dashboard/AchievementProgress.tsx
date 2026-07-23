@@ -62,7 +62,7 @@ export default function AchievementProgress({
             color: achievement.color,
           }}
         >
-          {achievement.achievementName}
+          {achievement.name}
         </span>
 
         <span className="text-sm font-bold text-white">

@@ -39,6 +39,7 @@ export default function Sidebar({
   { icon: "📋", name: "Pedidos", href: "/dashboard/orders" },
   { icon: "💰", name: "Financeiro", href: "/dashboard/finance" },
   { icon: "📈", name: "Analytics", href: "/dashboard/analytics" },
+  { icon: "🏆", name: "Conquistas", href: "/dashboard/achievements" },
 ];
   const customerMenu: MenuItem[] = [
   {
