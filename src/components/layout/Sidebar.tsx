@@ -1,5 +1,6 @@
 "use client";
 
+import AchievementProgress from "@/components/dashboard/AchievementProgress";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -10,7 +11,15 @@ type MenuItem = {
   href: string;
 };
 
-export default function Sidebar() {
+interface SidebarProps {
+  userId: string;
+  totalEarned: number;
+}
+
+export default function Sidebar({
+  userId,
+  totalEarned,
+}: SidebarProps) {
 
   const pathname = usePathname();
 
@@ -285,12 +294,6 @@ export default function Sidebar() {
       </div>
     )}
 
-
-
-
-
-
-
     <aside
       className={`
         hidden
@@ -343,9 +346,9 @@ export default function Sidebar() {
         </h1>
 
         {!collapsed && (
-          <p className="text-zinc-500 text-sm mt-1">
-            IA Marketing Platform
-          </p>
+          <div className="mt-3">
+              <AchievementProgress totalEarned={totalEarned} />
+          </div>
         )}
 
       </div>

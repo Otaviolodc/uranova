@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { redirect } from "next/navigation";
+import { getUserBalance } from "@/lib/services/balance";
 
 import Sidebar from "@/components/layout/Sidebar";
 import Topbar from "@/components/layout/Topbar";
@@ -22,9 +23,14 @@ export default async function DashboardLayout({
   redirect("/auth/login");
 }
 
+  const balance = await getUserBalance(user.id);
+
   return (
     <div className="flex bg-black min-h-screen">
-      <Sidebar />
+      <Sidebar
+        userId={user.id}
+        totalEarned={balance?.total_earned ?? 0}
+      />
 
       <div className="flex flex-col flex-1 min-h-screen">
         <Topbar />
