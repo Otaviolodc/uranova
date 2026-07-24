@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase/client";
 type Product = {
   id: string;
   title: string;
-  product_type: string | null;
+  type: string;
   price: number;
 };
 
@@ -33,7 +33,7 @@ const user = session.user;
       .select(`
         id,
         title,
-        product_type,
+        type,
         price
       `)
       .eq("user_id", user.id)
@@ -163,7 +163,7 @@ const user = session.user;
                   </h3>
 
                   <p className="text-zinc-400 mt-1">
-                    {product.product_type || "Produto digital"}
+                    {product.type || "Produto digital"}
                   </p>
 
                 </div>

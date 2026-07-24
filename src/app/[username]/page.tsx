@@ -462,7 +462,7 @@ const marketplaceProducts =
 
             <p className="text-green-400 text-xs font-bold">
 
-              {product.product_type?.toUpperCase()}
+              {product.type?.toUpperCase()}
 
             </p>
 

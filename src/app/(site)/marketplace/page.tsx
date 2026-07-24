@@ -12,7 +12,7 @@ type Product = {
   price: number;
   image_url: string | null;
   checkout_slug: string;
-  product_type: string;
+  type: string;
 };
 
 export default function MarketplacePage() {
@@ -45,7 +45,7 @@ export default function MarketplacePage() {
   price,
   image_url,
   checkout_slug,
-  product_type
+  type
   `)
   .eq("status", "active")
   .eq("is_marketplace", true)
@@ -75,7 +75,7 @@ setProducts(data || []);
     const matchesCategory =
       category === "todos"
         ? true
-        : product.product_type === category;
+        : product.type === category;
 
     return (
       matchesSearch &&
@@ -466,7 +466,7 @@ if (sortBy === "az") {
                     "
                   >
 
-                    {product.product_type?.toUpperCase()}
+                    {product.type?.toUpperCase()}
 
                   </div>
 

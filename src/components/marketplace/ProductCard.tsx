@@ -86,7 +86,7 @@ export default function ProductCard({
               text-sm
             "
           >
-            {product.product_type}
+            {product.type}
           </span>
 
           <span

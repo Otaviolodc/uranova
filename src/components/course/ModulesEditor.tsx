@@ -2,16 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import LessonEditor from "./LessonEditor";
 
 export default function ModulesEditor() {
   const { id } = useParams<{ id: string }>();
 
   const [modules, setModules] = useState<any[]>([]);
-
-  const [lessonTitle, setLessonTitle] = useState("");
-
-  const [activeModule, setActiveModule] =
-    useState<string | null>(null);
 
   const [creating, setCreating] = useState(false);
 
@@ -61,53 +57,21 @@ async function createModule() {
 
   if (!response.ok) {
 
-    alert("Erro ao criar módulo.");
+  const error = await response.json();
 
-    return;
+  console.error(error);
 
-  }
+  alert(error.error ?? "Erro ao criar módulo.");
+
+  return;
+
+}
 
   setTitle("");
 
   setCreating(false);
 
   fetchModules();
-
-}
-  async function createLesson(moduleId: string) {
-
-  if (!lessonTitle.trim()) return;
-
-  const response = await fetch(
-    "/api/course-lessons",
-    {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        moduleId,
-        title: lessonTitle,
-        description: "",
-        videoUrl: "",
-        position: 0,
-      }),
-    }
-  );
-
-  if (!response.ok) {
-
-    alert("Erro ao criar aula.");
-
-    return;
-
-  }
-
-  setLessonTitle("");
-
-  setActiveModule(null);
 
 }
 
@@ -235,74 +199,9 @@ async function createModule() {
         📚 {module.title}
       </h2>
 
-      <button
-  onClick={() =>
-    setActiveModule(module.id)
-  }
-  className="
-    bg-green-500
-    hover:bg-green-400
-    text-black
-    px-4
-    py-2
-    rounded-xl
-    font-bold
-  "
->
-  ➕ Nova Aula
-</button>
-
     </div>
 
-    {activeModule === module.id && (
-
-  <div className="space-y-3">
-
-    <input
-      value={lessonTitle}
-      onChange={(e) =>
-        setLessonTitle(e.target.value)
-      }
-      placeholder="Título da aula"
-      className="
-        w-full
-        bg-zinc-900
-        rounded-xl
-        p-4
-      "
-    />
-
-    <button
-      onClick={() =>
-        createLesson(module.id)
-      }
-      className="
-        bg-green-500
-        hover:bg-green-400
-        text-black
-        px-4
-        py-2
-        rounded-xl
-        font-bold
-      "
-    >
-      Salvar Aula
-    </button>
-
-  </div>
-
-)}
-
-    <div
-      className="
-        bg-zinc-900
-        rounded-xl
-        p-4
-        text-zinc-400
-      "
-    >
-      Nenhuma aula criada.
-    </div>
+      <LessonEditor moduleId={module.id} />
 
   </div>
 

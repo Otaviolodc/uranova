@@ -1,6 +1,8 @@
 export type Product = {
   id: string;
 
+  product_id: string;
+
   user_id: string;
 
   title: string;
@@ -15,15 +17,12 @@ export type Product = {
 
   affiliate_url: string | null;
 
-  // NOVO
   type:
     | "course"
     | "pdf"
     | "ebook"
     | "mentoring"
     | "bundle";
-
-  product_type: string;
 
   is_marketplace: boolean;
 

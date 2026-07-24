@@ -167,7 +167,7 @@ if (!product) {
       font-bold
     "
   >
-    {product.product_type}
+    {product.type}
   </span>
 
 </div>
@@ -323,7 +323,7 @@ if (!product) {
               </p>
 
               <h2 className="text-xl font-bold mt-2">
-                {product.product_type}
+                {product.type}
               </h2>
 
             </div>

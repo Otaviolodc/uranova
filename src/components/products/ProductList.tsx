@@ -1,13 +1,5 @@
-type Product = {
-  id: string;
-  title: string;
-  image_url: string | null;
-  product_type: string | null;
-  is_marketplace: boolean;
-  status: string;
-  price: string;
-  checkout_slug: string;
-};
+import Link from "next/link";
+import type { Product } from "@/types/product";
 
 interface Props {
   products: Product[];
@@ -74,7 +66,7 @@ export default function ProductList({
                     font-bold
                   "
                 >
-                  {product.product_type}
+                  {product.type}
                 </span>
 
                 {product.is_marketplace && (
@@ -115,23 +107,59 @@ export default function ProductList({
                 R$ {product.price}
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-3 mt-6">
+              <div className="flex flex-col gap-3 mt-6">
 
-                <button
-                  onClick={() => editProduct(product)}
-                  className="flex-1 bg-blue-500 hover:bg-blue-400 text-black py-3 rounded-2xl font-semibold"
-                >
-                  Editar
-                </button>
+  <button
+    onClick={() => editProduct(product)}
+    className="
+      w-full
+      bg-blue-500
+      hover:bg-blue-400
+      text-black
+      py-3
+      rounded-2xl
+      font-semibold
+    "
+  >
+    ✏️ Editar Produto
+  </button>
 
-                <button
-                  onClick={() => deleteProduct(product.id)}
-                  className="flex-1 bg-red-500 hover:bg-red-400 text-black py-3 rounded-2xl font-semibold"
-                >
-                  Excluir
-                </button>
+  {product.type === "course" && (
 
-              </div>
+    <Link
+      href={`/dashboard/products/${product.product_id}/edit`}
+      className="
+        w-full
+        bg-green-500
+        hover:bg-green-400
+        text-black
+        py-3
+        rounded-2xl
+        font-semibold
+        text-center
+      "
+    >
+      📚 Área de Membros
+    </Link>
+
+  )}
+
+  <button
+    onClick={() => deleteProduct(product.id)}
+    className="
+      w-full
+      bg-red-500
+      hover:bg-red-400
+      text-black
+      py-3
+      rounded-2xl
+      font-semibold
+    "
+  >
+    🗑️ Excluir
+  </button>
+
+</div>
 
               <a
                 href={`/checkout/product/${product.checkout_slug}`}

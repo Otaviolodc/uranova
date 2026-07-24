@@ -6,6 +6,7 @@ import type { Product } from "@/types/product";
 
 const emptyProduct: Product = {
   id: "",
+  product_id: "",
   user_id: "",
 
   title: "",
@@ -20,8 +21,6 @@ const emptyProduct: Product = {
   affiliate_url: null,
 
   type: "pdf",
-
-  product_type: "ebook",
 
   is_marketplace: false,
 

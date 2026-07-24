@@ -10,7 +10,7 @@ export default function MarketplacePage() {
   title: string;
   price: number;
   image_url: string | null;
-  product_type: string | null;
+  type: string;
   checkout_slug: string;
 };
 
@@ -34,7 +34,7 @@ export default function MarketplacePage() {
         title,
         price,
         image_url,
-        product_type,
+        type,
         checkout_slug
       `)
       .eq("status", "active")
@@ -70,17 +70,18 @@ setLoading(false);;
     const categoryMatch =
       category === "Todos"
         ? true
-        : product.product_type === category;
+        : product.type === category;
 
     return searchMatch && categoryMatch;
   });
 
   const categories = [
     "Todos",
-    "curso",
+    "course",
     "ebook",
     "pdf",
-    "ferramenta",
+    "mentoring",
+    "bundle",
   ];
 
   return (
