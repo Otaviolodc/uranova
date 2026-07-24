@@ -3,18 +3,17 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="border-t border-white/5 mt-32">
-
       <div className="max-w-7xl mx-auto px-6 py-20">
-
-        <div className="
-               grid
-               md:grid-cols-4
-               gap-10
-               xl:gap-16">
-
+        <div
+          className="
+            grid
+            md:grid-cols-4
+            gap-10
+            xl:gap-16
+          "
+        >
           {/* LOGO */}
           <div>
-
             <Link
               href="/"
               className="
@@ -37,127 +36,124 @@ export default function Footer() {
               e-books, mentorias, assinaturas e criar
               uma estrutura digital profissional.
             </p>
-
           </div>
 
           {/* PRODUTO */}
           <div>
-
             <h4 className="font-bold mb-5 text-white">
               Produto
             </h4>
 
             <ul className="space-y-3 text-zinc-400 text-sm">
-
               <li>
                 <Link
                   href="/"
-                  className="
-                    hover:text-white
-                    transition-colors
-                    duration-200
-                  "
+                  className="hover:text-white transition-colors duration-200"
                 >
-                    Área de Membros
+                  Área de Membros
                 </Link>
               </li>
 
               <li>
                 <Link
                   href="/"
-                  className="
-                    hover:text-white
-                    transition-colors
-                    duration-200
-                  "
+                  className="hover:text-white transition-colors duration-200"
                 >
-                    Analytics
+                  Analytics
                 </Link>
               </li>
 
               <li>
                 <Link
                   href="/"
-                  className="
-                    hover:text-white
-                    transition-colors
-                    duration-200
-                  "
+                  className="hover:text-white transition-colors duration-200"
                 >
-                    Checkout
+                  Checkout
                 </Link>
               </li>
 
               <li>
                 <Link
                   href="/"
-                  className="
-                    hover:text-white
-                    transition-colors
-                    duration-200
-                  "
+                  className="hover:text-white transition-colors duration-200"
                 >
-                    Marketplace
+                  Marketplace
                 </Link>
               </li>
 
               <li>
                 <Link
                   href="/"
-                  className="
-                    hover:text-white
-                    transition-colors
-                    duration-200
-                  "
+                  className="hover:text-white transition-colors duration-200"
                 >
-                    Página de Links
+                  Página de Links
                 </Link>
               </li>
-
             </ul>
-
           </div>
 
           {/* EMPRESA */}
           <div>
-
             <h4 className="font-bold mb-5 text-white">
               Empresa
             </h4>
 
             <ul className="space-y-3 text-zinc-400 text-sm">
+              <li>
+                <Link
+                  href="/about"
+                  className="hover:text-white transition-colors duration-200"
+                >
+                  Sobre
+                </Link>
+              </li>
 
-              <li>Sobre</li>
-
-              <li>Contato</li>
-
-              <li>Suporte</li>
-
-              <li>Blog</li>
-
+              <li>
+                <Link
+                  href="/contact"
+                  className="hover:text-white transition-colors duration-200"
+                >
+                  Contato
+                </Link>
+              </li>
             </ul>
-
           </div>
 
           {/* LEGAL */}
           <div>
-
             <h4 className="font-bold mb-5 text-white">
               Legal
             </h4>
 
             <ul className="space-y-3 text-zinc-400 text-sm">
+              <li>
+                <Link
+                  href="/privacy"
+                  className="hover:text-white transition-colors duration-200"
+                >
+                  Privacidade
+                </Link>
+              </li>
 
-              <li>Privacidade</li>
+              <li>
+                <Link
+                  href="/terms"
+                  className="hover:text-white transition-colors duration-200"
+                >
+                  Termos de Uso
+                </Link>
+              </li>
 
-              <li>Termos de Uso</li>
-
-              <li>Cookies</li>
-
+              <li>
+                <Link
+                  href="/refund"
+                  className="hover:text-white transition-colors duration-200"
+                >
+                  Política de Reembolso
+                </Link>
+              </li>
             </ul>
-
           </div>
-
         </div>
 
         {/* LINHA */}
@@ -175,7 +171,6 @@ export default function Footer() {
             gap-4
           "
         >
-
           <p className="text-zinc-500 text-sm">
             © {new Date().getFullYear()} Uranova. Todos os direitos reservados.
           </p>
@@ -183,12 +178,8 @@ export default function Footer() {
           <p className="text-zinc-500 text-sm">
             Desenvolvido para criadores digitais.
           </p>
-
         </div>
-
       </div>
-
     </footer>
   );
 }
-
