@@ -1,11 +1,9 @@
 import AdminCard from "@/components/admin/AdminCard";
-import { createClient } 
-from "@/lib/supabase/server";
+import { admin } from "@/lib/supabase/admin";
 
 export default async function AdminPage() {
 
-  const supabase =
-    await createClient();
+  const supabase = admin;
 
   // USERS
   const { count: users } = await supabase
