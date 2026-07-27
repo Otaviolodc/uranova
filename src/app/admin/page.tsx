@@ -27,7 +27,7 @@ export default async function AdminPage() {
   const { data: paidOrders } = await supabase
     .from("orders")
     .select("amount")
-    .eq("status", "paid");
+    .eq("status", "PAID");
 
   const revenue =
     paidOrders?.reduce(
