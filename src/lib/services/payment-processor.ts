@@ -27,6 +27,29 @@ export async function processCheckoutCompleted({
     return;
   }
 
+  // Evita processar o mesmo webhook mais de uma vez
+const paymentIntent = String(session.payment_intent);
+
+const {
+  data: existingPayment,
+  error: existingPaymentError,
+} = await admin
+  .from("payments")
+  .select("id")
+  .eq("payment_provider_id", paymentIntent)
+  .maybeSingle();
+
+if (existingPaymentError) {
+  console.error("Erro ao verificar pagamento existente:");
+  console.error(existingPaymentError);
+  return;
+}
+
+if (existingPayment) {
+  console.log("Pagamento já processado anteriormente.");
+  return;
+}
+
   console.log("====================================");
   console.log("PAYMENT PROCESSOR");
   console.log("====================================");
