@@ -102,6 +102,11 @@ export async function PATCH(req: Request) {
     id,
     title,
     description,
+    video_provider,
+    video_url,
+    content,
+    duration_minutes,
+    is_free,
   } = body;
 
   const supabase = await createClient();
@@ -117,12 +122,24 @@ export async function PATCH(req: Request) {
     );
   }
 
+  const updates: Record<string, unknown> = {};
+
+  if (title !== undefined) updates.title = title;
+  if (description !== undefined) updates.description = description;
+  if (video_provider !== undefined)
+    updates.video_provider = video_provider;
+  if (video_url !== undefined)
+    updates.video_url = video_url;
+  if (content !== undefined)
+    updates.content = content;
+  if (duration_minutes !== undefined)
+    updates.duration_minutes = duration_minutes;
+  if (is_free !== undefined)
+    updates.is_free = is_free;
+
   const { data, error } = await supabase
     .from("course_lessons")
-    .update({
-      title,
-      description,
-    })
+    .update(updates)
     .eq("id", id)
     .eq("user_id", user.id)
     .select()

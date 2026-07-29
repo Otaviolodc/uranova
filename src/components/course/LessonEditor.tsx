@@ -10,8 +10,16 @@ interface Lesson {
   title: string;
   description: string;
   position: number;
-}
 
+  video_provider: string | null;
+  video_url: string | null;
+
+  content: string | null;
+
+  duration_minutes: number;
+
+  is_free: boolean;
+}
 interface LessonEditorProps {
   moduleId: string;
 }

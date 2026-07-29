@@ -1,4 +1,12 @@
-import { ACHIEVEMENTS } from "../constants/achievements";
+import {
+  DIGITAL_ACHIEVEMENTS,
+  PHYSICAL_PLATES,
+} from "../constants/achievements";
+
+const ACHIEVEMENTS = [
+  ...DIGITAL_ACHIEVEMENTS,
+  ...PHYSICAL_PLATES,
+];
 
 export interface UserAchievement {
   currentRevenue: number;

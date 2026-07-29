@@ -2,11 +2,25 @@
 
 import { useEffect, useState } from "react";
 
+import LessonSection from "./LessonSection";
+import LessonVideo from "./LessonVideo";
+import LessonContent from "./LessonContent";
+import LessonSettings from "./LessonSettings";
+
 interface Lesson {
   id: string;
   title: string;
   description: string;
   position: number;
+
+  video_provider: string | null;
+  video_url: string | null;
+
+  content: string | null;
+
+  duration_minutes: number;
+
+  is_free: boolean;
 }
 
 interface LessonCardProps {
@@ -67,9 +81,7 @@ export default function LessonCard({
       "Tem certeza que deseja excluir esta aula?"
     );
 
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
     try {
       setDeleting(true);
@@ -141,14 +153,7 @@ export default function LessonCard({
       </button>
 
       {open && (
-        <div
-          className="
-            border-t
-            border-zinc-800
-            p-6
-            space-y-5
-          "
-        >
+        <div className="border-t border-zinc-800 p-6 space-y-6">
           <div>
             <label className="block text-sm mb-2">
               Título
@@ -183,6 +188,50 @@ export default function LessonCard({
               "
             />
           </div>
+
+          <LessonSection
+            icon="🎥"
+            title="Vídeo"
+          >
+            <LessonVideo
+              lessonId={lesson.id}
+              videoProvider={lesson.video_provider}
+              videoUrl={lesson.video_url}
+              onUpdated={onUpdated}
+          />
+          </LessonSection>
+
+          <LessonSection
+            icon="📝"
+            title="Conteúdo"
+          >
+           <LessonContent
+             lessonId={lesson.id}
+             content={lesson.content}
+             onUpdated={onUpdated}
+            />
+          </LessonSection>
+
+          <LessonSection
+            icon="📎"
+            title="Materiais"
+          >
+            <p className="text-zinc-400">
+              Em desenvolvimento.
+            </p>
+          </LessonSection>
+
+          <LessonSection
+            icon="⚙️"
+            title="Configurações"
+          >
+            <LessonSettings
+              lessonId={lesson.id}
+              isFree={lesson.is_free}
+              durationMinutes={lesson.duration_minutes}
+              onUpdated={onUpdated}
+            />
+          </LessonSection>
 
           <div className="flex gap-3">
             <button

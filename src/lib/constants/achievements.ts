@@ -2,19 +2,19 @@ export interface Achievement {
   name: string;
   goal: number;
   color: string;
-  icon: string;
+  icon?: string;
+  image?: string;
   description: string;
   rewards: string[];
 }
 
-export const ACHIEVEMENTS: Achievement[] = [
+export const DIGITAL_ACHIEVEMENTS: Achievement[] = [
   {
     name: "Explorador",
     goal: 10_000,
     color: "#9CA3AF",
     icon: "🥉",
-    description:
-      "Toda grande jornada começa com o primeiro resultado. Você iniciou sua trajetória na Uranova e deu o primeiro passo rumo ao sucesso.",
+    description: "Seu primeiro marco na Uranova.",
     rewards: [
       "Badge Explorador",
       "Certificado Digital",
@@ -25,88 +25,67 @@ export const ACHIEVEMENTS: Achievement[] = [
     goal: 50_000,
     color: "#22C55E",
     icon: "🚀",
-    description:
-      "Seu negócio começou a ganhar velocidade. Você demonstra consistência e evolução dentro da plataforma.",
+    description: "Você está acelerando seus resultados.",
     rewards: [
       "Badge Impulsionador",
       "Certificado Premium",
     ],
   },
+];
+
+export const PHYSICAL_PLATES: Achievement[] = [
   {
-    name: "Visionário",
+    name: "Uranova Silver",
     goal: 100_000,
-    color: "#3B82F6",
-    icon: "🔵",
-    description:
-      "Você já faz parte do grupo de produtores que transformam conhecimento em grandes resultados.",
+    color: "#C0C0C0",
+    image: "/images/plates/silver.png",
+    description: "Primeira placa física da Uranova.",
     rewards: [
-      "Badge Visionário",
+      "Placa Uranova Silver",
       "Certificado Premium",
-      "Placa Oficial Uranova",
     ],
   },
   {
-    name: "Elite",
+    name: "Uranova Gold",
     goal: 250_000,
-    color: "#8B5CF6",
-    icon: "🟣",
-    description:
-      "Seu crescimento demonstra maturidade, profissionalismo e consistência. Você está entre os principais produtores da Uranova.",
+    color: "#D4AF37",
+    image: "/images/plates/gold.png",
+    description: "Reconhecimento pelo crescimento do seu negócio.",
     rewards: [
-      "Badge Elite",
-      "Certificado Premium",
-      "Placa Elite Uranova",
+      "Placa Uranova Gold",
+      "Badge Gold",
     ],
   },
   {
-    name: "Lendário",
+    name: "Uranova Diamond",
     goal: 500_000,
-    color: "#F59E0B",
-    icon: "🏆",
-    description:
-      "Sua marca inspira milhares de pessoas. Você alcançou um nível de excelência que poucos produtores conquistam.",
+    color: "#6EC6FF",
+    image: "/images/plates/diamond.png",
+    description: "Uma conquista reservada para grandes produtores.",
     rewards: [
-      "Badge Lendário",
-      "Certificado Premium",
-      "Placa Gold Uranova",
+      "Placa Uranova Diamond",
+      "Badge Diamond",
     ],
   },
   {
-    name: "Titan",
+    name: "Uranova Black",
     goal: 1_000_000,
     color: "#111827",
-    icon: "💎",
-    description:
-      "Você entrou para a elite absoluta da Uranova. Sua trajetória se tornou referência para toda a comunidade.",
+    image: "/images/plates/black.png",
+    description: "Você está entre os maiores produtores da plataforma.",
     rewards: [
-      "Badge Titan",
-      "Placa Titan Uranova",
-      "Hall de Destaque",
+      "Placa Uranova Black",
+      "Badge Black",
     ],
   },
   {
-    name: "Ícone Uranova",
+    name: "Hall of Fame",
     goal: 5_000_000,
-    color: "#06B6D4",
-    icon: "👑",
-    description:
-      "Seu impacto ultrapassa os números. Você se tornou um dos maiores nomes da história da Uranova.",
+    color: "#7C3AED",
+    image: "/images/plates/hall-of-fame.png",
+    description: "O maior reconhecimento da Uranova.",
     rewards: [
-      "Badge Ícone Uranova",
-      "Placa Diamond Uranova",
-      "Evento Exclusivo",
-    ],
-  },
-  {
-    name: "Hall da Fama",
-    goal: 10_000_000,
-    color: "#EAB308",
-    icon: "⭐",
-    description:
-      "Você alcançou o maior reconhecimento da plataforma e entrou definitivamente para a história da Uranova.",
-    rewards: [
-      "Badge Hall da Fama",
-      "Placa Hall da Fama",
+      "Placa Hall of Fame",
       "Reconhecimento Vitalício",
     ],
   },
