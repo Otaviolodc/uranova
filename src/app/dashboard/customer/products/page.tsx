@@ -9,6 +9,7 @@ type Product = {
   title: string;
   image_url: string | null;
   description: string | null;
+  type: string | null;
   unlocked_at?: string;
 };
 
@@ -53,7 +54,8 @@ if (!customerProducts?.length) {
     .select(`
       id,
       title,
-      image_url
+      image_url,
+      type
     `)
     .in("id", productIds);
 
@@ -72,6 +74,7 @@ const formattedProducts: Product[] =
       id: product.id,
       title: product.title,
       image_url: product.image_url,
+      type: product.type,
       description: null,
       unlocked_at: customer?.unlocked_at,
     };
@@ -206,7 +209,11 @@ setProducts(formattedProducts);
 </div>
 
           <Link
-            href={`/dashboard/customer/products/${product.id}`}
+            href={
+              product.type === "course"
+                ? `/dashboard/my-courses/${product.id}`
+                : `/dashboard/customer/products/${product.id}`
+            }
             className="
               mt-8
               block

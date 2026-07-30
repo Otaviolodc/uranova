@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import CoursePlayer from "@/components/course/CoursePlayer";
 
 interface PageProps {
   params: Promise<{
@@ -41,77 +42,51 @@ const { data: product } = await supabase
   .eq("id", productId)
   .single();
 
+console.log("PARAM PRODUCT ID:", productId);
+console.log("PRODUCT:", product);
+
 if (!product) {
   notFound();
 }
+  console.log("COURSE ID USED:", product.id);
 
-  // ✅ Corrigido: course_id
-  const { data: modules } = await supabase
-    .from("course_modules")
-    .select("*")
-    .eq("course_id", product.id)
-    .order("position");
+  const {
+  data: modules,
+  error: modulesError,
+} = await supabase
+  .from("course_modules")
+  .select("*")
+  .eq("course_id", product.id)
+  .order("position");
 
-  // Vamos melhorar esta consulta na próxima etapa
-  const moduleIds = modules?.map((module) => module.id) ?? [];
+console.log("MODULES:", modules);
+console.log("MODULES ERROR:", modulesError);
 
-  const { data: lessons } =
-    moduleIds.length === 0
-      ? { data: [] }
-      : await supabase
-          .from("course_lessons")
-          .select("*")
-          .in("module_id", moduleIds)
-          .order("position");
+const moduleIds = modules?.map((module) => module.id) ?? [];
+
+const {
+  data: lessons,
+  error: lessonsError,
+} =
+  moduleIds.length === 0
+    ? {
+        data: [],
+        error: null,
+      }
+    : await supabase
+        .from("course_lessons")
+        .select("*")
+        .in("module_id", moduleIds)
+        .order("position");
+
+console.log("LESSONS:", lessons);
+console.log("LESSONS ERROR:", lessonsError);
 
   return (
-    <div className="max-w-6xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-8">
-        {product.title}
-      </h1>
-
-      {modules?.map((module) => (
-        <div
-          key={module.id}
-          className="mb-8"
-        >
-          <h2 className="text-xl font-bold mb-4">
-            📚 {module.title}
-          </h2>
-
-          <div className="space-y-2">
-            {lessons
-              ?.filter(
-                (lesson) =>
-                  lesson.module_id === module.id
-              )
-              .map((lesson) => (
-                <button
-                  key={lesson.id}
-                  className="
-                    w-full
-                    rounded-xl
-                    bg-zinc-900
-                    hover:bg-zinc-800
-                    transition
-                    p-4
-                    text-left
-                  "
-                >
-                  <div className="font-medium">
-                    ▶ {lesson.title}
-                  </div>
-
-                  {lesson.duration_minutes && (
-                    <p className="text-sm text-zinc-400 mt-1">
-                      {lesson.duration_minutes} min
-                    </p>
-                  )}
-               </button>
-              ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  <CoursePlayer
+    product={product}
+    modules={modules ?? []}
+    lessons={lessons ?? []}
+  />
+);
 }

@@ -13,24 +13,42 @@ export default async function MyCoursesPage() {
     return null;
   }
 
-  const { data: customerProducts } = await supabase
+  const {
+    data: customerProducts,
+    error: customerProductsError,
+  } = await supabase
     .from("customer_products")
     .select("product_id")
     .eq("customer_id", user.id)
     .eq("status", "active");
+
+  console.log("USER:", user.id);
+  console.log("CUSTOMER PRODUCTS:", customerProducts);
+  console.log("CUSTOMER PRODUCTS ERROR:", customerProductsError);
 
   const productIds =
     customerProducts?.map(
       (item) => item.product_id
     ) ?? [];
 
-  const { data: products } =
+  console.log("PRODUCT IDS:", productIds);
+
+  const {
+    data: products,
+    error: productsError,
+  } =
     productIds.length === 0
-      ? { data: [] }
+      ? {
+          data: [],
+          error: null,
+        }
       : await supabase
           .from("products")
-          .select("id,title,description")
+          .select("id,title")
           .in("id", productIds);
+
+  console.log("PRODUCTS:", products);
+  console.log("PRODUCTS ERROR:", productsError);
 
   return (
     <div className="max-w-6xl mx-auto p-8">
@@ -74,12 +92,6 @@ export default async function MyCoursesPage() {
             <h2 className="text-xl font-bold">
               {product.title}
             </h2>
-
-            {product.description && (
-              <p className="text-zinc-400 mt-2">
-                {product.description}
-              </p>
-            )}
 
             <Link
               href={`/dashboard/my-courses/${product.id}`}
