@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import CoursePlayer from "@/components/course/CoursePlayer";
+import { getCompletedLessons } from "@/lib/services/lessonProgress";
 
 interface PageProps {
   params: Promise<{
@@ -82,11 +83,15 @@ const {
 console.log("LESSONS:", lessons);
 console.log("LESSONS ERROR:", lessonsError);
 
+const completedLessons = await getCompletedLessons(user.id);
+
   return (
   <CoursePlayer
+    userId={user.id}
     product={product}
     modules={modules ?? []}
     lessons={lessons ?? []}
+    completedLessons={completedLessons}
   />
 );
 }

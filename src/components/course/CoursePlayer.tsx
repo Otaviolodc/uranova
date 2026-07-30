@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import Link from "next/link";
 
 interface Product {
   id: string;
@@ -24,9 +25,11 @@ interface Lesson {
 }
 
 interface Props {
+  userId: string;
   product: Product;
   modules: Module[];
   lessons: Lesson[];
+  completedLessons: string[];
 }
 
 function getYoutubeEmbed(url: string) {
@@ -48,14 +51,19 @@ function getYoutubeEmbed(url: string) {
 }
 
 export default function CoursePlayer({
+  userId,
   product,
   modules,
   lessons,
+  completedLessons,
 }: Props) {
   const firstLesson = lessons[0] ?? null;
 
   const [selectedLesson, setSelectedLesson] =
     useState(firstLesson);
+
+  const [completed, setCompleted] =
+    useState(completedLessons);
 
   const playerTopRef = useRef<HTMLDivElement>(null);
 
@@ -84,6 +92,38 @@ export default function CoursePlayer({
 
     return selectedLesson.video_url;
   }, [selectedLesson]);
+
+  async function handleCompleteLesson() {
+  if (!selectedLesson) return;
+
+  try {
+    const response = await fetch(
+      "/api/course/complete-lesson",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          lessonId: selectedLesson.id,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error();
+    }
+
+    if (!completed.includes(selectedLesson.id)) {
+      setCompleted([
+        ...completed,
+        selectedLesson.id,
+      ]);
+    }
+  } catch {
+    alert("Erro ao concluir a aula.");
+  }
+}
 
   return (
     <div className="max-w-7xl mx-auto p-8">
@@ -137,8 +177,18 @@ export default function CoursePlayer({
                         }
                       `}
                     >
-                      <div className="font-medium">
-                        ▶ {lesson.title}
+                      <div className="flex items-center justify-between">
+
+                        <span className="font-medium">
+                          ▶ {lesson.title}
+                        </span>
+
+                        {completed.includes(lesson.id) && (
+                          <span className="text-green-400 text-lg">
+                            ✓
+                          </span>
+                        )}
+
                       </div>
 
                       {(lesson.duration_minutes ?? 0) > 0 && (
@@ -177,6 +227,7 @@ export default function CoursePlayer({
                 Nenhum vídeo disponível.
               </div>
             )}
+
           </div>
 
           <div
@@ -263,6 +314,55 @@ export default function CoursePlayer({
 
 </div>
 )}
+
+<div className="mt-10">
+  <button
+    onClick={handleCompleteLesson}
+    disabled={
+      !!selectedLesson &&
+      completed.includes(selectedLesson.id)
+    }
+    className="
+      w-full
+      rounded-xl
+      bg-green-600
+      py-4
+      font-semibold
+      transition
+      hover:bg-green-700
+      disabled:cursor-not-allowed
+      disabled:bg-green-900
+      disabled:opacity-70
+    "
+  >
+    {selectedLesson &&
+    completed.includes(selectedLesson.id)
+      ? "✓ Aula concluída"
+      : "✓ Marcar como concluída"}
+  </button>
+</div>
+
+<div className="mt-8">
+  <Link
+    href={`/dashboard/my-courses/${product.id}/certificate`}
+    className="
+      block
+      w-full
+      rounded-xl
+      border
+      border-blue-600
+      py-4
+      text-center
+      font-semibold
+      text-blue-400
+      transition
+      hover:bg-blue-600
+      hover:text-white
+    "
+  >
+    🎓 Ver Certificado
+  </Link>
+</div>
 
 <div className="mt-10 flex items-center justify-between border-t border-zinc-800 pt-6">
 
