@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { getUserBalance } from "@/lib/services/balance";
 
+import SupportButton from "@/components/support/SupportButton";
 import Sidebar from "@/components/layout/Sidebar";
 import Topbar from "@/components/layout/Topbar";
 import { createClient } from "@/lib/supabase/server";
@@ -20,8 +21,8 @@ export default async function DashboardLayout({
   } = await supabase.auth.getUser();
 
   if (!user) {
-  redirect("/auth/login");
-}
+    redirect("/auth/login");
+  }
 
   const balance = await getUserBalance(user.id);
 
@@ -39,6 +40,8 @@ export default async function DashboardLayout({
           {children}
         </main>
       </div>
+
+      <SupportButton />
     </div>
   );
 }
