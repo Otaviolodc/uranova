@@ -3,10 +3,12 @@
 import { CheckCircle2 } from "lucide-react";
 
 interface SupportSuccessProps {
+  message: string;
   onClose: () => void;
 }
 
 export default function SupportSuccess({
+  message,
   onClose,
 }: SupportSuccessProps) {
   return (
@@ -22,28 +24,20 @@ export default function SupportSuccess({
       </h2>
 
       <p className="mt-3 text-zinc-400">
-        Sua avaliação foi enviada com sucesso.
+        {message}
       </p>
 
       <button
         onClick={onClose}
         className="
           mt-8
-
           w-full
-
           rounded-xl
-
           bg-emerald-600
-
           py-3
-
           font-semibold
-
           text-white
-
           transition
-
           hover:bg-emerald-500
         "
       >

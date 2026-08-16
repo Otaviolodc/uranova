@@ -11,11 +11,17 @@ import {
 } from "lucide-react";
 
 interface SupportMenuProps {
+  onChatClick: () => void;
   onFeedbackClick: () => void;
+  onBugClick: () => void;
+  onSuggestionClick: () => void;
 }
 
 export default function SupportMenu({
+  onChatClick,
   onFeedbackClick,
+  onBugClick,
+  onSuggestionClick,
 }: SupportMenuProps) {
   return (
     <div className="space-y-3 p-4">
@@ -31,21 +37,21 @@ export default function SupportMenu({
         icon={<MessageCircle size={20} />}
         title="Conversar com suporte"
         description="Fale com nossa equipe"
-        onClick={() => {}}
+        onClick={onChatClick}
       />
 
       <MenuItem
         icon={<Bug size={20} />}
         title="Reportar problema"
         description="Encontrou algum bug?"
-        onClick={() => {}}
+        onClick={onBugClick}
       />
 
       <MenuItem
         icon={<Lightbulb size={20} />}
         title="Enviar sugestão"
         description="Ajude a melhorar a Uranova"
-        onClick={() => {}}
+        onClick={onSuggestionClick}
       />
 
       <MenuItem

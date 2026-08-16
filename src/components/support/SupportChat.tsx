@@ -1,44 +1,39 @@
 "use client";
 
-import { createBug } from "@/lib/services/support";
+import { createMessage } from "@/lib/services/support";
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Send } from "lucide-react";
 
-interface SupportBugProps {
+interface SupportChatProps {
   onBack: () => void;
   onSuccess: () => void;
 }
 
-export default function SupportBug({
+export default function SupportChat({
   onBack,
   onSuccess,
-}: SupportBugProps) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+}: SupportChatProps) {
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit() {
-    if (!title.trim() || !description.trim()) {
-      alert("Preencha todos os campos.");
+    if (!message.trim()) {
+      alert("Digite sua mensagem.");
       return;
     }
 
     try {
       setLoading(true);
 
-      await createBug(
-        title.trim(),
-        description.trim()
-      );
+      await createMessage(message.trim());
 
-      setTitle("");
-      setDescription("");
+      setMessage("");
 
       onSuccess();
     } catch (error) {
       console.error(error);
 
-      alert("Não foi possível enviar o problema.");
+      alert("Não foi possível enviar sua mensagem.");
     } finally {
       setLoading(false);
     }
@@ -46,8 +41,10 @@ export default function SupportBug({
 
   return (
     <div className="p-5">
+
       <button
         onClick={onBack}
+        disabled={loading}
         className="
           mb-5
           flex
@@ -57,6 +54,7 @@ export default function SupportBug({
           text-zinc-400
           transition
           hover:text-white
+          disabled:opacity-50
         "
       >
         <ArrowLeft size={18} />
@@ -64,42 +62,21 @@ export default function SupportBug({
       </button>
 
       <h3 className="text-xl font-bold text-white">
-        Reportar problema
+        Conversar com suporte
       </h3>
 
       <p className="mt-2 text-sm text-zinc-400">
-        Encontrou algum problema? Conte para nossa equipe.
+        Envie sua dúvida ou mensagem para nossa equipe.
       </p>
 
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Título do problema"
+      <textarea
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
         disabled={loading}
+        placeholder="Digite sua mensagem..."
         className="
           mt-6
-          w-full
-          rounded-xl
-          border
-          border-white/10
-          bg-zinc-800
-          p-4
-          text-white
-          placeholder:text-zinc-500
-          focus:border-emerald-500
-          focus:outline-none
-          disabled:opacity-50
-        "
-      />
-
-      <textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="Descreva o que aconteceu"
-        disabled={loading}
-        className="
-          mt-4
-          h-32
+          h-36
           w-full
           resize-none
           rounded-xl
@@ -120,7 +97,11 @@ export default function SupportBug({
         disabled={loading}
         className="
           mt-5
+          flex
           w-full
+          items-center
+          justify-center
+          gap-2
           rounded-xl
           bg-emerald-600
           py-3
@@ -132,8 +113,11 @@ export default function SupportBug({
           disabled:opacity-50
         "
       >
-        {loading ? "Enviando..." : "Enviar problema"}
+        <Send size={18} />
+
+        {loading ? "Enviando..." : "Enviar mensagem"}
       </button>
+
     </div>
   );
 }
