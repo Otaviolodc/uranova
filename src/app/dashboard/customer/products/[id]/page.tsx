@@ -8,8 +8,9 @@ type Product = {
   id: string;
   title: string;
   description: string | null;
-  image_url: string |null;
+  image_url: string | null;
   file_path: string | null;
+  type: string | null;
 
   purchased_at?: string;
   order_id?: string;
@@ -32,168 +33,179 @@ export default function CustomerProductPage() {
   }, [id]);
 
   async function openProduct() {
-  if (!product?.file_path) return;
+    if (!product?.file_path) return;
 
-  const { data, error } =
-    await supabase.storage
-      .from("products")
-      .createSignedUrl(
-        product.file_path,
-        60 * 30 // 30 minutos
-      );
+    const { data, error } =
+      await supabase.storage
+        .from("products")
+        .createSignedUrl(
+          product.file_path,
+          60 * 30
+        );
 
-  if (error) {
-    console.error(error);
-    return;
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    window.open(data.signedUrl, "_blank");
   }
-
-  window.open(data.signedUrl, "_blank");
-}
 
   async function fetchProduct() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
-  if (!user) {
+    const { data: accesses, error: accessError } =
+      await supabase
+        .from("customer_products")
+        .select(`
+          id,
+          unlocked_at,
+          order_id
+        `)
+        .eq("customer_id", user.id)
+        .eq("product_id", id)
+        .eq("status", "active");
+
+    if (accessError) {
+      console.error(accessError);
+      setLoading(false);
+      return;
+    }
+
+    const access = accesses?.[0];
+
+    if (!access) {
+      setHasAccess(false);
+      setLoading(false);
+      return;
+    }
+
+    const {
+      data,
+      error,
+    } = await supabase
+      .from("products")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    console.log("Produto encontrado:", data);
+    console.log("Erro produto:", error);
+    console.log("ID recebido:", id);
+
+    if (error) {
+      console.error(error);
+      setLoading(false);
+      return;
+    }
+
+    if (!data) {
+      setHasAccess(false);
+      setLoading(false);
+      return;
+    }
+
+    setProduct({
+      id: data.id,
+      title: data.title,
+      image_url: data.image_url,
+      file_path: data.file_path,
+      description: data.description ?? null,
+      type: data.type ?? null,
+      purchased_at: access.unlocked_at,
+      order_id: access.order_id,
+    });
+
     setLoading(false);
-    return;
   }
 
-  const { data: accesses, error: accessError } =
-    await supabase
-      .from("customer_products")
-      .select(`
-        id,
-        unlocked_at,
-        order_id
-      `)
-      .eq("customer_id", user.id)
-      .eq("product_id", id)
-      .eq("status", "active");
-
-  if (accessError) {
-  console.error(accessError);
-  setLoading(false);
-  return;
-}
-
-const access = accesses?.[0];
-
-if (!access) {
-  setHasAccess(false);
-  setLoading(false);
-  return;
-}
-  
-  const {
-    data,
-    error,
-  } = await supabase
-    .from("products")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  console.log("Produto encontrado:", data);
-  console.log("Erro produto:", error);
-  console.log("ID recebido:", id);
-
-  if (error) {
-    console.error(error);
-    setLoading(false);
-    return;
-  }
-
-  if (!data) {
-    setHasAccess(false);
-    setLoading(false);
-    return;
-  }
-
-setProduct({
-  id: data.id,
-    title: data.title,
-    image_url: data.image_url,
-    file_path: data.file_path,
-    description: null,
-    purchased_at: access.unlocked_at,
-    order_id: access.order_id,
-  });
-
-  setLoading(false);
-
-}
-  
   if (loading) {
-  return (
-    <div className="p-10">
-      Carregando produto...
-    </div>
-  );
-}
+    return (
+      <div className="p-10">
+        Carregando produto...
+      </div>
+    );
+  }
 
-if (!hasAccess) {
-  return (
-    <div className="max-w-3xl mx-auto py-16">
-      <div
-        className="
-          bg-zinc-900
-          border
-          border-red-500/30
-          rounded-3xl
-          p-10
-          text-center
-        "
-      >
-        <div className="text-6xl mb-6">
-          🔒
-        </div>
-
-        <h1 className="text-4xl font-black">
-          Acesso Negado
-        </h1>
-
-        <p className="text-zinc-400 mt-4">
-          Você ainda não possui acesso
-          a este produto.
-        </p>
-
-        <a
-          href="/dashboard/marketplace"
+  if (!hasAccess) {
+    return (
+      <div className="max-w-3xl mx-auto py-16">
+        <div
           className="
-            inline-block
-            mt-8
-            bg-green-500
-            hover:bg-green-400
-            text-black
-            font-bold
-            px-8
-            py-4
-            rounded-2xl
+            bg-zinc-900
+            border
+            border-red-500/30
+            rounded-3xl
+            p-10
+            text-center
           "
         >
-          Ir para Marketplace
-        </a>
+          <div className="text-6xl mb-6">
+            🔒
+          </div>
+
+          <h1 className="text-4xl font-black">
+            Acesso Negado
+          </h1>
+
+          <p className="text-zinc-400 mt-4">
+            Você ainda não possui acesso
+            a este produto.
+          </p>
+
+          <a
+            href="/dashboard/marketplace"
+            className="
+              inline-block
+              mt-8
+              bg-green-500
+              hover:bg-green-400
+              text-black
+              font-bold
+              px-8
+              py-4
+              rounded-2xl
+            "
+          >
+            Ir para Marketplace
+          </a>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+
+  const isEbook = product?.type === "ebook";
+
+  const productLabel = isEbook
+    ? "📘 E-book"
+    : "📄 PDF";
+
+  const downloadLabel = isEbook
+    ? "📖 Baixar E-book"
+    : "⬇ Baixar PDF";
+
+  const fileName = product?.file_path
+    ? product.file_path.split("/").pop()
+    : null;
 
   return (
     <div className="space-y-8">
 
       <div>
-
         <h1 className="text-4xl font-black">
-          📦 Produto
+          {productLabel}
         </h1>
 
         <p className="text-zinc-400 mt-2">
           Área exclusiva do produto adquirido.
         </p>
-
       </div>
 
       <div
@@ -210,17 +222,17 @@ if (!hasAccess) {
           src={
             product.image_url ||
             "/placeholder.png"
-        }
-        alt={product.title}
-        className="
-          w-full
-          h-72
-          object-cover
-        "
+          }
+          alt={product.title}
+          className="
+            w-full
+            h-72
+            object-cover
+          "
         />
 
         <div className="p-8">
-         
+
           <h1
             className="
               text-4xl
@@ -230,7 +242,7 @@ if (!hasAccess) {
           >
             {product.title}
           </h1>
- 
+
           <p
             className="
               text-zinc-400
@@ -262,7 +274,7 @@ if (!hasAccess) {
               </p>
 
               <h3 className="text-xl font-bold mt-2">
-                Digital
+                {productLabel}
               </h3>
             </div>
 
@@ -300,48 +312,59 @@ if (!hasAccess) {
 
           </div>
 
-        <div
-          className="
-            mt-8
-            rounded-2xl
-            border
-            border-zinc-800
-            bg-zinc-950
-            p-6
-            space-y-4
-          "
-        >
-          <h2 className="text-lg font-bold text-green-400">
-            🟢 Produto liberado para sua conta
-          </h2>
+          <div
+            className="
+              mt-8
+              rounded-2xl
+              border
+              border-zinc-800
+              bg-zinc-950
+              p-6
+              space-y-4
+            "
+          >
 
-          <div className="space-y-2 text-zinc-300">
+            <h2 className="text-lg font-bold text-green-400">
+              🟢 Produto liberado para sua conta
+            </h2>
 
-            <p>
-              📅 <span className="font-medium">Liberado em:</span>{" "}
-              {product.purchased_at
-                ? new Date(product.purchased_at).toLocaleDateString("pt-BR")
-                : "-"}
-            </p>
+            <div className="space-y-2 text-zinc-300">
 
-            <p>
-              📄 <span className="font-medium">Arquivo:</span>{" "}
-              {product.title}.pdf
-             </p>
+              <p>
+                📅{" "}
+                <span className="font-medium">
+                  Liberado em:
+                </span>{" "}
+                {product.purchased_at
+                  ? new Date(
+                      product.purchased_at
+                    ).toLocaleDateString("pt-BR")
+                  : "-"}
+              </p>
 
-            <p>
-              ☁️ <span className="font-medium">
-                Download disponível
-              </span>
+              <p>
+                {isEbook ? "📘" : "📄"}{" "}
+                <span className="font-medium">
+                  Arquivo:
+                </span>{" "}
+                {fileName || product.title}
+              </p>
+
+              <p>
+                ☁️{" "}
+                <span className="font-medium">
+                  Download disponível
+                </span>
+              </p>
+
+            </div>
+
+            <p className="text-sm text-zinc-500">
+              Este conteúdo permanecerá disponível na sua biblioteca
+              enquanto sua conta estiver ativa.
             </p>
 
           </div>
-
-          <p className="text-sm text-zinc-500">
-            Este conteúdo permanecerá disponível na sua biblioteca
-            enquanto sua conta estiver ativa.
-          </p>
-        </div>
 
           {product.file_path ? (
 
@@ -363,7 +386,9 @@ if (!hasAccess) {
               <div>
 
                 <p className="text-zinc-500 text-sm">
-                  Arquivo Principal
+                  {isEbook
+                    ? "E-book"
+                    : "Arquivo Principal"}
                 </p>
 
                 <h3 className="text-xl font-bold mt-2">
@@ -388,7 +413,7 @@ if (!hasAccess) {
                   rounded-2xl
                 "
               >
-                ⬇ Baixar Produto
+                {downloadLabel}
               </button>
 
             </div>
@@ -405,20 +430,15 @@ if (!hasAccess) {
                 p-6
               "
             >
-
               Este produto ainda não possui conteúdo disponível.
-
             </div>
 
           )}
-
-          {/* ProductViewer será implementado na próxima sprint */}
 
         </div>
 
       </div>
 
     </div>
-
   );
 }

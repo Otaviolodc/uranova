@@ -182,7 +182,7 @@ export default function ProductForm({
           />
         </label>
 
-        {product.type === "pdf" && (
+        {(product.type === "pdf" || product.type === "ebook") && (
 
   <label
     className="
@@ -197,15 +197,16 @@ export default function ProductForm({
       cursor-pointer
     "
   >
-    📄 Enviar Produto PDF
+    {product.type === "pdf"
+      ? "📄 Enviar Produto PDF"
+      : "📘 Enviar E-book"}
 
     <input
       type="file"
-      accept=".pdf"
+      accept=".pdf,.epub"
       onChange={handleProductFileUpload}
       className="hidden"
     />
-
   </label>
 
 )}
