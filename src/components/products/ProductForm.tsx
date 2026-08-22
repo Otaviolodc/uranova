@@ -208,7 +208,40 @@ export default function ProductForm({
       className="hidden"
     />
   </label>
+)}
 
+        {product.type === "bundle" && (
+  <label
+    className="
+      border-2
+      border-dashed
+      border-orange-500/50
+      rounded-2xl
+      p-8
+      flex
+      flex-col
+      justify-center
+      items-center
+      cursor-pointer
+      hover:bg-orange-500/5
+      transition
+    "
+  >
+    <span className="text-lg font-bold text-orange-400">
+      📦 Enviar arquivos do Pack
+    </span>
+
+    <span className="text-sm text-zinc-400 mt-2 text-center">
+      Selecione vários arquivos para compor seu Pack.
+    </span>
+
+    <input
+      type="file"
+      multiple
+      onChange={handleProductFileUpload}
+      className="hidden"
+    />
+  </label>
 )}
 
 {product.type === "course" && (

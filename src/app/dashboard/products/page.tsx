@@ -117,43 +117,74 @@ async function handleProductFileUpload(
 ) {
   console.log("=== UPLOAD PRODUTO ===");
 
-  const file = e.target.files?.[0];
+  const files = Array.from(e.target.files ?? []);
 
-  console.log("FILE:", file);
-
-  if (!file) return;
+  if (files.length === 0) return;
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log("USER:", user);
-
   if (!user) return;
 
-  const fileExt = file.name.split(".").pop();
+  // PDF e E-book continuam aceitando apenas 1 arquivo
+  if (product.type !== "bundle") {
+    const file = files[0];
 
-  const fileName =
-    `${user.id}-${Date.now()}.${fileExt}`;
+    const fileExt = file.name.split(".").pop();
 
-  console.log("FILE NAME:", fileName);
+    const fileName =
+      `${user.id}-${Date.now()}.${fileExt}`;
 
-  const filePath = await uploadPrivateFile(
-    "products",
-    file,
-    fileName
-  );
+    const filePath = await uploadPrivateFile(
+      "products",
+      file,
+      fileName
+    );
 
-  console.log("FILE PATH:", filePath);
+    if (!filePath) {
+      alert("Erro ao enviar o arquivo.");
+      return;
+    }
 
-  if (!filePath) {
-    alert("Erro ao enviar o arquivo.");
+    updateField("file_path", filePath);
+
+    console.log("ARQUIVO ÚNICO ENVIADO:", filePath);
+
     return;
   }
 
-  updateField("file_path", filePath);
+  // 📦 Pack de Arquivos
+  const uploadedFiles: string[] = [];
 
-  console.log("STATE ATUALIZADO");
+  for (const file of files) {
+    const fileExt = file.name.split(".").pop();
+
+    const fileName =
+      `${user.id}-${Date.now()}-${Math.random()
+        .toString(36)
+        .substring(2, 8)}.${fileExt}`;
+
+    const filePath = await uploadPrivateFile(
+      "products",
+      file,
+      fileName
+    );
+
+    if (!filePath) {
+      alert(`Erro ao enviar o arquivo: ${file.name}`);
+      return;
+    }
+
+    uploadedFiles.push(filePath);
+  }
+
+  updateField(
+    "file_path",
+    JSON.stringify(uploadedFiles)
+  );
+
+  console.log("PACK ENVIADO:", uploadedFiles);
 }
 
   async function handleCreate() {

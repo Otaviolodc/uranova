@@ -16,6 +16,11 @@ type Product = {
   order_id?: string;
 };
 
+type PackFile = {
+  path: string;
+  name: string;
+};
+
 export default function CustomerProductPage() {
   const { id } = useParams();
 
@@ -32,14 +37,12 @@ export default function CustomerProductPage() {
     fetchProduct();
   }, [id]);
 
-  async function openProduct() {
-    if (!product?.file_path) return;
-
+  async function openSingleFile(filePath: string) {
     const { data, error } =
       await supabase.storage
         .from("products")
         .createSignedUrl(
-          product.file_path,
+          filePath,
           60 * 30
         );
 
@@ -181,19 +184,64 @@ export default function CustomerProductPage() {
     );
   }
 
-  const isEbook = product?.type === "ebook";
+  const isBundle =
+    product?.type === "bundle";
 
-  const productLabel = isEbook
+  const isEbook =
+    product?.type === "ebook";
+
+  const productLabel = isBundle
+    ? "📦 Pack de Arquivos"
+    : isEbook
     ? "📘 E-book"
     : "📄 PDF";
 
-  const downloadLabel = isEbook
-    ? "📖 Baixar E-book"
-    : "⬇ Baixar PDF";
+  /*
+   * Converte o file_path do Pack em uma lista.
+   *
+   * Exemplo:
+   *
+   * [
+   *   "products/arquivo1.pdf",
+   *   "products/arquivo2.zip"
+   * ]
+   */
+  let packFiles: PackFile[] = [];
 
-  const fileName = product?.file_path
-    ? product.file_path.split("/").pop()
-    : null;
+  if (isBundle && product?.file_path) {
+    try {
+      const parsed =
+        JSON.parse(product.file_path);
+
+      if (Array.isArray(parsed)) {
+        packFiles = parsed.map(
+          (path: string) => ({
+            path,
+            name:
+              path.split("/").pop() ||
+              "Arquivo",
+          })
+        );
+      }
+    } catch {
+      console.error(
+        "Erro ao interpretar arquivos do Pack."
+      );
+    }
+  }
+
+  const fileName =
+    product?.file_path &&
+    !isBundle
+      ? product.file_path
+          .split("/")
+          .pop()
+      : null;
+
+  const singleDownloadLabel =
+    isEbook
+      ? "📖 Baixar E-book"
+      : "⬇ Baixar PDF";
 
   return (
     <div className="space-y-8">
@@ -250,7 +298,8 @@ export default function CustomerProductPage() {
               leading-8
             "
           >
-            {product.description ?? "Sem descrição."}
+            {product.description ??
+              "Sem descrição."}
           </p>
 
           <div
@@ -306,7 +355,13 @@ export default function CustomerProductPage() {
               </p>
 
               <h3 className="text-xl font-bold mt-2">
-                1 Arquivo
+                {isBundle
+                  ? `${packFiles.length} Arquivo${
+                      packFiles.length === 1
+                        ? ""
+                        : "s"
+                    }`
+                  : "1 Arquivo"}
               </h3>
             </div>
 
@@ -338,17 +393,32 @@ export default function CustomerProductPage() {
                 {product.purchased_at
                   ? new Date(
                       product.purchased_at
-                    ).toLocaleDateString("pt-BR")
+                    ).toLocaleDateString(
+                      "pt-BR"
+                    )
                   : "-"}
               </p>
 
-              <p>
-                {isEbook ? "📘" : "📄"}{" "}
-                <span className="font-medium">
-                  Arquivo:
-                </span>{" "}
-                {fileName || product.title}
-              </p>
+              {isBundle ? (
+                <p>
+                  📦{" "}
+                  <span className="font-medium">
+                    Arquivos:
+                  </span>{" "}
+                  {packFiles.length} disponíveis
+                </p>
+              ) : (
+                <p>
+                  {isEbook
+                    ? "📘"
+                    : "📄"}{" "}
+                  <span className="font-medium">
+                    Arquivo:
+                  </span>{" "}
+                  {fileName ||
+                    product.title}
+                </p>
+              )}
 
               <p>
                 ☁️{" "}
@@ -360,13 +430,155 @@ export default function CustomerProductPage() {
             </div>
 
             <p className="text-sm text-zinc-500">
-              Este conteúdo permanecerá disponível na sua biblioteca
-              enquanto sua conta estiver ativa.
+              Este conteúdo permanecerá disponível
+              na sua biblioteca enquanto sua conta
+              estiver ativa.
             </p>
 
           </div>
 
-          {product.file_path ? (
+          {isBundle ? (
+
+            <div
+              className="
+                mt-10
+                rounded-2xl
+                border
+                border-orange-500/30
+                bg-orange-500/5
+                p-6
+              "
+            >
+
+              <div className="mb-6">
+
+                <h2 className="text-2xl font-bold">
+                  📦 Arquivos do Pack
+                </h2>
+
+                <p className="text-zinc-400 mt-2">
+                  Baixe individualmente cada
+                  arquivo disponível.
+                </p>
+
+              </div>
+
+              {packFiles.length > 0 ? (
+
+                <div className="space-y-3">
+
+                  {packFiles.map(
+                    (file, index) => (
+
+                      <div
+                        key={`${file.path}-${index}`}
+                        className="
+                          bg-zinc-800
+                          border
+                          border-zinc-700
+                          rounded-2xl
+                          p-5
+                          flex
+                          items-center
+                          justify-between
+                          gap-5
+                        "
+                      >
+
+                        <div
+                          className="
+                            flex
+                            items-center
+                            gap-4
+                            min-w-0
+                          "
+                        >
+
+                          <div
+                            className="
+                              w-12
+                              h-12
+                              rounded-xl
+                              bg-orange-500/10
+                              flex
+                              items-center
+                              justify-center
+                              text-2xl
+                              shrink-0
+                            "
+                          >
+                            📄
+                          </div>
+
+                          <div className="min-w-0">
+
+                            <p className="text-xs text-zinc-500">
+                              Arquivo {index + 1}
+                            </p>
+
+                            <h3
+                              className="
+                                font-semibold
+                                truncate
+                              "
+                              title={file.name}
+                            >
+                              {file.name}
+                            </h3>
+
+                          </div>
+
+                        </div>
+
+                        <button
+                          onClick={() =>
+                            openSingleFile(
+                              file.path
+                            )
+                          }
+                          className="
+                            shrink-0
+                            bg-green-500
+                            hover:bg-green-400
+                            text-black
+                            font-bold
+                            px-5
+                            py-3
+                            rounded-xl
+                            transition
+                          "
+                        >
+                          ⬇ Baixar
+                        </button>
+
+                      </div>
+
+                    )
+                  )}
+
+                </div>
+
+              ) : (
+
+                <div
+                  className="
+                    rounded-2xl
+                    border
+                    border-yellow-500/30
+                    bg-yellow-500/10
+                    p-6
+                    text-yellow-300
+                  "
+                >
+                  Nenhum arquivo foi encontrado
+                  neste Pack.
+                </div>
+
+              )}
+
+            </div>
+
+          ) : product.file_path ? (
 
             <div
               className="
@@ -402,7 +614,11 @@ export default function CustomerProductPage() {
               </div>
 
               <button
-                onClick={openProduct}
+                onClick={() =>
+                  openSingleFile(
+                    product.file_path!
+                  )
+                }
                 className="
                   bg-green-500
                   hover:bg-green-400
@@ -413,7 +629,7 @@ export default function CustomerProductPage() {
                   rounded-2xl
                 "
               >
-                {downloadLabel}
+                {singleDownloadLabel}
               </button>
 
             </div>
@@ -430,7 +646,8 @@ export default function CustomerProductPage() {
                 p-6
               "
             >
-              Este produto ainda não possui conteúdo disponível.
+              Este produto ainda não possui
+              conteúdo disponível.
             </div>
 
           )}
