@@ -5,7 +5,6 @@ import { getProfile } from "@/lib/services/profile.service";
 
 import AccountHeader from "@/components/dashboard/account/AccountHeader";
 import AccountInfo from "@/components/dashboard/account/AccountInfo";
-import AccountStats from "@/components/dashboard/account/AccountStats";
 import AccountActions from "@/components/dashboard/account/AccountActions";
 
 export default async function AccountPage() {
@@ -27,6 +26,7 @@ export default async function AccountPage() {
 
   return (
     <div className="space-y-8 p-8">
+
       <AccountHeader />
 
       <AccountInfo
@@ -34,14 +34,8 @@ export default async function AccountPage() {
         email={user.email ?? "-"}
       />
 
-      <AccountStats
-        products={0}
-        customers={0}
-        sales={0}
-        isPro={profile.is_pro}
-      />
-
       <AccountActions />
+
     </div>
   );
 }
