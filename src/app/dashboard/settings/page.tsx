@@ -281,7 +281,6 @@ if (error) {
 
       <SettingsPreview
         profile={profile}
-        reloadProfile={fetchProfile}
       />
 
     </div>

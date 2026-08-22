@@ -22,8 +22,6 @@ export default function ProfilePreview({
           w-[320px]
           h-[650px]
           bg-black
-          border-[10px]
-          border-zinc-900
           rounded-[50px]
           overflow-hidden
           shadow-2xl
