@@ -132,17 +132,15 @@ export default async function PaymentsPage() {
 
               <span
                 className="
-                  bg-green-500/20
-                  text-green-400
-                  border
-                  border-green-500/20
-                  px-3
-                  py-1
-                  rounded-lg
+                  text-white
                   text-sm
+                  font-semibold
+                  whitespace-nowrap
                 "
               >
-                {order.status}
+                {order.status === "PAID"
+                  ? "APROVADA"
+                  : order.status}
               </span>
 
             </div>

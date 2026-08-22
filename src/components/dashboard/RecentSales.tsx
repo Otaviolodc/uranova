@@ -17,56 +17,48 @@ type Sale = {
 };
 
 export default function RecentSales() {
-
- const [sales, setSales] =
-   useState<Sale[]>([]);
+  const [sales, setSales] = useState<Sale[]>([]);
 
   async function fetchSales() {
-
     const {
-  data: { session },
-} = await supabase.auth.getSession();
+      data: { session },
+    } = await supabase.auth.getSession();
 
-const user = session?.user;
+    const user = session?.user;
 
-if (!user) return;
+    if (!user) return;
 
-    const {
-  data,
-  error,
-} = await supabase
-  .from("orders")
-  .select(`
-    id,
-    customer_name,
-    amount,
-    status,
-    created_at,
-    products (
-      title
-    )
-  `)
-  .eq("user_id", user.id)
-  .order("created_at", {
-    ascending: false,
-  })
-  .limit(10);
+    const { data, error } = await supabase
+      .from("orders")
+      .select(`
+        id,
+        customer_name,
+        amount,
+        status,
+        created_at,
+        products (
+          title
+        )
+      `)
+      .eq("user_id", user.id)
+      .order("created_at", {
+        ascending: false,
+      })
+      .limit(10);
 
-if (error) {
-  console.error("RecentSales:", error);
-  return;
-}
+    if (error) {
+      console.error("RecentSales:", error);
+      return;
+    }
 
     setSales((data as Sale[]) || []);
-
-}
+  }
 
   useEffect(() => {
     fetchSales();
   }, []);
 
   return (
-
     <div
       className="
         mt-10
@@ -77,7 +69,6 @@ if (error) {
         overflow-hidden
       "
     >
-
       {/* HEADER */}
       <div
         className="
@@ -86,7 +77,6 @@ if (error) {
           border-zinc-800
         "
       >
-
         <h2
           className="
             text-2xl
@@ -100,13 +90,10 @@ if (error) {
         <p className="text-zinc-400 mt-2">
           Pedidos mais recentes da sua operação
         </p>
-
       </div>
 
       <div className="overflow-x-auto">
-
         <table className="w-full">
-
           <thead
             className="
               border-b
@@ -114,9 +101,7 @@ if (error) {
               bg-zinc-950
             "
           >
-
             <tr>
-
               <th className="text-left p-5 text-zinc-400">
                 Produto
               </th>
@@ -136,15 +121,11 @@ if (error) {
               <th className="text-left p-5 text-zinc-400">
                 Data
               </th>
-
             </tr>
-
           </thead>
 
           <tbody>
-
             {sales.map((sale) => (
-
               <tr
                 key={sale.id}
                 className="
@@ -154,7 +135,6 @@ if (error) {
                   transition
                 "
               >
-
                 <td className="p-5 text-white font-medium">
                   {sale.products?.[0]?.title || "Produto"}
                 </td>
@@ -174,39 +154,30 @@ if (error) {
                 </td>
 
                 <td className="p-5">
-
                   <span
                     className="
-                      bg-green-500/20
-                      text-green-400
-                      px-4
-                      py-2
-                      rounded-full
+                      text-white
                       text-sm
-                      font-medium
+                      font-semibold
+                      whitespace-nowrap
                     "
                   >
-                    {sale.status}
+                    {sale.status === "PAID"
+                      ? "APROVADA"
+                      : sale.status}
                   </span>
-
                 </td>
 
                 <td className="p-5 text-zinc-400">
-
                   {new Date(
                     sale.created_at
                   ).toLocaleDateString("pt-BR")}
-
                 </td>
-
               </tr>
-
             ))}
 
             {sales.length === 0 && (
-
               <tr>
-
                 <td
                   colSpan={5}
                   className="
@@ -217,18 +188,11 @@ if (error) {
                 >
                   Nenhuma venda encontrada.
                 </td>
-
               </tr>
-
             )}
-
           </tbody>
-
         </table>
-
       </div>
-
     </div>
-
   );
 }

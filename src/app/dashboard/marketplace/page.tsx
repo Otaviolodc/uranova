@@ -76,13 +76,22 @@ setLoading(false);;
   });
 
   const categories = [
-    "Todos",
-    "course",
-    "ebook",
-    "pdf",
-    "mentoring",
-    "bundle",
-  ];
+  "Todos",
+  "course",
+  "ebook",
+  "pdf",
+  "mentoring",
+  "bundle",
+];
+
+const categoryLabels: Record<string, string> = {
+  Todos: "Todos",
+  course: "Curso",
+  ebook: "E-book",
+  pdf: "PDF",
+  mentoring: "Mentoria",
+  bundle: "Pack de Arquivos",
+};
 
   return (
     <div className="p-8">
@@ -153,7 +162,7 @@ setLoading(false);;
               }
             `}
           >
-            {item}
+            {categoryLabels[item]}
           </button>
 
         ))}

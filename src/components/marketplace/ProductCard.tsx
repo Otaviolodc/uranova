@@ -7,6 +7,15 @@ type ProductCardProps = {
 export default function ProductCard({
   product,
 }: ProductCardProps) {
+
+  const typeLabels: Record<string, string> = {
+    course: "Curso",
+    ebook: "E-book",
+    pdf: "PDF",
+    mentoring: "Mentoria",
+    bundle: "Pack de Arquivos",
+  };
+
   return (
     <div
       className="
@@ -23,6 +32,7 @@ export default function ProductCard({
         duration-300
       "
     >
+
       {/* IMAGEM */}
       <div className="relative">
 
@@ -74,6 +84,7 @@ export default function ProductCard({
       {/* CONTEÚDO */}
       <div className="p-5">
 
+        {/* TIPOS */}
         <div className="flex gap-2 mb-4">
 
           <span
@@ -86,7 +97,7 @@ export default function ProductCard({
               text-sm
             "
           >
-            {product.type}
+            {typeLabels[product.type] || product.type}
           </span>
 
           <span
@@ -104,6 +115,7 @@ export default function ProductCard({
 
         </div>
 
+        {/* TÍTULO */}
         <h2
           className="
             text-2xl
@@ -115,12 +127,12 @@ export default function ProductCard({
           {product.title}
         </h2>
 
+        {/* DESCRIÇÃO */}
         <p className="text-zinc-500 mt-3">
-
           Marketplace Uranova
-
         </p>
 
+        {/* PREÇO */}
         <h3
           className="
             text-green-400
@@ -132,6 +144,7 @@ export default function ProductCard({
           R$ {Number(product.price).toFixed(2)}
         </h3>
 
+        {/* BOTÃO */}
         <Link
           href={`/checkout/product/${product.checkout_slug}`}
           className="
