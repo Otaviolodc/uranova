@@ -57,6 +57,10 @@ export async function approveWithdraw(id: string) {
   }
 }
 
+/* ===========================
+   RECUSAR SAQUE
+=========================== */
+
 export async function rejectWithdraw(id: string) {
   const { error } = await admin
     .from("withdraw_requests")
@@ -71,119 +75,45 @@ export async function rejectWithdraw(id: string) {
   }
 }
 
+/* ===========================
+   MARCAR SAQUE COMO PAGO
+=========================== */
+
 export async function markWithdrawAsPaid(id: string) {
-  // Busca o saque
-  const { data: withdraw, error: withdrawError } = await admin
-    .from("withdraw_requests")
-    .select("*")
-    .eq("id", id)
-    .single();
+  console.log("====================================");
+  console.log("PROCESSANDO SAQUE");
+  console.log("====================================");
+  console.log("Withdrawal ID:", id);
 
-  if (withdrawError || !withdraw) {
-    throw new Error("Saque não encontrado.");
+  if (!id) {
+    throw new Error("ID do saque não informado.");
   }
 
-  // O saque deve estar aprovado
-  if (withdraw.status !== "approved") {
-    switch (withdraw.status) {
-      case "pending":
-        throw new Error("O saque ainda não foi aprovado.");
+  // ======================================================
+  // PROCESSAMENTO FINANCEIRO CENTRALIZADO NO BANCO
+  // ======================================================
 
-      case "rejected":
-        throw new Error("Este saque foi recusado.");
-
-      case "paid":
-        throw new Error("Este saque já foi pago.");
-
-      default:
-        throw new Error("Status do saque inválido.");
-    }
-  }
-
-  // O valor precisa ser maior que zero
-  if (Number(withdraw.amount) <= 0) {
-    throw new Error("Valor do saque inválido.");
-  }
-
-  // Busca o saldo do produtor
-  const { data: balance, error: balanceError } = await admin
-    .from("balances")
-    .select("*")
-    .eq("user_id", withdraw.user_id)
-    .single();
-
-  if (balanceError || !balance) {
-    throw new Error("Saldo do produtor não encontrado.");
-  }
-
-  // Confere saldo disponível
-  if (Number(balance.available_balance) < Number(withdraw.amount)) {
-    throw new Error("Saldo insuficiente para concluir este pagamento.");
-  }
-
-// ==========================
-// ETAPA 2 - Inserir financial_transactions
-// ==========================
-
-const { error: transactionError } = await admin
-  .from("financial_transactions")
-  .insert({
-    user_id: withdraw.user_id,
-    withdrawal_id: withdraw.id,
-    type: "withdrawal",
-    amount: withdraw.amount,
-    description: "Saque realizado via PIX",
+  const { error } = await admin.rpc("process_withdrawal", {
+    p_withdraw_id: id,
   });
 
-if (transactionError) {
-  console.error(
-    "Erro ao inserir financial_transactions:",
-    transactionError
-  );
-  throw transactionError;
-}
+  if (error) {
+    console.error("====================================");
+    console.error("WITHDRAWAL ERROR");
+    console.error("====================================");
+    console.error(error);
 
-// ==========================
-// ETAPA 3 - Atualizar withdraw_requests
-// ==========================
+    throw new Error(
+      error.message || "Erro ao processar saque."
+    );
+  }
 
-const { error: updateWithdrawError } = await admin
-  .from("withdraw_requests")
-  .update({
-    status: "paid",
-    paid_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  })
-  .eq("id", withdraw.id);
+  console.log("Saque processado com sucesso.");
+  console.log("Withdrawal ID:", id);
+  console.log("====================================");
 
-if (updateWithdrawError) {
-  console.error(
-    "Erro ao atualizar withdraw_requests:",
-    updateWithdrawError
-  );
-  throw updateWithdrawError;
-}
-
-  // ==========================
-  // ETAPA 4 - Atualizar balances
-  // ==========================
-
-const { error: updateBalanceError } = await admin
-  .from("balances")
-  .update({
-    available_balance:
-      Number(balance.available_balance) - Number(withdraw.amount),
-
-    total_withdrawn:
-      Number(balance.total_withdrawn) + Number(withdraw.amount),
-
-    updated_at: new Date().toISOString(),
-  })
-  .eq("user_id", withdraw.user_id);
-
-if (updateBalanceError) {
-  console.error("Erro ao atualizar balances:", updateBalanceError);
-  throw updateBalanceError;
-}
-
+  return {
+    success: true,
+    message: "Saque processado e marcado como pago com sucesso.",
+  };
 }
