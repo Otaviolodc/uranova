@@ -1,4 +1,8 @@
-import { processCheckoutCompleted } from "@/lib/services/payment-processor";
+import {
+  processCheckoutCompleted,
+  processPaymentIntentSettlement,
+} from "@/lib/services/payment-processor";
+
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -48,44 +52,153 @@ export async function POST(req: Request) {
   console.log("Event ID:", event.id);
   console.log("=================================================");
 
-  switch (event.type) {
+  try {
+    switch (event.type) {
+      // =====================================================
+      // CHECKOUT CONCLUÍDO
+      // =====================================================
 
-    case "checkout.session.completed": {
+      case "checkout.session.completed": {
+        console.log("Checkout concluído.");
 
-      console.log("Checkout concluído.");
+        const session =
+          event.data.object as Stripe.Checkout.Session;
 
-      const session =
-        event.data.object as Stripe.Checkout.Session;
+        await processCheckoutCompleted({
+          session,
+        });
 
-      await processCheckoutCompleted({
-        session,
-      });
+        break;
+      }
 
-      break;
+      // =====================================================
+      // PAGAMENTO APROVADO
+      // =====================================================
+
+      case "payment_intent.succeeded": {
+        console.log("Pagamento aprovado.");
+
+        const paymentIntent =
+          event.data.object as Stripe.PaymentIntent;
+
+        await processPaymentIntentSettlement(
+          paymentIntent.id
+        );
+
+        break;
+      }
+
+      // =====================================================
+      // CHARGE SUCCEEDED
+      // =====================================================
+
+      case "charge.succeeded": {
+        console.log("Charge criada com sucesso.");
+
+        const charge =
+          event.data.object as Stripe.Charge;
+
+        const paymentIntentId =
+          typeof charge.payment_intent === "string"
+            ? charge.payment_intent
+            : charge.payment_intent?.id;
+
+        if (paymentIntentId) {
+          console.log(
+            "Tentando processar financeiro pelo Charge:",
+            paymentIntentId
+          );
+
+          await processPaymentIntentSettlement(
+            paymentIntentId
+          );
+        } else {
+          console.log(
+            "Payment Intent não encontrado no Charge."
+          );
+        }
+
+        break;
+      }
+
+      // =====================================================
+      // CHARGE UPDATED
+      // =====================================================
+
+      case "charge.updated": {
+        console.log(
+          "Charge atualizada. Tentando novamente o financeiro."
+        );
+
+        const charge =
+          event.data.object as Stripe.Charge;
+
+        const paymentIntentId =
+          typeof charge.payment_intent === "string"
+            ? charge.payment_intent
+            : charge.payment_intent?.id;
+
+        if (paymentIntentId) {
+          console.log(
+            "Retry financeiro pelo Charge Updated:",
+            paymentIntentId
+          );
+
+          await processPaymentIntentSettlement(
+            paymentIntentId
+          );
+        } else {
+          console.log(
+            "Payment Intent não encontrado no Charge Updated."
+          );
+        }
+
+        break;
+      }
+
+      // =====================================================
+      // FATURA PAGA
+      // =====================================================
+
+      case "invoice.paid": {
+        console.log("Fatura paga.");
+        break;
+      }
+
+      // =====================================================
+      // ASSINATURA CRIADA
+      // =====================================================
+
+      case "customer.subscription.created": {
+        console.log("Assinatura criada.");
+        break;
+      }
+
+      // =====================================================
+      // OUTROS EVENTOS
+      // =====================================================
+
+      default: {
+        console.log(
+          "Evento ignorado:",
+          event.type
+        );
+      }
     }
+  } catch (error) {
+    console.error(
+      "ERRO AO PROCESSAR WEBHOOK:",
+      error
+    );
 
-    case "payment_intent.succeeded":
-
-      console.log("Pagamento aprovado.");
-
-      break;
-
-    case "invoice.paid":
-
-      console.log("Fatura paga.");
-
-      break;
-
-    case "customer.subscription.created":
-
-      console.log("Assinatura criada.");
-
-      break;
-
-    default:
-
-      console.log("Evento ignorado:", event.type);
-
+    return NextResponse.json(
+      {
+        error: "Erro ao processar webhook.",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 
   return NextResponse.json({

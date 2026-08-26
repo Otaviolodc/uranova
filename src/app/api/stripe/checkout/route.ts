@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { stripe } from "@/lib/stripe";
+import { admin } from "@/lib/supabase/admin";
 
 interface CheckoutRequest {
   checkoutSlug: string;
@@ -38,6 +39,10 @@ export async function POST(req: Request) {
       );
     }
 
+    // ======================================================
+    // BUSCA O PRODUTO
+    // ======================================================
+
     const { data: product, error } = await supabase
       .from("products_checkout")
       .select("*")
@@ -45,6 +50,11 @@ export async function POST(req: Request) {
       .maybeSingle();
 
     if (error) {
+      console.error(
+        "Erro ao buscar produto:",
+        error
+      );
+
       return NextResponse.json(
         {
           error: "Erro ao buscar produto.",
@@ -66,7 +76,10 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!product.is_active || product.status !== "active") {
+    if (
+      !product.is_active ||
+      product.status !== "active"
+    ) {
       return NextResponse.json(
         {
           error: "Produto indisponível.",
@@ -77,55 +90,185 @@ export async function POST(req: Request) {
       );
     }
 
+    // ======================================================
+    // CONTA STRIPE DO PRODUTOR
+    // ======================================================
+
+    const {
+      data: sellerProfile,
+      error: sellerProfileError,
+    } = await admin
+      .from("profiles")
+      .select("stripe_account_id")
+      .eq("id", product.user_id)
+      .single();
+
+    if (
+      sellerProfileError ||
+      !sellerProfile?.stripe_account_id
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "O produtor ainda não conectou sua conta Stripe.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const sellerStripeAccountId =
+      sellerProfile.stripe_account_id;
+
+    // ======================================================
+    // URLS
+    // ======================================================
+
     const baseUrl =
       process.env.NODE_ENV === "development"
         ? "http://localhost:3000"
         : process.env.NEXT_PUBLIC_SITE_URL!;
 
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
+    // ======================================================
+    // VALOR DA VENDA
+    // ======================================================
 
-      success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+    const amount = Math.round(
+      Number(product.price) * 100
+    );
 
-      cancel_url: `${baseUrl}/checkout/${product.checkout_slug}`,
-
-      client_reference_id: product.id,
-
-      metadata: {
-        product_id: product.id,
-
-        seller_id: product.user_id,
-
-        customer_id: user.id,
-
-        checkout_slug: product.checkout_slug,
-      },
-
-      line_items: [
+    if (amount <= 0) {
+      return NextResponse.json(
         {
-          quantity: 1,
+          error: "Valor do produto inválido.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
-          price_data: {
-            currency: "brl",
+    // ======================================================
+    // COMISSÃO COMERCIAL DA URANOVA
+    //
+    // A Uranova tem direito a 10% da venda.
+    //
+    // IMPORTANTE:
+    // A tarifa real da Stripe NÃO é calculada aqui.
+    //
+    // Ela será obtida posteriormente através da
+    // Balance Transaction no payment-processor.
+    // ======================================================
 
-            unit_amount: Math.round(
-              Number(product.price) * 100
-            ),
+    const platformFee = Math.round(
+      amount * 0.10
+    );
 
-            product_data: {
-              name: product.title,
+    const sellerAmount =
+      amount - platformFee;
 
-              description:
-                product.description ?? undefined,
+    // ======================================================
+    // STRIPE CHECKOUT
+    //
+    // SEPARATE CHARGES AND TRANSFERS
+    //
+    // A cobrança inteira acontece na conta da Uranova.
+    //
+    // NÃO usamos:
+    //
+    // payment_intent_data.transfer_data
+    //
+    // A transferência para o produtor será criada
+    // posteriormente pelo payment-processor.
+    // ======================================================
 
-              images: product.image_url
-                ? [product.image_url]
-                : [],
+    const session =
+      await stripe.checkout.sessions.create({
+        mode: "payment",
+
+        success_url:
+          `${baseUrl}/checkout/success` +
+          `?session_id={CHECKOUT_SESSION_ID}`,
+
+        cancel_url:
+          `${baseUrl}/checkout/${product.checkout_slug}`,
+
+        client_reference_id: product.id,
+
+        metadata: {
+          product_id: product.id,
+
+          seller_id: product.user_id,
+
+          customer_id: user.id,
+
+          checkout_slug:
+            product.checkout_slug,
+
+          platform_fee:
+            String(platformFee),
+
+          seller_amount:
+            String(sellerAmount),
+
+          seller_stripe_account_id:
+            sellerStripeAccountId,
+        },
+
+        payment_intent_data: {
+          metadata: {
+            product_id: product.id,
+
+            seller_id: product.user_id,
+
+            customer_id: user.id,
+
+            checkout_slug:
+              product.checkout_slug,
+
+            seller_stripe_account_id:
+              sellerStripeAccountId,
+
+            platform_fee:
+              String(platformFee),
+
+            seller_amount:
+              String(sellerAmount),
+          },
+
+          transfer_group:
+            `uranova_order_${product.id}`,
+        },
+
+        line_items: [
+          {
+            quantity: 1,
+
+            price_data: {
+              currency: "brl",
+
+              unit_amount: amount,
+
+              product_data: {
+                name: product.title,
+
+                description:
+                  product.description ??
+                  undefined,
+
+                images: product.image_url
+                  ? [product.image_url]
+                  : [],
+              },
             },
           },
-        },
-      ],
-    });
+        ],
+      });
+
+    // ======================================================
+    // RESPOSTA
+    // ======================================================
 
     return NextResponse.json({
       success: true,
@@ -133,7 +276,6 @@ export async function POST(req: Request) {
     });
 
   } catch (error) {
-
     console.error(
       "STRIPE CHECKOUT ERROR:",
       error
