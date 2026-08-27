@@ -149,26 +149,6 @@ if (
             Pagamentos
           </Link>
 
-          <Link
-            href="/admin/withdraws"
-            className="
-              bg-zinc-900
-              hover:bg-zinc-800
-              hover:translate-x-1
-              transition-all
-              duration-200
-              px-4
-              py-3
-              rounded-xl
-              font-medium
-              border
-              border-transparent
-              hover:border-zinc-700
-            "
-          >
-            Saques
-          </Link>
-
         </nav>
 
      <a

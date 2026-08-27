@@ -1,7 +1,5 @@
-import WithdrawHistory from "@/components/finance/WithdrawHistory";
 import FinanceCards from "@/components/finance/FinanceCards";
 import FinancialHistory from "@/components/finance/FinancialHistory";
-import WithdrawSection from "@/components/finance/WithdrawSection";
 import StripeConnectButton from "@/components/finance/StripeConnectButton";
 import { createClient } from "@/lib/supabase/server";
 import { admin } from "@/lib/supabase/admin";
@@ -38,9 +36,7 @@ export default async function FinancePage() {
   // Client Component. Enviamos somente dados simples.
   //
 
-  const stripeConnected = Boolean(
-    stripeAccountId
-  );
+  const stripeConnected = Boolean(stripeAccountId);
 
   return (
     <div className="p-8">
@@ -66,16 +62,9 @@ export default async function FinancePage() {
         />
       </div>
 
-      {/* BOTÃO DE SAQUE */}
-      <div className="mt-8">
-        <WithdrawSection userId={user.id} />
-      </div>
-
-      {/* HISTÓRICO */}
+      {/* HISTÓRICO FINANCEIRO */}
       <div className="mt-10">
         <FinancialHistory userId={user.id} />
-
-        <WithdrawHistory userId={user.id} />
       </div>
     </div>
   );
