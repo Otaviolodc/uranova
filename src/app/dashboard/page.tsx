@@ -58,7 +58,8 @@ export default function DashboardPage() {
     // ======================================================
 
     const totalRevenue = orders.reduce(
-      (total, order) => total + Number(order.amount),
+      (total, order) =>
+        total + Number(order.amount),
       0
     );
 
@@ -123,14 +124,19 @@ export default function DashboardPage() {
 
       </div>
 
+      {/* AÇÕES RÁPIDAS */}
       <QuickActions />
 
+      {/* GRÁFICO */}
       <SalesChart />
 
+      {/* VENDAS RECENTES */}
       <RecentSales />
 
+      {/* PRODUTO MAIS VENDIDO */}
       <TopProducts />
 
+      {/* DESEMPENHO DA OPERAÇÃO */}
       <AIInsights />
 
     </div>
