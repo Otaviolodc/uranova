@@ -14,24 +14,33 @@ const PLATFORM_FEE_PERCENT = 10;
  * PROCESSA CHECKOUT CONCLUÍDO
  * ============================================================
  *
- * Fluxo:
+ * MODELO FINANCEIRO URANOVA
  *
- * Cliente paga
- * ↓
- * Stripe processa pagamento
- * ↓
- * 10% = comissão Uranova
- * ↓
- * restante = saldo Stripe Connect do produtor
- * ↓
- * Stripe controla payout do produtor
+ * Exemplo de uma venda de R$100,00:
+ *
+ * Venda                         R$100,00
+ * Comissão Uranova 10%         R$ 10,00
+ * Taxa Stripe                   R$  4,38
+ * Líquido após Stripe           R$ 95,62
+ * Produtor                      R$ 85,62
+ * Resultado líquido Uranova    R$ 10,00
  *
  * IMPORTANTE:
  *
- * Este arquivo NÃO cria Transfer.
+ * A comissão da Uranova é calculada sobre o valor bruto da venda.
  *
- * A transferência para o produtor é responsabilidade
- * da configuração do Checkout através do Stripe Connect.
+ * A taxa da Stripe é uma despesa da operação e é descontada
+ * do valor que seria destinado ao produtor.
+ *
+ * Portanto:
+ *
+ * produtor = venda - comissão Uranova - taxa Stripe
+ *
+ * A Uranova permanece com os 10% integrais.
+ *
+ * O pagamento utiliza Destination Charge do Stripe Connect.
+ *
+ * Não é criada Transfer manualmente.
  */
 export async function processCheckoutCompleted({
   session,
@@ -442,24 +451,27 @@ export async function processCheckoutCompleted({
  * PROCESSAMENTO FINANCEIRO
  * ============================================================
  *
- * IMPORTANTE:
+ * MODELO FINANCEIRO:
  *
- * NÃO cria Transfer.
+ * Venda:                  R$100,00
+ * Comissão Uranova:      R$ 10,00
+ * Taxa Stripe:            R$  4,38
+ * Líquido após Stripe:    R$ 95,62
+ * Produtor:               R$ 85,62
+ * Uranova líquida:        R$ 10,00
  *
- * A Stripe já recebe:
+ * Fórmula:
  *
- * application_fee_amount = 10%
+ * platformFee =
+ *   grossAmount * 10%
  *
- * transfer_data.destination =
- * conta Stripe Connect do produtor
+ * producerAmount =
+ *   grossAmount - platformFee - stripeFee
  *
- * Portanto:
+ * platformNet =
+ *   platformFee
  *
- * Venda
- * - 10% Uranova
- * = Produtor
- *
- * A taxa Stripe é uma despesa da operação da plataforma.
+ * A taxa Stripe NÃO é descontada da comissão Uranova.
  */
 async function processFinancialSettlement({
   session,
@@ -663,6 +675,13 @@ async function processFinancialSettlement({
   // ======================================================
   // 7. COMISSÃO URANOVA
   // ======================================================
+  //
+  // A Uranova SEMPRE fica com 10% do valor bruto.
+  //
+  // R$100,00 x 10% = R$10,00
+  //
+  // A taxa Stripe não reduz esta comissão.
+  // ======================================================
 
   const platformFee =
     Math.round(
@@ -672,25 +691,43 @@ async function processFinancialSettlement({
     ) / 100;
 
   // ======================================================
-  // 8. VALOR DO PRODUTOR
+  // 8. VALOR LÍQUIDO APÓS TAXA STRIPE
+  // ======================================================
+  //
+  // Exemplo:
+  //
+  // R$100,00 - R$4,38 = R$95,62
+  // ======================================================
+
+  const netAfterStripeFee =
+    Math.round(
+      (
+        grossAmount -
+        stripeFee
+      ) *
+        100
+    ) / 100;
+
+  // ======================================================
+  // 9. VALOR DO PRODUTOR
+  // ======================================================
+  //
+  // O produtor recebe:
+  //
+  // Venda
+  // - Comissão Uranova
+  // - Taxa Stripe
+  //
+  // R$100,00
+  // - R$10,00
+  // - R$4,38
+  // = R$85,62
   // ======================================================
 
   const producerAmount =
     Math.round(
       (
         grossAmount -
-        platformFee
-      ) *
-        100
-    ) / 100;
-
-  // ======================================================
-  // 9. URANOVA LÍQUIDA
-  // ======================================================
-
-  const platformNet =
-    Math.round(
-      (
         platformFee -
         stripeFee
       ) *
@@ -698,7 +735,19 @@ async function processFinancialSettlement({
     ) / 100;
 
   // ======================================================
-  // 10. VALIDAÇÕES
+  // 10. RESULTADO LÍQUIDO DA URANOVA
+  // ======================================================
+  //
+  // A Uranova fica integralmente com sua comissão.
+  //
+  // R$10,00
+  // ======================================================
+
+  const platformNet =
+    platformFee;
+
+  // ======================================================
+  // 11. VALIDAÇÕES
   // ======================================================
 
   if (
@@ -710,6 +759,20 @@ async function processFinancialSettlement({
     console.error(
       "Comissão Uranova inválida:",
       platformFee
+    );
+
+    return;
+  }
+
+  if (
+    !Number.isFinite(
+      netAfterStripeFee
+    ) ||
+    netAfterStripeFee < 0
+  ) {
+    console.error(
+      "Valor líquido após Stripe inválido:",
+      netAfterStripeFee
     );
 
     return;
@@ -729,11 +792,25 @@ async function processFinancialSettlement({
     return;
   }
 
+  // ======================================================
+  // 12. CONCILIAÇÃO FINANCEIRA
+  // ======================================================
+  //
+  // Venda =
+  // Uranova + Produtor + Stripe
+  //
+  // R$100,00 =
+  // R$10,00 + R$85,62 + R$4,38
+  //
+  // = R$100,00
+  // ======================================================
+
   const calculatedTotal =
     Math.round(
       (
+        platformFee +
         producerAmount +
-        platformFee
+        stripeFee
       ) *
         100
     );
@@ -757,13 +834,16 @@ async function processFinancialSettlement({
       stripeFee,
       platformFee,
       producerAmount,
+      platformNet,
+      calculatedTotal,
+      grossTotal,
     });
 
     return;
   }
 
   // ======================================================
-  // 11. LOG FINANCEIRO
+  // 13. LOG FINANCEIRO
   // ======================================================
 
   console.log(
@@ -784,13 +864,18 @@ async function processFinancialSettlement({
   );
 
   console.log(
-    "Stripe Fee:",
+    "Comissão Uranova:",
+    platformFee
+  );
+
+  console.log(
+    "Taxa Stripe:",
     stripeFee
   );
 
   console.log(
-    "Uranova 10%:",
-    platformFee
+    "Valor líquido após Stripe:",
+    netAfterStripeFee
   );
 
   console.log(
@@ -809,7 +894,7 @@ async function processFinancialSettlement({
   );
 
   // ======================================================
-  // 12. NÃO CRIA TRANSFER
+  // 14. NÃO CRIA TRANSFER
   // ======================================================
 
   console.log(
@@ -821,19 +906,7 @@ async function processFinancialSettlement({
   );
 
   // ======================================================
-  // 13. REGISTRA PAGAMENTO
-  // ======================================================
-  //
-  // A coluna payment_provider_id possui UNIQUE.
-  //
-  // Mesmo que dois webhooks cheguem simultaneamente,
-  // o banco impedirá duplicação.
-  //
-  // Se ocorrer 23505, significa que outra execução
-  // conseguiu registrar primeiro.
-  //
-  // Nesse caso NÃO devemos executar processSale(),
-  // pois o financeiro já foi registrado pela outra execução.
+  // 15. REGISTRA PAGAMENTO
   // ======================================================
 
   const {
@@ -885,7 +958,7 @@ async function processFinancialSettlement({
     .maybeSingle();
 
   // ======================================================
-  // 13.1. PAGAMENTO JÁ INSERIDO POR OUTRA EXECUÇÃO
+  // 15.1. PAGAMENTO JÁ INSERIDO POR OUTRA EXECUÇÃO
   // ======================================================
 
   if (
@@ -929,7 +1002,13 @@ async function processFinancialSettlement({
   );
 
   // ======================================================
-  // 14. FINANCEIRO DO PRODUTOR
+  // 16. FINANCEIRO DO PRODUTOR
+  // ======================================================
+  //
+  // Aqui entra exatamente o valor que o produtor
+  // efetivamente tem direito a receber:
+  //
+  // R$85,62 no exemplo de R$100,00.
   // ======================================================
 
   const financialResult =
@@ -952,7 +1031,7 @@ async function processFinancialSettlement({
   );
 
   // ======================================================
-  // 15. FINAL
+  // 17. FINAL
   // ======================================================
 
   console.log(
@@ -984,8 +1063,18 @@ async function processFinancialSettlement({
   );
 
   console.log(
+    "Valor líquido após Stripe:",
+    netAfterStripeFee
+  );
+
+  console.log(
     "Produtor:",
     producerAmount
+  );
+
+  console.log(
+    "Resultado líquido Uranova:",
+    platformNet
   );
 
   console.log(
@@ -1214,7 +1303,7 @@ export async function processPaymentIntentSettlement(
       !customerProduct?.order_id
     ) {
       console.error(
-        "Pedido não encontrado para o produto do cliente."
+        "Pedido ainda não encontrado para o produto do cliente. O retry financeiro será ignorado."
       );
 
       return;
