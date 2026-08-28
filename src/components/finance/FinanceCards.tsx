@@ -11,7 +11,7 @@ export default async function FinanceCards({
   const balance = await getUserBalance(userId);
 
   return (
-    <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
       <BalanceCard
         title="Saldo Disponível"
         value={balance?.available_balance ?? 0}
@@ -28,12 +28,6 @@ export default async function FinanceCards({
         title="Total Recebido"
         value={balance?.total_earned ?? 0}
         color="blue"
-      />
-
-      <BalanceCard
-        title="Total Sacado"
-        value={balance?.total_withdrawn ?? 0}
-        color="red"
       />
     </div>
   );

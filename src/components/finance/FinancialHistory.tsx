@@ -51,7 +51,9 @@ export default async function FinancialHistory({
   //
 
   const transactions = allTransactions.filter(
-    (transaction) => transaction.type !== "withdraw"
+    (transaction) =>
+      transaction.type !== "withdraw" &&
+      transaction.type !== "withdrawal"
   );
 
   return (
