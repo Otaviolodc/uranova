@@ -70,7 +70,7 @@ export async function processCheckoutCompleted({
     }
 
     // ======================================================
-    // 3. CONTA STRIPE DO PRODUTOR
+    // 3. CONTA STRIPE CONNECT DO PRODUTOR
     // ======================================================
 
     const {
@@ -446,7 +446,7 @@ export async function processCheckoutCompleted({
  *
  * NÃO cria Transfer.
  *
- * A Stripe já deverá ter recebido a configuração:
+ * A Stripe já recebe:
  *
  * application_fee_amount = 10%
  *
@@ -459,8 +459,7 @@ export async function processCheckoutCompleted({
  * - 10% Uranova
  * = Produtor
  *
- * A taxa Stripe é uma despesa da operação da plataforma
- * e NÃO é retirada novamente do saldo do produtor.
+ * A taxa Stripe é uma despesa da operação da plataforma.
  */
 async function processFinancialSettlement({
   session,
@@ -484,7 +483,7 @@ async function processFinancialSettlement({
   customerEmail: string;
 }) {
   // ======================================================
-  // 1. VERIFICA PAGAMENTO JÁ REGISTRADO
+  // 1. VERIFICA SE JÁ FOI PROCESSADO
   // ======================================================
 
   const {
@@ -515,6 +514,11 @@ async function processFinancialSettlement({
   ) {
     console.log(
       "Pagamento financeiro já processado."
+    );
+
+    console.log(
+      "Payment Intent já registrado:",
+      paymentIntentId
     );
 
     return;
@@ -670,22 +674,6 @@ async function processFinancialSettlement({
   // ======================================================
   // 8. VALOR DO PRODUTOR
   // ======================================================
-  //
-  // IMPORTANTE:
-  //
-  // O produtor NÃO paga novamente a taxa Stripe.
-  //
-  // A Stripe já controla:
-  //
-  // - application_fee_amount
-  // - transfer_data.destination
-  //
-  // Portanto:
-  //
-  // Venda
-  // - 10% Uranova
-  // = produtor
-  //
 
   const producerAmount =
     Math.round(
@@ -699,15 +687,6 @@ async function processFinancialSettlement({
   // ======================================================
   // 9. URANOVA LÍQUIDA
   // ======================================================
-  //
-  // A taxa Stripe é uma despesa da Uranova.
-  //
-  // Portanto:
-  //
-  // Comissão Uranova
-  // - taxa Stripe
-  // = resultado líquido Uranova
-  //
 
   const platformNet =
     Math.round(
@@ -832,14 +811,6 @@ async function processFinancialSettlement({
   // ======================================================
   // 12. NÃO CRIA TRANSFER
   // ======================================================
-  //
-  // NÃO usar:
-  //
-  // stripe.transfers.create(...)
-  //
-  // A transferência para o produtor deve ser realizada
-  // pela configuração do Checkout/Connect.
-  //
 
   console.log(
     "Transferência manual desativada."
@@ -852,8 +823,21 @@ async function processFinancialSettlement({
   // ======================================================
   // 13. REGISTRA PAGAMENTO
   // ======================================================
+  //
+  // A coluna payment_provider_id possui UNIQUE.
+  //
+  // Mesmo que dois webhooks cheguem simultaneamente,
+  // o banco impedirá duplicação.
+  //
+  // Se ocorrer 23505, significa que outra execução
+  // conseguiu registrar primeiro.
+  //
+  // Nesse caso NÃO devemos executar processSale(),
+  // pois o financeiro já foi registrado pela outra execução.
+  // ======================================================
 
   const {
+    data: insertedPayment,
     error: paymentError,
   } = await admin
     .from("payments")
@@ -896,14 +880,45 @@ async function processFinancialSettlement({
 
       coupon_code:
         null,
-    });
+    })
+    .select("id")
+    .maybeSingle();
+
+  // ======================================================
+  // 13.1. PAGAMENTO JÁ INSERIDO POR OUTRA EXECUÇÃO
+  // ======================================================
 
   if (
     paymentError
   ) {
+    if (
+      paymentError.code === "23505"
+    ) {
+      console.log(
+        "Pagamento já foi registrado por outra execução."
+      );
+
+      console.log(
+        "Payment Intent duplicado ignorado:",
+        paymentIntentId
+      );
+
+      return;
+    }
+
     console.error(
       "Erro ao criar payment:",
       paymentError
+    );
+
+    return;
+  }
+
+  if (
+    !insertedPayment
+  ) {
+    console.error(
+      "Pagamento não foi criado."
     );
 
     return;
@@ -986,6 +1001,7 @@ async function processFinancialSettlement({
  *
  * Usado pelo webhook para:
  *
+ * - payment_intent.succeeded
  * - charge.succeeded
  * - charge.updated
  *
