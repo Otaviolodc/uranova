@@ -9,26 +9,34 @@ import { admin } from "@/lib/supabase/admin";
  *
  * Fluxo:
  *
- * Cliente
+ * Produtor
  *    ↓
- * Uranova
+ * Conecta sua conta Stripe
  *    ↓
- * Conta conectada do produtor
+ * Uranova cria/reutiliza uma conta Connect
+ *    ↓
+ * Cliente realiza a compra
+ *    ↓
+ * Checkout Stripe
+ *    ↓
+ * Uranova recebe a application fee de 10%
+ *    ↓
+ * Produtor recebe sua parte no saldo Stripe Connect
+ *    ↓
+ * Stripe controla a disponibilidade do payout
  *
- * A Uranova é a plataforma/marketplace.
+ * IMPORTANTE:
  *
- * O produtor possui uma conta conectada Stripe.
+ * Este serviço NÃO realiza o pagamento de vendas.
  *
- * Accounts v2:
- * - dashboard: express
- * - configuration.merchant
- * - configuration.recipient
- * - merchant.capabilities.card_payments
- * - recipient.capabilities.stripe_balance.stripe_transfers
+ * A divisão financeira da venda é definida no Checkout
+ * através de:
  *
- * A configuração merchant + card_payments é necessária
- * para solicitar stripe_balance.stripe_transfers no
- * ambiente atual da Stripe.
+ * application_fee_amount
+ * transfer_data.destination
+ *
+ * O payment-processor também NÃO deve criar Transfer
+ * manualmente para essa venda.
  */
 
 /**
@@ -51,11 +59,19 @@ export async function createStripeConnectAccount(
     error: profileError,
   } = await admin
     .from("profiles")
-    .select("id, name, stripe_account_id")
-    .eq("id", userId)
+    .select(
+      "id, name, stripe_account_id"
+    )
+    .eq(
+      "id",
+      userId
+    )
     .single();
 
-  if (profileError || !profile) {
+  if (
+    profileError ||
+    !profile
+  ) {
     throw new Error(
       "Perfil do produtor não encontrado."
     );
@@ -65,10 +81,20 @@ export async function createStripeConnectAccount(
   // 2. REUTILIZA CONTA EXISTENTE
   // ==========================================================
 
-  if (profile.stripe_account_id) {
+  if (
+    profile.stripe_account_id
+  ) {
+    console.log(
+      "Conta Stripe Connect já existente:",
+      profile.stripe_account_id
+    );
+
     return {
-      accountId: profile.stripe_account_id,
-      created: false,
+      accountId:
+        profile.stripe_account_id,
+
+      created:
+        false,
     };
   }
 
@@ -80,15 +106,21 @@ export async function createStripeConnectAccount(
     data: authUser,
     error: authUserError,
   } =
-    await admin.auth.admin.getUserById(userId);
+    await admin.auth.admin.getUserById(
+      userId
+    );
 
-  if (authUserError || !authUser?.user) {
+  if (
+    authUserError ||
+    !authUser?.user
+  ) {
     throw new Error(
       "Não foi possível obter os dados do produtor."
     );
   }
 
-  const email = authUser.user.email;
+  const email =
+    authUser.user.email;
 
   if (!email) {
     throw new Error(
@@ -100,45 +132,49 @@ export async function createStripeConnectAccount(
   // 4. CRIA A CONTA CONNECT — ACCOUNTS V2
   // ==========================================================
   //
-  // A Stripe exige merchant.card_payments para permitir
-  // recipient.stripe_balance.stripe_transfers nessa
-  // configuração.
+  // MERCHANT
   //
-  // merchant:
-  // Permite que a conta tenha capacidade de pagamentos
-  // com cartão.
+  // Solicita a capacidade de pagamentos com cartão.
   //
-  // recipient:
-  // Permite que a Uranova envie fundos para a conta
-  // conectada.
+  // RECIPIENT
+  //
+  // Solicita a capacidade necessária para receber
+  // transferências no saldo Stripe da conta conectada.
+  //
+  // IMPORTANTE:
+  //
+  // NÃO existe um "configuration" dentro de outro
+  // "configuration".
   //
 
   const account =
     await stripe.v2.core.accounts.create(
       {
-        contact_email: email,
+        contact_email:
+          email,
 
         display_name:
           profile.name ||
           email,
 
         identity: {
-          country: "BR",
+          country:
+            "BR",
         },
 
-        dashboard: "express",
+        dashboard:
+          "express",
 
         configuration: {
           // ==================================================
           // MERCHANT
           // ==================================================
-          //
-          // Necessário para solicitar card_payments.
-          //
+
           merchant: {
             capabilities: {
               card_payments: {
-                requested: true,
+                requested:
+                  true,
               },
             },
           },
@@ -146,29 +182,39 @@ export async function createStripeConnectAccount(
           // ==================================================
           // RECIPIENT
           // ==================================================
-          //
-          // Permite que a Uranova faça transferências para
-          // o saldo Stripe da conta conectada.
-          //
+
           recipient: {
             capabilities: {
               stripe_balance: {
                 stripe_transfers: {
-                  requested: true,
+                  requested:
+                    true,
                 },
               },
             },
           },
         },
 
+        // ====================================================
+        // RESPONSABILIDADES
+        // ====================================================
+
         defaults: {
-          currency: "brl",
+          currency:
+            "brl",
 
           responsibilities: {
-            fees_collector: "application",
-            losses_collector: "application",
+            fees_collector:
+              "application",
+
+            losses_collector:
+              "application",
           },
         },
+
+        // ====================================================
+        // DADOS RETORNADOS PELA API
+        // ====================================================
 
         include: [
           "configuration.merchant",
@@ -195,8 +241,20 @@ export async function createStripeConnectAccount(
   }
 
   console.log(
-    "Stripe Connect v2 Account criada:",
+    "===================================="
+  );
+
+  console.log(
+    "STRIPE CONNECT ACCOUNT CRIADA"
+  );
+
+  console.log(
+    "Account ID:",
     account.id
+  );
+
+  console.log(
+    "===================================="
   );
 
   // ==========================================================
@@ -208,11 +266,17 @@ export async function createStripeConnectAccount(
   } = await admin
     .from("profiles")
     .update({
-      stripe_account_id: account.id,
+      stripe_account_id:
+        account.id,
     })
-    .eq("id", userId);
+    .eq(
+      "id",
+      userId
+    );
 
-  if (updateError) {
+  if (
+    updateError
+  ) {
     console.error(
       "Erro ao salvar Stripe Account ID:",
       updateError
@@ -223,13 +287,20 @@ export async function createStripeConnectAccount(
     );
   }
 
+  console.log(
+    "Stripe Account ID salvo no perfil."
+  );
+
   // ==========================================================
   // 7. RETORNA RESULTADO
   // ==========================================================
 
   return {
-    accountId: account.id,
-    created: true,
+    accountId:
+      account.id,
+
+    created:
+      true,
   };
 }
 
@@ -244,6 +315,10 @@ export async function createStripeConnectAccount(
 export async function createStripeAccountLink(
   accountId: string
 ) {
+  // ==========================================================
+  // 1. URL BASE
+  // ==========================================================
+
   const baseUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_SITE_URL;
@@ -255,40 +330,64 @@ export async function createStripeAccountLink(
   }
 
   // ==========================================================
-  // A STRIPE EXIGE HTTPS PARA ACCOUNT LINKS
+  // 2. VALIDA HTTPS
   // ==========================================================
 
-  if (!baseUrl.startsWith("https://")) {
+  if (
+    !baseUrl.startsWith(
+      "https://"
+    )
+  ) {
     throw new Error(
       "O Account Link da Stripe exige uma URL HTTPS. Configure NEXT_PUBLIC_APP_URL com uma URL HTTPS."
     );
   }
 
   // ==========================================================
-  // ACCOUNT LINK — ACCOUNTS V2
+  // 3. ACCOUNT LINK — ACCOUNTS V2
   // ==========================================================
 
   const accountLink =
-    await stripe.v2.core.accountLinks.create({
-      account: accountId,
+    await stripe.v2.core.accountLinks.create(
+      {
+        account:
+          accountId,
 
-      use_case: {
-        type: "account_onboarding",
+        use_case: {
+          type:
+            "account_onboarding",
 
-        account_onboarding: {
-          configurations: [
-            "recipient",
-            "merchant",
-          ],
+          account_onboarding: {
+            configurations: [
+              "recipient",
+              "merchant",
+            ],
 
-          refresh_url:
-            `${baseUrl}/dashboard/finance?stripe=refresh`,
+            refresh_url:
+              `${baseUrl}/dashboard/finance?stripe=refresh`,
 
-          return_url:
-            `${baseUrl}/dashboard/finance?stripe=success`,
+            return_url:
+              `${baseUrl}/dashboard/finance?stripe=success`,
+          },
         },
-      },
-    });
+      }
+    );
+
+  // ==========================================================
+  // 4. VALIDA URL
+  // ==========================================================
+
+  if (
+    !accountLink.url
+  ) {
+    throw new Error(
+      "A Stripe não retornou a URL de onboarding."
+    );
+  }
+
+  console.log(
+    "Stripe Account Link criado."
+  );
 
   return accountLink.url;
 }
@@ -297,6 +396,12 @@ export async function createStripeAccountLink(
  * ============================================================
  * BUSCA DADOS DA CONTA CONNECT
  * ============================================================
+ *
+ * Usado para consultar o estado atual da conta conectada.
+ *
+ * Pode ser utilizado futuramente no dashboard financeiro
+ * para mostrar ao produtor informações sobre sua conexão
+ * Stripe e requisitos pendentes.
  */
 export async function getStripeConnectAccount(
   accountId: string

@@ -36,7 +36,7 @@ export async function processSale({
   }
 
   // ======================================================
-  // 1. PROCESSA A TRANSAÇÃO FINANCEIRA
+  // PROCESSA A TRANSAÇÃO FINANCEIRA
   // ======================================================
 
   const { error } = await admin.rpc(
@@ -61,50 +61,8 @@ export async function processSale({
     );
   }
 
-  console.log("Financeiro atualizado com sucesso.");
-
-  // ======================================================
-  // 2. CRIA O PRAZO DE LIBERAÇÃO
-  // ======================================================
-
-  const availableAt = new Date(
-    Date.now() + 7 * 24 * 60 * 60 * 1000
-  );
-
-  const { error: releaseError } = await admin
-    .from("balance_releases")
-    .upsert(
-      {
-        user_id: userId,
-        order_id: orderId,
-        amount,
-        available_at: availableAt.toISOString(),
-        status: "pending",
-      },
-      {
-        onConflict: "order_id",
-        ignoreDuplicates: true,
-      }
-    );
-
-  if (releaseError) {
-    console.error("====================================");
-    console.error("BALANCE RELEASE ERROR");
-    console.error("====================================");
-    console.error(releaseError);
-
-    throw new Error(
-      "Erro ao criar prazo de liberação do saldo."
-    );
-  }
-
   console.log(
-    "Saldo pendente programado para liberação:"
-  );
-
-  console.log(
-    "Disponível em:",
-    availableAt.toISOString()
+    "Transação financeira registrada com sucesso."
   );
 
   console.log("====================================");
@@ -112,7 +70,7 @@ export async function processSale({
   return {
     success: true,
     message:
-      "Transação financeira processada e saldo programado para liberação em 7 dias.",
+      "Transação financeira processada com sucesso.",
   };
 }
 
@@ -120,7 +78,9 @@ export async function processSale({
 // HISTÓRICO FINANCEIRO
 // ======================================================
 
-export async function getFinancialHistory(userId: string) {
+export async function getFinancialHistory(
+  userId: string
+) {
   const { data, error } = await admin
     .from("financial_transactions")
     .select("*")

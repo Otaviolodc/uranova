@@ -91,7 +91,7 @@ export async function POST(req: Request) {
     }
 
     // ======================================================
-    // CONTA STRIPE DO PRODUTOR
+    // CONTA STRIPE CONNECT DO PRODUTOR
     // ======================================================
 
     const {
@@ -144,21 +144,24 @@ export async function POST(req: Request) {
           error: "Valor do produto inválido.",
         },
         {
-          status: 400,
+          status: 400
         }
       );
     }
 
     // ======================================================
-    // COMISSÃO COMERCIAL DA URANOVA
+    // COMISSÃO DA URANOVA
     //
-    // A Uranova tem direito a 10% da venda.
+    // Uranova fica com 10% da venda.
     //
-    // IMPORTANTE:
-    // A tarifa real da Stripe NÃO é calculada aqui.
+    // Exemplo:
     //
-    // Ela será obtida posteriormente através da
-    // Balance Transaction no payment-processor.
+    // Venda: R$100,00
+    // Uranova: R$10,00
+    // Produtor: R$90,00
+    //
+    // A tarifa da Stripe NÃO entra nesse cálculo.
+    // A tarifa da Stripe é tratada separadamente pela Stripe.
     // ======================================================
 
     const platformFee = Math.round(
@@ -171,16 +174,21 @@ export async function POST(req: Request) {
     // ======================================================
     // STRIPE CHECKOUT
     //
-    // SEPARATE CHARGES AND TRANSFERS
+    // DESTINATION CHARGE
     //
-    // A cobrança inteira acontece na conta da Uranova.
+    // A cobrança acontece na conta da Uranova.
     //
-    // NÃO usamos:
+    // application_fee_amount:
+    //   comissão da Uranova.
     //
-    // payment_intent_data.transfer_data
+    // transfer_data.destination:
+    //   conta Stripe Connect do produtor.
     //
-    // A transferência para o produtor será criada
-    // posteriormente pelo payment-processor.
+    // Dessa forma a Stripe realiza a transferência
+    // para o saldo da conta Connect do produtor.
+    //
+    // A Uranova NÃO precisa criar manualmente uma
+    // transferência posteriormente.
     // ======================================================
 
     const session =
@@ -217,6 +225,26 @@ export async function POST(req: Request) {
         },
 
         payment_intent_data: {
+          // ==================================================
+          // COMISSÃO DA URANOVA
+          // ==================================================
+
+          application_fee_amount:
+            platformFee,
+
+          // ==================================================
+          // CONTA CONNECT DO PRODUTOR
+          // ==================================================
+
+          transfer_data: {
+            destination:
+              sellerStripeAccountId,
+          },
+
+          // ==================================================
+          // METADADOS DO PAGAMENTO
+          // ==================================================
+
           metadata: {
             product_id: product.id,
 
@@ -237,9 +265,17 @@ export async function POST(req: Request) {
               String(sellerAmount),
           },
 
+          // ==================================================
+          // AGRUPAMENTO DA VENDA
+          // ==================================================
+
           transfer_group:
             `uranova_order_${product.id}`,
         },
+
+        // ====================================================
+        // PRODUTO
+        // ====================================================
 
         line_items: [
           {

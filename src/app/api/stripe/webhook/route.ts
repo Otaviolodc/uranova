@@ -11,7 +11,8 @@ import { stripe } from "@/lib/stripe";
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  const signature = req.headers.get("stripe-signature");
+  const signature =
+    req.headers.get("stripe-signature");
 
   if (!signature) {
     return NextResponse.json(
@@ -28,14 +29,22 @@ export async function POST(req: Request) {
 
   let event: Stripe.Event;
 
+  // ======================================================
+  // 1. VALIDA ASSINATURA STRIPE
+  // ======================================================
+
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    );
+    event =
+      stripe.webhooks.constructEvent(
+        body,
+        signature,
+        process.env.STRIPE_WEBHOOK_SECRET!
+      );
   } catch (error) {
-    console.error("WEBHOOK SIGNATURE ERROR:", error);
+    console.error(
+      "WEBHOOK SIGNATURE ERROR:",
+      error
+    );
 
     return NextResponse.json(
       {
@@ -47,19 +56,56 @@ export async function POST(req: Request) {
     );
   }
 
-  console.log("=================================================");
-  console.log("Stripe Event:", event.type);
-  console.log("Event ID:", event.id);
-  console.log("=================================================");
+  console.log(
+    "================================================="
+  );
+
+  console.log(
+    "Stripe Event:",
+    event.type
+  );
+
+  console.log(
+    "Event ID:",
+    event.id
+  );
+
+  console.log(
+    "================================================="
+  );
 
   try {
     switch (event.type) {
+
       // =====================================================
       // CHECKOUT CONCLUÍDO
       // =====================================================
+      //
+      // Esse é o evento principal da nossa operação.
+      //
+      // Ele:
+      //
+      // - valida o pagamento
+      // - cria o pedido
+      // - libera o produto
+      // - registra o financeiro
+      //
+      // A transferência para o produtor NÃO é feita aqui.
+      //
+      // Ela já foi configurada no Checkout através de:
+      //
+      // transfer_data.destination
+      //
+      // e:
+      //
+      // application_fee_amount
+      //
+      // =====================================================
 
       case "checkout.session.completed": {
-        console.log("Checkout concluído.");
+        console.log(
+          "Checkout concluído."
+        );
 
         const session =
           event.data.object as Stripe.Checkout.Session;
@@ -72,11 +118,26 @@ export async function POST(req: Request) {
       }
 
       // =====================================================
-      // PAGAMENTO APROVADO
+      // PAYMENT INTENT SUCCEEDED
+      // =====================================================
+      //
+      // Atua como recuperação financeira.
+      //
+      // Caso o Checkout tenha sido concluído mas o
+      // processamento financeiro ainda não tenha conseguido
+      // obter o Balance Transaction, tentamos novamente.
+      //
+      // O payment-processor possui proteção contra
+      // duplicidade através de:
+      //
+      // payments.payment_provider_id
+      //
       // =====================================================
 
       case "payment_intent.succeeded": {
-        console.log("Pagamento aprovado.");
+        console.log(
+          "Pagamento aprovado."
+        );
 
         const paymentIntent =
           event.data.object as Stripe.PaymentIntent;
@@ -91,15 +152,25 @@ export async function POST(req: Request) {
       // =====================================================
       // CHARGE SUCCEEDED
       // =====================================================
+      //
+      // Segunda oportunidade para concluir o financeiro.
+      //
+      // Esse evento é útil principalmente quando os dados
+      // financeiros da cobrança já estão disponíveis.
+      //
+      // =====================================================
 
       case "charge.succeeded": {
-        console.log("Charge criada com sucesso.");
+        console.log(
+          "Charge criada com sucesso."
+        );
 
         const charge =
           event.data.object as Stripe.Charge;
 
         const paymentIntentId =
-          typeof charge.payment_intent === "string"
+          typeof charge.payment_intent ===
+          "string"
             ? charge.payment_intent
             : charge.payment_intent?.id;
 
@@ -122,46 +193,14 @@ export async function POST(req: Request) {
       }
 
       // =====================================================
-      // CHARGE UPDATED
-      // =====================================================
-
-      case "charge.updated": {
-        console.log(
-          "Charge atualizada. Tentando novamente o financeiro."
-        );
-
-        const charge =
-          event.data.object as Stripe.Charge;
-
-        const paymentIntentId =
-          typeof charge.payment_intent === "string"
-            ? charge.payment_intent
-            : charge.payment_intent?.id;
-
-        if (paymentIntentId) {
-          console.log(
-            "Retry financeiro pelo Charge Updated:",
-            paymentIntentId
-          );
-
-          await processPaymentIntentSettlement(
-            paymentIntentId
-          );
-        } else {
-          console.log(
-            "Payment Intent não encontrado no Charge Updated."
-          );
-        }
-
-        break;
-      }
-
-      // =====================================================
       // FATURA PAGA
       // =====================================================
 
       case "invoice.paid": {
-        console.log("Fatura paga.");
+        console.log(
+          "Fatura paga."
+        );
+
         break;
       }
 
@@ -170,7 +209,10 @@ export async function POST(req: Request) {
       // =====================================================
 
       case "customer.subscription.created": {
-        console.log("Assinatura criada.");
+        console.log(
+          "Assinatura criada."
+        );
+
         break;
       }
 
@@ -185,6 +227,7 @@ export async function POST(req: Request) {
         );
       }
     }
+
   } catch (error) {
     console.error(
       "ERRO AO PROCESSAR WEBHOOK:",
@@ -193,7 +236,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        error: "Erro ao processar webhook.",
+        error:
+          "Erro ao processar webhook.",
       },
       {
         status: 500,

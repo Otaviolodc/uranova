@@ -14,26 +14,24 @@ const PLATFORM_FEE_PERCENT = 10;
  * PROCESSA CHECKOUT CONCLUÍDO
  * ============================================================
  *
- * Responsabilidades:
+ * Fluxo:
  *
- * 1. Validar pagamento
- * 2. Encontrar produto
- * 3. Criar pedido
- * 4. Liberar produto para cliente
- * 5. Tentar processar financeiro
+ * Cliente paga
+ * ↓
+ * Stripe processa pagamento
+ * ↓
+ * 10% = comissão Uranova
+ * ↓
+ * restante = saldo Stripe Connect do produtor
+ * ↓
+ * Stripe controla payout do produtor
  *
  * IMPORTANTE:
  *
- * A liberação do produto NÃO depende da Balance Transaction.
+ * Este arquivo NÃO cria Transfer.
  *
- * A taxa real da Stripe será obtida separadamente.
- *
- * IDEMPOTÊNCIA:
- *
- * O processamento financeiro é protegido pelo
- * payment_provider_id (Payment Intent).
- *
- * O banco possui índice UNIQUE nesse campo.
+ * A transferência para o produtor é responsabilidade
+ * da configuração do Checkout através do Stripe Connect.
  */
 export async function processCheckoutCompleted({
   session,
@@ -48,12 +46,31 @@ export async function processCheckoutCompleted({
     const customerId = session.metadata?.customer_id;
 
     if (!productId || !sellerId || !customerId) {
-      console.error("Metadata inválida no checkout.");
+      console.error(
+        "Metadata inválida no checkout."
+      );
+
       return;
     }
 
     // ======================================================
-    // 2. CONTA STRIPE DO PRODUTOR
+    // 2. PAYMENT INTENT
+    // ======================================================
+
+    const paymentIntentId = session.payment_intent
+      ? String(session.payment_intent)
+      : null;
+
+    if (!paymentIntentId) {
+      console.error(
+        "Payment Intent não encontrado."
+      );
+
+      return;
+    }
+
+    // ======================================================
+    // 3. CONTA STRIPE DO PRODUTOR
     // ======================================================
 
     const {
@@ -81,28 +98,20 @@ export async function processCheckoutCompleted({
       sellerProfile.stripe_account_id;
 
     // ======================================================
-    // 3. PAYMENT INTENT
-    // ======================================================
-
-    const paymentIntentId = session.payment_intent
-      ? String(session.payment_intent)
-      : null;
-
-    if (!paymentIntentId) {
-      console.error(
-        "Payment Intent não encontrado."
-      );
-
-      return;
-    }
-
-    // ======================================================
     // 4. LOG
     // ======================================================
 
-    console.log("====================================");
-    console.log("PAYMENT PROCESSOR");
-    console.log("====================================");
+    console.log(
+      "===================================="
+    );
+
+    console.log(
+      "PAYMENT PROCESSOR"
+    );
+
+    console.log(
+      "===================================="
+    );
 
     console.log(
       "Session ID:",
@@ -134,11 +143,6 @@ export async function processCheckoutCompleted({
       customerId
     );
 
-    console.log(
-      "Metadata:",
-      session.metadata
-    );
-
     // ======================================================
     // 5. STATUS DO PAGAMENTO
     // ======================================================
@@ -154,7 +158,7 @@ export async function processCheckoutCompleted({
     }
 
     // ======================================================
-    // 6. BUSCA PRODUTO
+    // 6. PRODUTO
     // ======================================================
 
     const {
@@ -166,7 +170,10 @@ export async function processCheckoutCompleted({
       .eq("id", productId)
       .single();
 
-    if (productError || !product) {
+    if (
+      productError ||
+      !product
+    ) {
       console.error(
         "Produto não encontrado:",
         productError
@@ -195,7 +202,7 @@ export async function processCheckoutCompleted({
     );
 
     // ======================================================
-    // 8. CLIENTE / PEDIDO
+    // 8. CLIENTE
     // ======================================================
 
     const customerName =
@@ -215,7 +222,9 @@ export async function processCheckoutCompleted({
       error: existingCustomerProductError,
     } = await admin
       .from("customer_products")
-      .select("id, order_id")
+      .select(
+        "id, order_id"
+      )
       .eq(
         "customer_id",
         customerId
@@ -237,7 +246,9 @@ export async function processCheckoutCompleted({
       return;
     }
 
-    let orderId: string | null =
+    let orderId:
+      | string
+      | null =
       existingCustomerProduct?.order_id ??
       null;
 
@@ -306,7 +317,8 @@ export async function processCheckoutCompleted({
         return;
       }
 
-      orderId = order.id;
+      orderId =
+        order.id;
 
       console.log(
         "Pedido criado com sucesso."
@@ -397,7 +409,7 @@ export async function processCheckoutCompleted({
     }
 
     // ======================================================
-    // 12. TENTA PROCESSAR FINANCEIRO
+    // 12. PROCESSAMENTO FINANCEIRO
     // ======================================================
 
     await processFinancialSettlement({
@@ -415,6 +427,7 @@ export async function processCheckoutCompleted({
     console.log(
       "Checkout processado."
     );
+
   } catch (error) {
     console.error(
       "ERRO NO PAYMENT PROCESSOR:",
@@ -423,22 +436,31 @@ export async function processCheckoutCompleted({
   }
 }
 
+
 /**
  * ============================================================
  * PROCESSAMENTO FINANCEIRO
  * ============================================================
  *
- * Essa função pode ser executada novamente quando a Stripe
- * disponibilizar a Balance Transaction.
+ * IMPORTANTE:
  *
- * O produto do cliente NÃO depende dessa etapa.
+ * NÃO cria Transfer.
  *
- * IDEMPOTÊNCIA:
+ * A Stripe já deverá ter recebido a configuração:
  *
- * O Payment Intent é a chave única da operação financeira.
+ * application_fee_amount = 10%
  *
- * Mesmo que a Stripe envie vários eventos, somente uma
- * execução poderá registrar o pagamento em `payments`.
+ * transfer_data.destination =
+ * conta Stripe Connect do produtor
+ *
+ * Portanto:
+ *
+ * Venda
+ * - 10% Uranova
+ * = Produtor
+ *
+ * A taxa Stripe é uma despesa da operação da plataforma
+ * e NÃO é retirada novamente do saldo do produtor.
  */
 async function processFinancialSettlement({
   session,
@@ -462,7 +484,7 @@ async function processFinancialSettlement({
   customerEmail: string;
 }) {
   // ======================================================
-  // 1. VERIFICA PAGAMENTO FINANCEIRO JÁ REGISTRADO
+  // 1. VERIFICA PAGAMENTO JÁ REGISTRADO
   // ======================================================
 
   const {
@@ -492,7 +514,7 @@ async function processFinancialSettlement({
     existingPayment
   ) {
     console.log(
-      "Pagamento financeiro já processado. Encerrando execução duplicada."
+      "Pagamento financeiro já processado."
     );
 
     return;
@@ -548,7 +570,11 @@ async function processFinancialSettlement({
 
   if (!latestCharge) {
     console.log(
-      "Charge ainda não disponível. Financeiro ficará pendente."
+      "Charge ainda não disponível."
+    );
+
+    console.log(
+      "Financeiro ficará pendente para processamento posterior."
     );
 
     return;
@@ -586,7 +612,7 @@ async function processFinancialSettlement({
     );
 
     console.log(
-      "Produto já foi liberado. Financeiro será processado posteriormente."
+      "Financeiro será processado posteriormente."
     );
 
     return;
@@ -642,15 +668,30 @@ async function processFinancialSettlement({
     ) / 100;
 
   // ======================================================
-  // 8. PRODUTOR
+  // 8. VALOR DO PRODUTOR
   // ======================================================
+  //
+  // IMPORTANTE:
+  //
+  // O produtor NÃO paga novamente a taxa Stripe.
+  //
+  // A Stripe já controla:
+  //
+  // - application_fee_amount
+  // - transfer_data.destination
+  //
+  // Portanto:
+  //
+  // Venda
+  // - 10% Uranova
+  // = produtor
+  //
 
   const producerAmount =
     Math.round(
       (
         grossAmount -
-        platformFee -
-        stripeFee
+        platformFee
       ) *
         100
     ) / 100;
@@ -658,6 +699,15 @@ async function processFinancialSettlement({
   // ======================================================
   // 9. URANOVA LÍQUIDA
   // ======================================================
+  //
+  // A taxa Stripe é uma despesa da Uranova.
+  //
+  // Portanto:
+  //
+  // Comissão Uranova
+  // - taxa Stripe
+  // = resultado líquido Uranova
+  //
 
   const platformNet =
     Math.round(
@@ -693,7 +743,7 @@ async function processFinancialSettlement({
     producerAmount < 0
   ) {
     console.error(
-      "Valor líquido do produtor inválido:",
+      "Valor do produtor inválido:",
       producerAmount
     );
 
@@ -704,8 +754,7 @@ async function processFinancialSettlement({
     Math.round(
       (
         producerAmount +
-        platformFee +
-        stripeFee
+        platformFee
       ) *
         100
     );
@@ -775,137 +824,34 @@ async function processFinancialSettlement({
     platformNet
   );
 
+  console.log(
+    "Stripe Connect:",
+    sellerStripeAccountId
+  );
+
   // ======================================================
-  // 12. TRANSFER PARA PRODUTOR
+  // 12. NÃO CRIA TRANSFER
   // ======================================================
   //
-  // SEPARATE CHARGES AND TRANSFERS
+  // NÃO usar:
   //
-  // A cobrança permanece na Uranova.
+  // stripe.transfers.create(...)
   //
-  // O produtor recebe somente:
-  //
-  // Venda
-  // - Comissão Uranova
-  // - Taxa REAL Stripe
-  // = Produtor
-  //
-  // source_transaction garante que a transferência
-  // fique vinculada à cobrança original.
-  //
-  // A idempotencyKey garante que chamadas repetidas
-  // para o mesmo Payment Intent não criem uma nova
-  // transferência.
+  // A transferência para o produtor deve ser realizada
+  // pela configuração do Checkout/Connect.
   //
 
-  const transferAmount =
-    Math.round(
-      producerAmount *
-        100
-    );
+  console.log(
+    "Transferência manual desativada."
+  );
 
-  if (
-    transferAmount <= 0
-  ) {
-    console.error(
-      "Valor de transferência inválido:",
-      transferAmount
-    );
-
-    return;
-  }
-
-  let producerTransfer:
-    Stripe.Transfer;
-
-  try {
-    producerTransfer =
-      await stripe.transfers.create(
-        {
-          amount:
-            transferAmount,
-
-          currency:
-            "brl",
-
-          destination:
-            sellerStripeAccountId,
-
-          source_transaction:
-            charge.id,
-
-          metadata: {
-            payment_intent_id:
-              paymentIntentId,
-
-            session_id:
-              session.id,
-
-            product_id:
-              product.id,
-
-            seller_id:
-              sellerId,
-
-            customer_id:
-              customerId,
-
-            gross_amount:
-              String(
-                grossAmount
-              ),
-
-            stripe_fee:
-              String(
-                stripeFee
-              ),
-
-            platform_fee:
-              String(
-                platformFee
-              ),
-
-            producer_amount:
-              String(
-                producerAmount
-              ),
-          },
-        },
-        {
-          idempotencyKey:
-            `uranova-transfer-${paymentIntentId}`,
-        }
-      );
-
-    console.log(
-      "Transfer criada:",
-      producerTransfer.id
-    );
-  } catch (error) {
-    console.error(
-      "Erro ao criar transferência para produtor:",
-      error
-    );
-
-    return;
-  }
+  console.log(
+    "Produtor recebe pelo Stripe Connect."
+  );
 
   // ======================================================
   // 13. REGISTRA PAGAMENTO
   // ======================================================
-  //
-  // IMPORTANTE:
-  //
-  // A tabela payments possui UNIQUE em:
-  //
-  // payment_provider_id
-  //
-  // Portanto, se duas execuções chegarem aqui
-  // simultaneamente, somente uma poderá inserir.
-  //
-  // O erro PostgreSQL 23505 significa que outra
-  // execução já registrou esse pagamento.
-  //
 
   const {
     error: paymentError,
@@ -955,34 +901,6 @@ async function processFinancialSettlement({
   if (
     paymentError
   ) {
-    // ====================================================
-    // DUPLICAÇÃO CONTROLADA
-    // ====================================================
-
-    if (
-      paymentError.code ===
-      "23505"
-    ) {
-      console.log(
-        "Pagamento já registrado por outra execução."
-      );
-
-      console.log(
-        "Payment Intent duplicado:",
-        paymentIntentId
-      );
-
-      console.log(
-        "Processamento duplicado encerrado com segurança."
-      );
-
-      return;
-    }
-
-    // ====================================================
-    // OUTRO ERRO
-    // ====================================================
-
     console.error(
       "Erro ao criar payment:",
       paymentError
@@ -1031,13 +949,28 @@ async function processFinancialSettlement({
   );
 
   console.log(
-    "Transfer:",
-    producerTransfer.id
+    "Payment Intent:",
+    paymentIntentId
   );
 
   console.log(
-    "Payment Intent:",
-    paymentIntentId
+    "Valor bruto:",
+    grossAmount
+  );
+
+  console.log(
+    "Comissão Uranova:",
+    platformFee
+  );
+
+  console.log(
+    "Taxa Stripe:",
+    stripeFee
+  );
+
+  console.log(
+    "Produtor:",
+    producerAmount
   );
 
   console.log(
@@ -1045,21 +978,18 @@ async function processFinancialSettlement({
   );
 }
 
+
 /**
  * ============================================================
  * PROCESSA UM PAYMENT INTENT NOVAMENTE
  * ============================================================
  *
- * Essa função será usada pelo webhook quando receber:
+ * Usado pelo webhook para:
  *
  * - charge.succeeded
  * - charge.updated
  *
- * A Stripe permite localizar a Checkout Session usando
- * o Payment Intent.
- *
- * Antes de executar qualquer processamento pesado,
- * verificamos se esse Payment Intent já foi processado.
+ * O retry NÃO cria transferência.
  */
 export async function processPaymentIntentSettlement(
   paymentIntentId: string
@@ -1083,13 +1013,8 @@ export async function processPaymentIntentSettlement(
     );
 
     // ======================================================
-    // 0. VERIFICA SE JÁ FOI PROCESSADO
+    // 1. VERIFICA SE JÁ FOI PROCESSADO
     // ======================================================
-    //
-    // Isso evita que charge.updated ou outros eventos
-    // posteriores façam consultas e processamento
-    // financeiro desnecessário.
-    //
 
     const {
       data: existingPayment,
@@ -1130,7 +1055,7 @@ export async function processPaymentIntentSettlement(
     }
 
     // ======================================================
-    // 1. LOCALIZA CHECKOUT SESSION
+    // 2. LOCALIZA CHECKOUT SESSION
     // ======================================================
 
     const sessions =
@@ -1154,7 +1079,7 @@ export async function processPaymentIntentSettlement(
     }
 
     // ======================================================
-    // 2. METADATA
+    // 3. METADATA
     // ======================================================
 
     const productId =
@@ -1179,7 +1104,7 @@ export async function processPaymentIntentSettlement(
     }
 
     // ======================================================
-    // 3. CONTA STRIPE DO PRODUTOR
+    // 4. CONTA STRIPE DO PRODUTOR
     // ======================================================
 
     const {
@@ -1209,7 +1134,7 @@ export async function processPaymentIntentSettlement(
     }
 
     // ======================================================
-    // 4. PRODUTO
+    // 5. PRODUTO
     // ======================================================
 
     const {
@@ -1237,7 +1162,7 @@ export async function processPaymentIntentSettlement(
     }
 
     // ======================================================
-    // 5. PEDIDO
+    // 6. PEDIDO
     // ======================================================
 
     const {
@@ -1280,26 +1205,35 @@ export async function processPaymentIntentSettlement(
     }
 
     // ======================================================
-    // 6. TENTA NOVAMENTE O FINANCEIRO
+    // 7. PROCESSA FINANCEIRO NOVAMENTE
     // ======================================================
 
     await processFinancialSettlement({
       session,
+
       sellerId,
+
       sellerStripeAccountId:
         sellerProfile.stripe_account_id,
+
       customerId,
+
       product,
+
       paymentIntentId,
+
       orderId:
         customerProduct.order_id,
+
       customerName:
         session.customer_details?.name ??
         "Cliente Stripe",
+
       customerEmail:
         session.customer_details?.email ??
         "",
     });
+
   } catch (error) {
     console.error(
       "ERRO NO RETRY FINANCEIRO:",
