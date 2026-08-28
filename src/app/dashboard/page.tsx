@@ -9,83 +9,82 @@ import SalesChart from "@/components/charts/SalesChart";
 import QuickActions from "@/components/dashboard/QuickActions";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 
-export default function DashboardPage() {
-
-const [revenue, setRevenue] = useState(0);
-const [salesToday, setSalesToday] = useState(0);
-const [ticket, setTicket] = useState(0);
 type Order = {
   amount: number;
   created_at: string;
+  status: string;
 };
 
-async function fetchOrders() {
-  const {
-  data: { user },
-} = await supabase.auth.getUser();
+export default function DashboardPage() {
+  const [revenue, setRevenue] = useState(0);
+  const [sales, setSales] = useState(0);
+  const [ticket, setTicket] = useState(0);
 
-if (!user) return;
+  async function fetchOrders() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  const {
-  data,
-  error,
-} = await supabase
-  .from("orders")
-  .select(`
-    amount,
-    created_at
-  `)
-  .eq("user_id", user.id);
+    if (!user) return;
 
-if (error) {
+    const {
+      data,
+      error,
+    } = await supabase
+      .from("orders")
+      .select(`
+        amount,
+        created_at,
+        status
+      `)
+      .eq("user_id", user.id)
+      .eq("status", "PAID");
 
-  console.error("Dashboard:", error);
+    if (error) {
+      console.error("Dashboard:", error);
+      return;
+    }
 
-  return;
+    const orders: Order[] = data || [];
 
-}
+    // ======================================================
+    // VENDAS APROVADAS
+    // ======================================================
 
-  const totalRevenue =
-    data?.reduce(
-      (total, order) =>
-        total + Number(order.amount),
+    const totalSales = orders.length;
+
+    // ======================================================
+    // RECEITA TOTAL
+    // ======================================================
+
+    const totalRevenue = orders.reduce(
+      (total, order) => total + Number(order.amount),
       0
-    ) || 0;
+    );
 
-  setRevenue(totalRevenue);
+    // ======================================================
+    // TICKET MÉDIO
+    // ======================================================
 
-  const today =
-    new Date()
-      .toISOString()
-      .split("T")[0];
+    const averageTicket =
+      totalSales > 0
+        ? totalRevenue / totalSales
+        : 0;
 
-  const todaySales =
-    data?.filter((order) =>
-      order.created_at?.startsWith(today)
-    ).length || 0;
+    setRevenue(totalRevenue);
+    setSales(totalSales);
+    setTicket(averageTicket);
+  }
 
-  setSalesToday(todaySales);
-
-  const avgTicket =
-    totalRevenue > 0
-      ? totalRevenue /
-        (data?.length || 1)
-      : 0;
-
-  setTicket(avgTicket);
-}
-
-useEffect(() => {
-  fetchOrders();
-}, []);
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   return (
-
     <div className="p-6 md:p-8">
 
       {/* HEADER */}
       <div className="mb-10">
-
         <h1 className="text-3xl font-bold text-white">
           Dashboard
         </h1>
@@ -93,7 +92,6 @@ useEffect(() => {
         <p className="text-zinc-400 mt-2">
           Resumo geral da sua operação
         </p>
-
       </div>
 
       {/* CARDS */}
@@ -107,14 +105,14 @@ useEffect(() => {
 
         <StatsCard
           title="🛒 Vendas"
-          value={salesToday.toString()}
-          subtitle="Vendas realizadas hoje"
+          value={sales.toString()}
+          subtitle="Vendas aprovadas"
         />
 
         <StatsCard
           title="📈 Conversão"
-          value="0%"
-          subtitle="Taxa de conversão"
+          value="—"
+          subtitle="Dados de conversão indisponíveis"
         />
 
         <StatsCard
