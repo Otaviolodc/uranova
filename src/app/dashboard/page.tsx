@@ -13,12 +13,14 @@ type Order = {
   amount: number;
   created_at: string;
   status: string;
+  product_id: string | null;
 };
 
 export default function DashboardPage() {
   const [revenue, setRevenue] = useState(0);
   const [sales, setSales] = useState(0);
   const [ticket, setTicket] = useState(0);
+  const [topProduct, setTopProduct] = useState("Nenhum produto");
 
   async function fetchOrders() {
     const {
@@ -35,7 +37,8 @@ export default function DashboardPage() {
       .select(`
         amount,
         created_at,
-        status
+        status,
+        product_id
       `)
       .eq("user_id", user.id)
       .eq("status", "PAID");
@@ -71,6 +74,54 @@ export default function DashboardPage() {
       totalSales > 0
         ? totalRevenue / totalSales
         : 0;
+
+    // ======================================================
+    // PRODUTO MAIS VENDIDO
+    // ======================================================
+
+    const productSales: Record<string, number> = {};
+
+    orders.forEach((order) => {
+      if (!order.product_id) return;
+
+      productSales[order.product_id] =
+        (productSales[order.product_id] || 0) + 1;
+    });
+
+    const topProductEntry = Object.entries(productSales).sort(
+      (a, b) => b[1] - a[1]
+    )[0];
+
+    if (topProductEntry) {
+      const [productId] = topProductEntry;
+
+      const {
+        data: product,
+        error: productError,
+      } = await supabase
+        .from("products_checkout")
+        .select("title")
+        .eq("id", productId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (productError) {
+        console.error(
+          "Dashboard - Produto campeão:",
+          productError
+        );
+      }
+
+      if (product?.title) {
+        setTopProduct(product.title);
+      }
+    } else {
+      setTopProduct("Nenhum produto");
+    }
+
+    // ======================================================
+    // ATUALIZA ESTATÍSTICAS
+    // ======================================================
 
     setRevenue(totalRevenue);
     setSales(totalSales);
@@ -136,8 +187,15 @@ export default function DashboardPage() {
       {/* PRODUTO MAIS VENDIDO */}
       <TopProducts />
 
-      {/* DESEMPENHO DA OPERAÇÃO */}
-      <AIInsights />
+      {/* RESUMO DA OPERAÇÃO */}
+      <AIInsights
+        summary={{
+          sales,
+          revenue,
+          ticket,
+          topProduct,
+        }}
+      />
 
     </div>
   );
