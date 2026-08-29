@@ -19,18 +19,16 @@ export default function TopProducts() {
   async function fetchTopProduct() {
     try {
       const {
-        data: { session },
-      } = await supabase.auth.getSession();
+        data: { user },
+      } = await supabase.auth.getUser();
 
-      if (!session?.user) {
+      if (!user) {
         setLoading(false);
         return;
       }
 
-      const user = session.user;
-
       // ======================================================
-      // BUSCA AS VENDAS APROVADAS DO PRODUTOR
+      // 1. BUSCA AS VENDAS APROVADAS DO PRODUTOR
       // ======================================================
 
       const { data: orders, error: ordersError } = await supabase
@@ -38,13 +36,23 @@ export default function TopProducts() {
         .select(`
           product_id,
           amount,
-          status
+          status,
+          products (
+            id,
+            title,
+            type,
+            price
+          )
         `)
         .eq("user_id", user.id)
         .eq("status", "PAID");
 
       if (ordersError) {
-        console.error("TopProducts - Orders:", ordersError);
+        console.error(
+          "TopProducts - Orders:",
+          ordersError
+        );
+
         setLoading(false);
         return;
       }
@@ -56,87 +64,89 @@ export default function TopProducts() {
       }
 
       // ======================================================
-      // AGRUPA AS VENDAS POR PRODUTO
+      // 2. AGRUPA AS VENDAS POR PRODUTO
       // ======================================================
 
       const productStats: Record<
         string,
         {
+          id: string;
+          title: string;
+          type: string;
+          price: number;
           sales: number;
           revenue: number;
         }
       > = {};
 
-      orders.forEach((order) => {
+      orders.forEach((order: any) => {
         if (!order.product_id) return;
 
-        if (!productStats[order.product_id]) {
-          productStats[order.product_id] = {
+        const productData = Array.isArray(order.products)
+          ? order.products[0]
+          : order.products;
+
+        if (!productData) return;
+
+        const productId = order.product_id;
+
+        if (!productStats[productId]) {
+          productStats[productId] = {
+            id: productData.id,
+            title: productData.title || "Produto",
+            type:
+              productData.type ||
+              "Produto digital",
+            price:
+              Number(productData.price) || 0,
             sales: 0,
             revenue: 0,
           };
         }
 
-        productStats[order.product_id].sales += 1;
-        productStats[order.product_id].revenue +=
+        productStats[productId].sales += 1;
+
+        productStats[productId].revenue +=
           Number(order.amount) || 0;
       });
 
       // ======================================================
-      // ENCONTRA O PRODUTO COM MAIS VENDAS
+      // 3. ENCONTRA O PRODUTO MAIS VENDIDO
       // ======================================================
 
-      const topProductEntry = Object.entries(productStats).sort(
-        (a, b) => b[1].sales - a[1].sales
-      )[0];
+      const topProduct = Object.values(productStats)
+        .sort((a, b) => {
+          if (b.sales !== a.sales) {
+            return b.sales - a.sales;
+          }
 
-      if (!topProductEntry) {
+          return b.revenue - a.revenue;
+        })[0];
+
+      if (!topProduct) {
         setProduct(null);
         setLoading(false);
         return;
       }
 
-      const [productId, stats] = topProductEntry;
-
       // ======================================================
-      // BUSCA OS DADOS DO PRODUTO
+      // 4. DEFINE O PRODUTO CAMPEÃO
       // ======================================================
-
-      const { data: productData, error: productError } =
-        await supabase
-          .from("products_checkout")
-          .select(`
-            id,
-            title,
-            type,
-            price
-          `)
-          .eq("id", productId)
-          .eq("user_id", user.id)
-          .maybeSingle();
-
-      if (productError) {
-        console.error("TopProducts - Product:", productError);
-        setLoading(false);
-        return;
-      }
-
-      if (!productData) {
-        setProduct(null);
-        setLoading(false);
-        return;
-      }
 
       setProduct({
-        id: productData.id,
-        title: productData.title,
-        type: productData.type || "Produto digital",
-        price: Number(productData.price) || 0,
-        sales: stats.sales,
-        revenue: stats.revenue,
+        id: topProduct.id,
+        title: topProduct.title,
+        type: topProduct.type,
+        price: topProduct.price,
+        sales: topProduct.sales,
+        revenue: topProduct.revenue,
       });
     } catch (error) {
-      console.error("TopProducts:", error);
+      console.error(
+        "TopProducts:",
+        error
+      );
+
       setProduct(null);
     } finally {
       setLoading(false);
@@ -292,10 +302,13 @@ export default function TopProducts() {
                     mt-1
                   "
                 >
-                  {product.revenue.toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
+                  {product.revenue.toLocaleString(
+                    "pt-BR",
+                    {
+                      style: "currency",
+                      currency: "BRL",
+                    }
+                  )}
                 </p>
               </div>
             </div>
