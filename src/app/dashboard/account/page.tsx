@@ -25,17 +25,20 @@ export default async function AccountPage() {
   }
 
   return (
-    <div className="space-y-8 p-8">
+    <main className="p-6 md:p-8">
+      <div className="mx-auto max-w-6xl space-y-8">
+        {/* HEADER */}
+        <AccountHeader />
 
-      <AccountHeader />
+        {/* INFORMAÇÕES DA CONTA */}
+        <AccountInfo
+          profile={profile}
+          email={user.email ?? "-"}
+        />
 
-      <AccountInfo
-        profile={profile}
-        email={user.email ?? "-"}
-      />
-
-      <AccountActions />
-
-    </div>
+        {/* SEGURANÇA E ZONA DE PERIGO */}
+        <AccountActions />
+      </div>
+    </main>
   );
 }
