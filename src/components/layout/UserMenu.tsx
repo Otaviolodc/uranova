@@ -16,73 +16,62 @@ export default function UserMenu({ profile }: Props) {
     <button
       type="button"
       onClick={() => router.push("/dashboard/profile")}
+      title="Meu Perfil"
+      aria-label="Abrir meu perfil"
       className="
         flex
         items-center
-        gap-3
+        justify-center
+        w-11
+        h-11
+        md:w-12
+        md:h-12
+        rounded-full
         bg-zinc-900
         border
         border-zinc-800
-        rounded-2xl
-        px-4
-        py-2
+        overflow-hidden
         hover:border-green-500
-        transition
+        hover:ring-2
+        hover:ring-green-500/20
+        transition-all
+        duration-200
+        cursor-pointer
       "
     >
       {profile?.avatar_url ? (
-        <div
+        <Image
+          src={profile.avatar_url}
+          alt={profile.name || "Avatar"}
+          width={48}
+          height={48}
           className="
-            w-12
-            h-12
-            rounded-full
-            overflow-hidden
-            border
-            border-zinc-700
-            flex-shrink-0
+            w-full
+            h-full
+            object-cover
           "
-        >
-          <Image
-            src={profile.avatar_url}
-            alt={profile.name || "Avatar"}
-            width={48}
-            height={48}
-            className="w-full h-full object-cover"
-          />
-        </div>
+        />
       ) : (
         <div
           className="
-            w-12
-            h-12
-            rounded-full
-            bg-gradient-to-r
-            from-green-400
-            to-emerald-600
+            w-full
+            h-full
             flex
             items-center
             justify-center
+            bg-gradient-to-r
+            from-green-400
+            to-emerald-600
             text-black
             font-black
+            text-lg
           "
         >
-          {
-            profile?.name?.[0]?.toUpperCase() ??
+          {profile?.name?.[0]?.toUpperCase() ??
             profile?.username?.[0]?.toUpperCase() ??
-            "U"
-          }
+            "U"}
         </div>
       )}
-
-      <div className="hidden md:block text-left">
-        <h2 className="font-bold text-white">
-          {profile?.name || profile?.username || "Usuário"}
-        </h2>
-
-        <p className="text-zinc-500 text-sm">
-          {profile?.is_pro ? "Plano PRO" : "Plano FREE"}
-        </p>
-      </div>
     </button>
   );
 }

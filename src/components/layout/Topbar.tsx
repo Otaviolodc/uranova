@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell } from "lucide-react";
+import { Bell, ChevronDown, Globe2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -176,16 +176,82 @@ export default function Topbar() {
         h-20
         border-b
         border-zinc-800
-        bg-zinc-950/80
+        bg-zinc-950/90
         backdrop-blur-xl
-        px-8
+        px-5
+        md:px-8
         flex
         items-center
-        justify-end
+        justify-between
         z-50
       "
     >
-      <div className="flex items-center gap-4">
+
+      {/* ==================================================
+          MARCA
+      ================================================== */}
+
+      <div className="flex items-center">
+        <button
+          type="button"
+          onClick={() => router.push("/dashboard")}
+          className="
+            text-2xl
+            md:text-3xl
+            font-black
+            tracking-tight
+            bg-gradient-to-r
+            from-green-400
+            to-emerald-500
+            bg-clip-text
+            text-transparent
+            hover:opacity-90
+            transition
+          "
+        >
+          Uranova
+        </button>
+      </div>
+
+      {/* ==================================================
+          AÇÕES DO CABEÇALHO
+      ================================================== */}
+
+      <div className="flex items-center gap-2 md:gap-3">
+
+        {/* ==================================================
+            IDIOMA
+        ================================================== */}
+
+        <button
+          type="button"
+          title="Idioma"
+          className="
+            hidden
+            sm:flex
+            items-center
+            gap-1.5
+            px-2
+            md:px-3
+            py-2
+            rounded-xl
+            text-sm
+            font-medium
+            text-zinc-300
+            hover:bg-zinc-900
+            hover:text-white
+            transition
+          "
+        >
+          <Globe2 size={18} />
+
+          <span>pt-BR</span>
+
+          <ChevronDown
+            size={14}
+            className="text-zinc-500"
+          />
+        </button>
 
         {/* ==================================================
             NOTIFICAÇÕES
@@ -206,16 +272,21 @@ export default function Topbar() {
             }
             className="
               relative
-              w-12
-              h-12
-              rounded-2xl
+              w-11
+              h-11
+              md:w-12
+              md:h-12
+              rounded-xl
+              md:rounded-2xl
               bg-zinc-900
               border
               border-zinc-800
               flex
               items-center
               justify-center
-              hover:border-green-500
+              text-zinc-200
+              hover:border-zinc-700
+              hover:bg-zinc-800
               transition
             "
           >
@@ -234,6 +305,8 @@ export default function Topbar() {
                   w-2.5
                   rounded-full
                   bg-green-500
+                  ring-2
+                  ring-zinc-900
                 "
               />
             )}
@@ -245,7 +318,9 @@ export default function Topbar() {
                 absolute
                 right-0
                 mt-3
-                w-96
+                w-[calc(100vw-2rem)]
+                sm:w-96
+                max-w-96
                 rounded-2xl
                 border
                 border-zinc-800
@@ -267,6 +342,7 @@ export default function Topbar() {
 
               {notifications.length === 0 ? (
                 <div className="px-5 py-10 text-center">
+
                   <div className="flex justify-center mb-3">
                     <Bell
                       size={40}
@@ -282,9 +358,11 @@ export default function Topbar() {
                     Quando houver novidades da sua conta,
                     elas aparecerão aqui.
                   </p>
+
                 </div>
               ) : (
                 <div className="max-h-96 overflow-y-auto">
+
                   {notifications.map(
                     (notification) => (
                       <div
@@ -293,6 +371,8 @@ export default function Topbar() {
                           border-b
                           border-zinc-800
                           p-5
+                          hover:bg-zinc-900/70
+                          transition
                         "
                       >
                         <h4 className="font-semibold text-white">
@@ -305,6 +385,7 @@ export default function Topbar() {
                       </div>
                     )
                   )}
+
                 </div>
               )}
             </div>
@@ -328,32 +409,35 @@ export default function Topbar() {
             md:flex
             items-center
             justify-center
-            px-5
-            py-3
-            rounded-2xl
+            min-w-[72px]
+            h-11
+            px-4
+            rounded-xl
             font-bold
-            text-white
+            text-sm
             cursor-pointer
             transition-all
             hover:scale-[1.02]
             active:scale-[0.98]
+
             ${
               isPro
-                ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:shadow-lg hover:shadow-green-500/10"
-                : "bg-zinc-800 hover:bg-zinc-700 hover:border-green-500/40 border border-transparent"
+                ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:shadow-lg hover:shadow-green-500/10"
+                : "bg-zinc-800 text-white border border-zinc-700 hover:bg-zinc-700 hover:border-zinc-600"
             }
           `}
         >
-          {isPro ? "💎 PRO" : "FREE"}
+          {isPro ? "PRO" : "FREE"}
         </button>
 
         {/* ==================================================
-            MENU DO USUÁRIO
+            USUÁRIO
         ================================================== */}
 
         <UserMenu profile={profile} />
 
       </div>
+
     </header>
   );
 }
