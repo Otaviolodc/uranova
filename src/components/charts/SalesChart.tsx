@@ -31,43 +31,109 @@ export default function SalesChart() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [period, setPeriod] = useState<Period>("7d");
   const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // ======================================================
-  // BUSCA AS VENDAS
+  // CALCULA O PERÍODO DA CONSULTA
   // ======================================================
 
-  async function fetchSales() {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+  function getPeriodStart(selectedPeriod: Period) {
+    const now = new Date();
 
-    const user = session?.user;
-
-    if (!user) return;
-
-    const { data, error } = await supabase
-      .from("orders")
-      .select(`
-        amount,
-        created_at
-      `)
-      .eq("user_id", user.id)
-      .order("created_at", {
-        ascending: true,
-      });
-
-    if (error) {
-      console.error("SalesChart:", error);
-      return;
+    if (selectedPeriod === "12m") {
+      return new Date(
+        now.getFullYear(),
+        now.getMonth() - 11,
+        1,
+        0,
+        0,
+        0,
+        0
+      );
     }
 
-    setOrders(data || []);
+    const days =
+      selectedPeriod === "7d"
+        ? 7
+        : selectedPeriod === "30d"
+        ? 30
+        : 90;
+
+    const start = new Date(now);
+
+    start.setHours(0, 0, 0, 0);
+    start.setDate(start.getDate() - (days - 1));
+
+    return start;
   }
+
+  // ======================================================
+  // BUSCA SOMENTE AS VENDAS APROVADAS DO PERÍODO
+  // ======================================================
+
+  async function fetchSales(selectedPeriod: Period) {
+    try {
+      setLoading(true);
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const user = session?.user;
+
+      if (!user) {
+        setOrders([]);
+        return;
+      }
+
+      const startDate = getPeriodStart(selectedPeriod);
+
+      const { data, error } = await supabase
+        .from("orders")
+        .select(`
+          amount,
+          created_at
+        `)
+        .eq("user_id", user.id)
+        .eq("status", "PAID")
+        .gte("created_at", startDate.toISOString())
+        .lte("created_at", new Date().toISOString())
+        .order("created_at", {
+          ascending: true,
+        });
+
+      if (error) {
+        console.error("SalesChart:", error);
+        setOrders([]);
+        return;
+      }
+
+      setOrders(data || []);
+    } catch (error) {
+      console.error("SalesChart:", error);
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // ======================================================
+  // CARREGAMENTO INICIAL
+  // ======================================================
 
   useEffect(() => {
     setMounted(true);
-    fetchSales();
   }, []);
+
+  // ======================================================
+  // BUSCA NOVOS DADOS QUANDO O PERÍODO MUDA
+  // ======================================================
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    fetchSales(period);
+  }, [period, mounted]);
 
   // ======================================================
   // FORMATA MOEDA
@@ -102,7 +168,6 @@ export default function SalesChart() {
 
     // ====================================================
     // 12 MESES
-    // Agrupa por mês
     // ====================================================
 
     if (period === "12m") {
@@ -122,13 +187,10 @@ export default function SalesChart() {
           month + 1
         ).padStart(2, "0")}-01`;
 
-        const label = date.toLocaleDateString(
-          "pt-BR",
-          {
-            month: "short",
-            year: "2-digit",
-          }
-        );
+        const label = date.toLocaleDateString("pt-BR", {
+          month: "short",
+          year: "2-digit",
+        });
 
         months.push({
           date: dateKey,
@@ -138,6 +200,7 @@ export default function SalesChart() {
         });
       }
 
+      // Agrupa as vendas por mês
       orders.forEach((order) => {
         if (!order.created_at) return;
 
@@ -147,7 +210,9 @@ export default function SalesChart() {
         const month = created.getMonth();
 
         const item = months.find((entry) => {
-          const entryDate = new Date(entry.date);
+          const entryDate = new Date(
+            `${entry.date}T12:00:00`
+          );
 
           return (
             entryDate.getFullYear() === year &&
@@ -185,6 +250,7 @@ export default function SalesChart() {
 
       days.push({
         date: formatDate(date),
+
         label:
           daysToShow <= 30
             ? String(date.getDate()).padStart(2, "0")
@@ -192,25 +258,19 @@ export default function SalesChart() {
                 day: "2-digit",
                 month: "2-digit",
               }),
+
         revenue: 0,
         sales: 0,
       });
     }
 
+    // Agrupa as vendas por dia
     orders.forEach((order) => {
       if (!order.created_at) return;
 
       const created = new Date(order.created_at);
 
-      const year = created.getFullYear();
-      const month = String(
-        created.getMonth() + 1
-      ).padStart(2, "0");
-      const day = String(
-        created.getDate()
-      ).padStart(2, "0");
-
-      const dateKey = `${year}-${month}-${day}`;
+      const dateKey = formatDate(created);
 
       const item = days.find(
         (entry) => entry.date === dateKey
@@ -254,22 +314,16 @@ export default function SalesChart() {
     let dateLabel = "";
 
     if (period === "12m") {
-      dateLabel = date.toLocaleDateString(
-        "pt-BR",
-        {
-          month: "long",
-          year: "numeric",
-        }
-      );
+      dateLabel = date.toLocaleDateString("pt-BR", {
+        month: "long",
+        year: "numeric",
+      });
     } else {
-      dateLabel = date.toLocaleDateString(
-        "pt-BR",
-        {
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
-        }
-      );
+      dateLabel = date.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      });
     }
 
     return (
@@ -312,7 +366,13 @@ export default function SalesChart() {
   // EVITA PROBLEMAS DE HYDRATION
   // ======================================================
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return null;
+  }
+
+  // ======================================================
+  // RENDER
+  // ======================================================
 
   return (
     <div
@@ -405,131 +465,137 @@ export default function SalesChart() {
       ================================================== */}
 
       <div className="mt-8 h-[320px] w-full md:h-[360px]">
-        <ResponsiveContainer
-          width="100%"
-          height="100%"
-        >
-          <AreaChart
-            data={chartData}
-            margin={{
-              top: 10,
-              right: 10,
-              left: 0,
-              bottom: 0,
-            }}
+        {loading ? (
+          <div className="flex h-full items-center justify-center text-zinc-500">
+            Carregando dados...
+          </div>
+        ) : (
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
           >
-            {/* ==================================================
-                DEGRADÊ
-            ================================================== */}
-
-            <defs>
-              <linearGradient
-                id="uranovaRevenueGradient"
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="1"
-              >
-                <stop
-                  offset="0%"
-                  stopColor="#22c55e"
-                  stopOpacity={0.32}
-                />
-
-                <stop
-                  offset="65%"
-                  stopColor="#22c55e"
-                  stopOpacity={0.08}
-                />
-
-                <stop
-                  offset="100%"
-                  stopColor="#22c55e"
-                  stopOpacity={0}
-                />
-              </linearGradient>
-            </defs>
-
-            {/* ==================================================
-                GRADE
-            ================================================== */}
-
-            <CartesianGrid
-              stroke="#27272a"
-              vertical={false}
-            />
-
-            {/* ==================================================
-                EIXO X
-            ================================================== */}
-
-            <XAxis
-              dataKey="label"
-              interval={xAxisInterval}
-              axisLine={{
-                stroke: "#3f3f46",
+            <AreaChart
+              data={chartData}
+              margin={{
+                top: 10,
+                right: 10,
+                left: 0,
+                bottom: 0,
               }}
-              tickLine={false}
-              tick={{
-                fill: "#71717a",
-                fontSize: 11,
-              }}
-              tickMargin={12}
-            />
+            >
+              {/* ==================================================
+                  DEGRADÊ
+              ================================================== */}
 
-            {/* ==================================================
-                EIXO Y
-            ================================================== */}
+              <defs>
+                <linearGradient
+                  id="uranovaRevenueGradient"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop
+                    offset="0%"
+                    stopColor="#22c55e"
+                    stopOpacity={0.32}
+                  />
 
-            <YAxis
-              axisLine={false}
-              tickLine={false}
-              width={75}
-              tick={{
-                fill: "#71717a",
-                fontSize: 11,
-              }}
-              tickFormatter={(value) =>
-                formatCurrency(Number(value))
-              }
-            />
+                  <stop
+                    offset="65%"
+                    stopColor="#22c55e"
+                    stopOpacity={0.08}
+                  />
 
-            {/* ==================================================
-                TOOLTIP
-            ================================================== */}
+                  <stop
+                    offset="100%"
+                    stopColor="#22c55e"
+                    stopOpacity={0}
+                  />
+                </linearGradient>
+              </defs>
 
-            <Tooltip
-              content={<CustomTooltip />}
-              cursor={{
-                stroke: "#52525b",
-                strokeWidth: 1,
-                strokeDasharray: "4 4",
-              }}
-            />
+              {/* ==================================================
+                  GRADE
+              ================================================== */}
 
-            {/* ==================================================
-                ÁREA
-            ================================================== */}
+              <CartesianGrid
+                stroke="#27272a"
+                vertical={false}
+              />
 
-            <Area
-              type="monotone"
-              dataKey="revenue"
-              stroke="#22c55e"
-              strokeWidth={3}
-              fill="url(#uranovaRevenueGradient)"
-              fillOpacity={1}
-              dot={false}
-              activeDot={{
-                r: 6,
-                stroke: "#18181b",
-                strokeWidth: 3,
-                fill: "#22c55e",
-              }}
-              animationDuration={700}
-              animationEasing="ease-out"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+              {/* ==================================================
+                  EIXO X
+              ================================================== */}
+
+              <XAxis
+                dataKey="label"
+                interval={xAxisInterval}
+                axisLine={{
+                  stroke: "#3f3f46",
+                }}
+                tickLine={false}
+                tick={{
+                  fill: "#71717a",
+                  fontSize: 11,
+                }}
+                tickMargin={12}
+              />
+
+              {/* ==================================================
+                  EIXO Y
+              ================================================== */}
+
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                width={75}
+                tick={{
+                  fill: "#71717a",
+                  fontSize: 11,
+                }}
+                tickFormatter={(value) =>
+                  formatCurrency(Number(value))
+                }
+              />
+
+              {/* ==================================================
+                  TOOLTIP
+              ================================================== */}
+
+              <Tooltip
+                content={<CustomTooltip />}
+                cursor={{
+                  stroke: "#52525b",
+                  strokeWidth: 1,
+                  strokeDasharray: "4 4",
+                }}
+              />
+
+              {/* ==================================================
+                  ÁREA
+              ================================================== */}
+
+              <Area
+                type="monotone"
+                dataKey="revenue"
+                stroke="#22c55e"
+                strokeWidth={3}
+                fill="url(#uranovaRevenueGradient)"
+                fillOpacity={1}
+                dot={false}
+                activeDot={{
+                  r: 6,
+                  stroke: "#18181b",
+                  strokeWidth: 3,
+                  fill: "#22c55e",
+                }}
+                animationDuration={700}
+                animationEasing="ease-out"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

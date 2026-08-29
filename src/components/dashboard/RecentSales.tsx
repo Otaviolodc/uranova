@@ -18,41 +18,65 @@ type Sale = {
 
 export default function RecentSales() {
   const [sales, setSales] = useState<Sale[]>([]);
+  const [loading, setLoading] = useState(true);
 
   async function fetchSales() {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    try {
+      // ======================================================
+      // USUÁRIO AUTENTICADO
+      // ======================================================
 
-    const user = session?.user;
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
 
-    if (!user) return;
+      if (userError || !user) {
+        setSales([]);
+        return;
+      }
 
-    const { data, error } = await supabase
-      .from("orders")
-      .select(`
-        id,
-        customer_name,
-        amount,
-        status,
-        created_at,
-        products (
-          title
-        )
-      `)
-      .eq("user_id", user.id)
-      .order("created_at", {
-        ascending: false,
-      })
-      .limit(10);
+      // ======================================================
+      // ÚLTIMAS VENDAS APROVADAS
+      // ======================================================
 
-    if (error) {
+      const { data, error } = await supabase
+        .from("orders")
+        .select(`
+          id,
+          customer_name,
+          amount,
+          status,
+          created_at,
+          products (
+            title
+          )
+        `)
+        .eq("user_id", user.id)
+        .eq("status", "PAID")
+        .order("created_at", {
+          ascending: false,
+        })
+        .limit(10);
+
+      if (error) {
+        console.error("RecentSales:", error);
+        setSales([]);
+        return;
+      }
+
+      setSales((data as Sale[]) || []);
+    } catch (error) {
       console.error("RecentSales:", error);
-      return;
+      setSales([]);
+    } finally {
+      setLoading(false);
     }
-
-    setSales((data as Sale[]) || []);
   }
+
+  // ======================================================
+  // CARREGAMENTO
+  // ======================================================
 
   useEffect(() => {
     fetchSales();
@@ -125,58 +149,7 @@ export default function RecentSales() {
           </thead>
 
           <tbody>
-            {sales.map((sale) => (
-              <tr
-                key={sale.id}
-                className="
-                  border-b
-                  border-zinc-800
-                  hover:bg-zinc-950
-                  transition
-                "
-              >
-                <td className="p-5 text-white font-medium">
-                  {sale.products?.[0]?.title || "Produto"}
-                </td>
-
-                <td className="p-5 text-white">
-                  {sale.customer_name || "Cliente"}
-                </td>
-
-                <td
-                  className="
-                    p-5
-                    text-green-400
-                    font-bold
-                  "
-                >
-                  R$ {Number(sale.amount).toFixed(2)}
-                </td>
-
-                <td className="p-5">
-                  <span
-                    className="
-                      text-white
-                      text-sm
-                      font-semibold
-                      whitespace-nowrap
-                    "
-                  >
-                    {sale.status === "PAID"
-                      ? "APROVADA"
-                      : sale.status}
-                  </span>
-                </td>
-
-                <td className="p-5 text-zinc-400">
-                  {new Date(
-                    sale.created_at
-                  ).toLocaleDateString("pt-BR")}
-                </td>
-              </tr>
-            ))}
-
-            {sales.length === 0 && (
+            {loading ? (
               <tr>
                 <td
                   colSpan={5}
@@ -186,9 +159,81 @@ export default function RecentSales() {
                     text-zinc-500
                   "
                 >
-                  Nenhuma venda encontrada.
+                  Carregando vendas...
                 </td>
               </tr>
+            ) : (
+              <>
+                {sales.map((sale) => (
+                  <tr
+                    key={sale.id}
+                    className="
+                      border-b
+                      border-zinc-800
+                      hover:bg-zinc-950
+                      transition
+                    "
+                  >
+                    <td className="p-5 text-white font-medium">
+                      {sale.products?.[0]?.title || "Produto"}
+                    </td>
+
+                    <td className="p-5 text-white">
+                      {sale.customer_name || "Cliente"}
+                    </td>
+
+                    <td
+                      className="
+                        p-5
+                        text-green-400
+                        font-bold
+                      "
+                    >
+                      {Number(sale.amount).toLocaleString(
+                        "pt-BR",
+                        {
+                          style: "currency",
+                          currency: "BRL",
+                        }
+                      )}
+                    </td>
+
+                    <td className="p-5">
+                      <span
+                        className="
+                          text-white
+                          text-sm
+                          font-semibold
+                          whitespace-nowrap
+                        "
+                      >
+                        APROVADA
+                      </span>
+                    </td>
+
+                    <td className="p-5 text-zinc-400">
+                      {new Date(
+                        sale.created_at
+                      ).toLocaleDateString("pt-BR")}
+                    </td>
+                  </tr>
+                ))}
+
+                {sales.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="
+                        p-10
+                        text-center
+                        text-zinc-500
+                      "
+                    >
+                      Nenhuma venda encontrada.
+                    </td>
+                  </tr>
+                )}
+              </>
             )}
           </tbody>
         </table>
