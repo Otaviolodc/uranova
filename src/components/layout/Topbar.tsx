@@ -196,8 +196,7 @@ export default function Topbar() {
           type="button"
           onClick={() => router.push("/dashboard")}
           className="
-            text-2xl
-            md:text-3xl
+            text-3xl
             font-black
             tracking-tight
             bg-gradient-to-r
@@ -217,7 +216,7 @@ export default function Topbar() {
           AÇÕES DO CABEÇALHO
       ================================================== */}
 
-      <div className="flex items-center gap-2 md:gap-3">
+      <div className="flex items-center gap-3">
 
         {/* ==================================================
             IDIOMA
