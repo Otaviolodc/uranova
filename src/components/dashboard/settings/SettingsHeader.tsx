@@ -9,7 +9,7 @@ export default function SettingsHeader({
 }: Props) {
   return (
     <div className="mb-10">
-      <h1 className="text-4xl font-black text-white">
+      <h1 className="text-3xl font-bold text-white">
         {title}
       </h1>
 

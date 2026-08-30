@@ -183,7 +183,7 @@ export default function CustomerProductsPage() {
     filteredProducts.length;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen p-8">
 
       {/* ==========================================================
           HEADER
@@ -212,9 +212,9 @@ export default function CustomerProductsPage() {
               "
             >
               Biblioteca digital
-            </div>
+          </div>
 
-            <h1 className="text-4xl font-black tracking-tight text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-white">
               Meus Produtos
             </h1>
 
