@@ -214,7 +214,7 @@ export default function CustomerProductsPage() {
               Biblioteca digital
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white">
+            <h1 className="text-4xl font-black tracking-tight text-white">
               Meus Produtos
             </h1>
 

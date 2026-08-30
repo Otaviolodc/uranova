@@ -257,7 +257,7 @@ if (error) {
     <div className="flex-1 p-4 md:p-8 pt-20 md:pt-8">
 
     <SettingsHeader
-      title="🎨 Aparência"
+      title="Aparência"
       description="Personalize sua página pública e identidade visual."
     />
 
