@@ -494,37 +494,17 @@ export default function AnalyticsPage() {
       <div className="p-4 md:p-8 pt-20 md:pt-8">
 
         {/* ================================================================
-            HEADER IA
+            HEADER ANALYTICS
         ================================================================= */}
 
         <div className="mb-10">
-
-          <div className="
-            inline-flex
-            items-center
-            gap-2
-            px-4
-            py-2
-            rounded-full
-            bg-green-500/10
-            border
-            border-green-500/20
-            text-green-400
-            text-sm
-            font-bold
-          ">
-            🤖 IA URANOVA
-          </div>
 
           <h1 className="
             text-3xl
             md:text-5xl
             font-black
-            mt-4
           ">
-            Assistente inteligente
-            <br />
-            de performance e conversão
+            Analytics
           </h1>
 
           <p className="
