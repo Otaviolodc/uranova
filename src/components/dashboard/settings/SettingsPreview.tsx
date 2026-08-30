@@ -57,7 +57,11 @@ export default function SettingsPreview({
             username={profile.username ?? ""}
             bio={profile.bio ?? ""}
             avatarUrl={profile.avatar_url ?? ""}
-            themeColor={profile.theme_color}
+            themeColor={
+              profile.is_pro
+                ? profile.theme_color
+                : "#000000"
+            }
             productTextColor={profile.product_text_color}
           />
 

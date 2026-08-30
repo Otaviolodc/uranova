@@ -108,7 +108,7 @@ export default function CustomersPage() {
       {/* HEADER */}
       <div className="mb-10">
 
-        <h1 className="text-3xl md:text-4xl font-bold text-white">
+        <h1 className="text-3xl font-bold text-white">
           Clientes
         </h1>
 

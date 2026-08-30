@@ -41,6 +41,7 @@ if (reservedRoutes.includes(username)) {
         avatar_url,
         theme_color,
         background_style,
+        is_pro,
         card_style,
         button_style,
         featured_url,
@@ -54,18 +55,29 @@ if (reservedRoutes.includes(username)) {
       .maybeSingle();
 
   if (profileError || !profile) {
-
     return (
 
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
-
         Usuário não encontrado
-
       </div>
-
     );
-
   }
+
+  // ==========================================================
+  // PERSONALIZAÇÃO
+  // FREE = padrão Uranova
+  // PRO = personalização liberada
+  // ==========================================================
+
+  const isPro = Boolean(profile.is_pro);
+
+  const effectiveThemeColor = isPro
+    ? profile.theme_color || "#00ff88"
+    : "#00ff88";
+
+  const effectiveBackgroundStyle = isPro
+    ? profile.background_style
+    : "default";
 
   // LINKS
   const { data } =
@@ -109,15 +121,18 @@ const marketplaceProducts =
     (p) => p.is_marketplace
   ).length || 0;
 
-  // BACKGROUND
-  const backgroundClass =
-    profile?.background_style ===
-    "gradient"
-      ? "bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700"
-      : profile?.background_style ===
-        "neon"
-      ? "bg-gradient-to-br from-green-400 via-cyan-500 to-blue-600"
-      : "bg-black";
+    // ==========================================================
+    // BACKGROUND
+    // FREE = sempre preto
+    // PRO = pode utilizar personalização
+    // ==========================================================
+
+    const backgroundClass =
+      effectiveBackgroundStyle === "gradient"
+        ? "bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700"
+        : effectiveBackgroundStyle === "neon"
+        ? "bg-gradient-to-br from-green-400 via-cyan-500 to-blue-600"
+        : "bg-black";
 
   // CARD STYLE
   const cardClass =
@@ -171,9 +186,7 @@ const marketplaceProducts =
             opacity-30
           "
           style={{
-            background:
-              profile.theme_color ||
-              "#6366f1",
+            background: effectiveThemeColor,
           }}
         />
 
@@ -542,8 +555,7 @@ const marketplaceProducts =
                   transition
                 "
                 style={{
-                  background:
-                    profile.theme_color,
+                  background: effectiveThemeColor,
                 }}
               />
 
@@ -661,9 +673,7 @@ const marketplaceProducts =
                       ${buttonRadius}
                     `}
                     style={{
-                      background:
-                        profile.theme_color ||
-                        "#6366f1",
+                      background: effectiveThemeColor,
                       color: "#fff",
                     }}
                   >
