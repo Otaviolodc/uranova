@@ -59,10 +59,30 @@ export default function SettingsPreview({
             avatarUrl={profile.avatar_url ?? ""}
             themeColor={
               profile.is_pro
-                ? profile.theme_color
-                : "#000000"
+                ? profile.theme_color || "#00ff88"
+                : "#00ff88"
             }
-            productTextColor={profile.product_text_color}
+            backgroundStyle={
+              profile.is_pro
+                ? profile.background_style || "default"
+                : "default"
+            }
+            cardStyle={
+              profile.is_pro
+                ? profile.card_style || "default"
+                : "default"
+            }
+            buttonStyle={
+              profile.is_pro
+                ? profile.button_style || "default"
+                : "default"
+            }
+            productTextColor={
+              profile.is_pro
+                ? profile.product_text_color || "#ffffff"
+                : "#ffffff"
+            }
+            isPro={Boolean(profile.is_pro)}
           />
 
         </div>

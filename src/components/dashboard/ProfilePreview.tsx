@@ -3,7 +3,11 @@ type Props = {
   bio: string;
   avatarUrl: string;
   themeColor: string;
+  backgroundStyle: string;
+  cardStyle: string;
+  buttonStyle: string;
   productTextColor: string;
+  isPro: boolean;
 };
 
 export default function ProfilePreview({
@@ -11,8 +15,64 @@ export default function ProfilePreview({
   bio,
   avatarUrl,
   themeColor,
+  backgroundStyle,
+  cardStyle,
+  buttonStyle,
   productTextColor,
+  isPro,
 }: Props) {
+  // ==========================================================
+  // PERSONALIZAÇÃO
+  // FREE = padrão Uranova
+  // PRO = personalização liberada
+  // ==========================================================
+
+  const effectiveThemeColor = isPro
+    ? themeColor || "#00ff88"
+    : "#00ff88";
+
+  const effectiveBackgroundStyle = isPro
+    ? backgroundStyle
+    : "default";
+
+  // ==========================================================
+  // BACKGROUND
+  // ==========================================================
+
+  const backgroundClass =
+    effectiveBackgroundStyle === "gradient"
+      ? "bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700"
+      : effectiveBackgroundStyle === "neon"
+      ? "bg-gradient-to-br from-green-400 via-cyan-500 to-blue-600"
+      : "bg-black";
+
+  // ==========================================================
+  // CARD STYLE
+  // ==========================================================
+
+  const cardClass =
+    isPro && cardStyle === "glass"
+      ? `
+        bg-white/10
+        backdrop-blur-2xl
+        border
+        border-white/10
+      `
+      : `
+        bg-zinc-900
+        border
+        border-zinc-800
+      `;
+
+  // ==========================================================
+  // BUTTON STYLE
+  // ==========================================================
+
+  const buttonRadius =
+    isPro && buttonStyle === "square"
+      ? "rounded-md"
+      : "rounded-2xl";
+
   return (
     <div className="sticky top-10">
 
@@ -40,62 +100,84 @@ export default function ProfilePreview({
             h-2
             bg-zinc-700
             rounded-full
+            z-20
           "
         />
 
-        {/* Conteúdo */}
+        {/* CONTEÚDO */}
         <div
-          className="h-full overflow-y-auto px-5 py-10 text-white"
-          style={{
-            background: `linear-gradient(to bottom, ${themeColor}, #000)`,
-          }}
+          className={`
+            h-full
+            overflow-y-auto
+            px-5
+            py-10
+            text-white
+            ${backgroundClass}
+          `}
         >
 
-          {/* Perfil */}
+          {/* PERFIL */}
           <div className="flex flex-col items-center mt-10">
 
-            <img
-              src={avatarUrl || "/logo.png"}
-              alt="Avatar do perfil"
+            {/* AVATAR */}
+            <div
               className="
-                w-28
-                h-28
                 rounded-full
-                object-cover
-                border-4
-                border-white
+                p-[3px]
                 shadow-2xl
               "
-            />
+              style={{
+                background: effectiveThemeColor,
+              }}
+            >
 
-            <h1 className="text-3xl font-bold mt-5">
+              <img
+                src={avatarUrl || "/logo.png"}
+                alt="Avatar do perfil"
+                className="
+                  w-28
+                  h-28
+                  rounded-full
+                  object-cover
+                  border-4
+                  border-black
+                "
+              />
+
+            </div>
+
+            {/* USERNAME */}
+            <h1 className="text-3xl font-bold mt-5 text-center">
               @{username || "usuario"}
             </h1>
 
+            {/* BIO */}
             <p className="text-center text-white/80 mt-2 text-sm">
               {bio || "Sua bio aparecerá aqui"}
             </p>
 
           </div>
 
-          {/* Produtos simulados */}
+          {/* PRODUTOS SIMULADOS */}
           <div className="mt-8 space-y-4">
+
             {[1, 2, 3].map((item) => (
+
               <div
                 key={item}
-                className="
-                  bg-black/40
-                  backdrop-blur-lg
-                  border
-                  border-white/10
-                  rounded-2xl
+                className={`
+                  ${cardClass}
+                  ${buttonRadius}
                   px-6
                   py-5
                   flex
                   justify-center
                   items-center
-                "
+                  shadow-lg
+                  transition
+                `}
               >
+
                 <h3
                   className="text-lg font-semibold text-center"
                   style={{
@@ -104,8 +186,30 @@ export default function ProfilePreview({
                 >
                   Produto Digital
                 </h3>
+
               </div>
+
             ))}
+
+          </div>
+
+          {/* BOTÃO SIMULADO */}
+          <div
+            className={`
+              mt-6
+              w-full
+              py-4
+              text-center
+              font-bold
+              transition
+              ${buttonRadius}
+            `}
+            style={{
+              background: effectiveThemeColor,
+              color: "#fff",
+            }}
+          >
+            Saiba Mais →
           </div>
 
         </div>
