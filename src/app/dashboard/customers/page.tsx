@@ -108,31 +108,11 @@ export default function CustomersPage() {
       {/* HEADER */}
       <div className="mb-10">
 
-        <div
-          className="
-            inline-flex
-            items-center
-            gap-2
-            bg-green-500/10
-            border
-            border-green-500/20
-            text-green-400
-            px-4
-            py-2
-            rounded-full
-            text-sm
-            font-semibold
-            mb-4
-          "
-        >
-          👥 Área de Clientes
-        </div>
-
-        <h1 className="text-4xl md:text-5xl font-black text-white">
+        <h1 className="text-3xl md:text-4xl font-bold text-white">
           Clientes
         </h1>
 
-        <p className="text-zinc-400 mt-3">
+        <p className="text-zinc-400 mt-2">
           Gerencie os clientes que compraram seus produtos.
         </p>
 

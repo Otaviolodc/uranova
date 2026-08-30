@@ -369,15 +369,15 @@ async function deleteProduct(id: string) {
       {/* HEADER */}
       <div className="mb-10">
 
-        <h1 className="text-2xl md:text-4xl font-bold">
-          🚀 Crie e venda produtos digitais
-        </h1>
+        <h1 className="text-3xl font-bold text-white">
+          Produtos
+      </h1>
 
-        <p className="text-gray-400 mt-2 text-lg">
-          Monte ofertas profissionais para compartilhar e vender online.
-        </p>
+      <p className="text-zinc-400 mt-2">
+        Crie e gerencie seus produtos digitais
+      </p>
 
-      </div>
+    </div>
 
       <ProductStats products={products} />
 
@@ -411,8 +411,5 @@ async function deleteProduct(id: string) {
   </div>
 
 </div>
-
-
 );
-
 }

@@ -42,7 +42,7 @@ export default async function FinancePage() {
     <div className="p-8">
       {/* HEADER */}
       <div className="mb-10">
-        <h1 className="text-4xl font-bold text-white">
+        <h1 className="text-3xl md:text-4xl font-bold text-white">
           Financeiro
         </h1>
 

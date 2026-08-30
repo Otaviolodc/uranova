@@ -55,64 +55,16 @@ export default function CheckoutsPage() {
     <div className="p-6 md:p-8">
 
       {/* HEADER */}
-      <div className="mb-8">
+      <div className="mb-10">
 
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        <h1 className="text-3xl font-bold text-white">
+          Checkouts
+        </h1>
 
-          <div>
-            <div className="flex items-center gap-3 mb-3">
+        <p className="text-zinc-400 mt-2">
+          Gerencie seus links de pagamento em um só lugar.
+        </p>
 
-              <div
-                className="
-                  flex
-                  h-11
-                  w-11
-                  items-center
-                  justify-center
-                  rounded-2xl
-                  bg-green-500/10
-                  border
-                  border-green-500/20
-                  text-xl
-                "
-              >
-                💳
-              </div>
-
-              <div>
-                <p
-                  className="
-                    text-xs
-                    uppercase
-                    tracking-widest
-                    font-bold
-                    text-green-400
-                  "
-                >
-                  Área de vendas
-                </p>
-
-                <h1
-                  className="
-                    text-3xl
-                    md:text-4xl
-                    font-black
-                    tracking-tight
-                    text-white
-                  "
-                >
-                  Checkouts
-                </h1>
-              </div>
-
-            </div>
-
-            <p className="text-zinc-400">
-              Gerencie seus links de pagamento em um só lugar.
-            </p>
-          </div>
-
-        </div>
       </div>
 
       {/* RESUMO */}
