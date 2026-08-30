@@ -460,7 +460,7 @@ export default async function PlanPage() {
                 </div>
               ) : (
                 <Link
-                  href="/dashboard/account/upgrade"
+                  href="#planos"
                   className="
                     flex
                     w-full
@@ -618,7 +618,7 @@ export default async function PlanPage() {
               </div>
 
               <Link
-                href="/dashboard/account/upgrade"
+                href="#planos"
                 className="
                   shrink-0
                   rounded-2xl
