@@ -18,28 +18,40 @@ export async function updateSession(
         },
 
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => {
-            request.cookies.set(name, value);
-          });
+          cookiesToSet.forEach(
+            ({ name, value }) => {
+              request.cookies.set(
+                name,
+                value
+              );
+            }
+          );
 
           response = NextResponse.next({
             request,
           });
 
-          cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(
+          cookiesToSet.forEach(
+            ({
               name,
               value,
-              options
-            );
-          });
+              options,
+            }) => {
+              response.cookies.set(
+                name,
+                value,
+                options
+              );
+            }
+          );
         },
       },
     }
   );
 
-  // Renova a sessão do usuário
-  await supabase.auth.getUser();
+  // Valida a sessão sem fazer uma busca completa
+  // do usuário no servidor de Auth em toda requisição.
+  await supabase.auth.getClaims();
 
   return response;
 }
