@@ -4,10 +4,10 @@ export default function AuthLogo() {
   return (
     <div className="mb-1 flex justify-center">
       <Image
-        src="/logo-new.png"
+        src="/uranova-logo.svg"
         alt="Uranova"
         width={360}
-        height={100}
+        height={84}
         priority
       />
     </div>
