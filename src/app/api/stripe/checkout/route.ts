@@ -7,11 +7,20 @@ interface CheckoutRequest {
   checkoutSlug: string;
 }
 
+const PLATFORM_FEE_PERCENT = 10;
+
 export async function POST(req: Request) {
   try {
+    // ======================================================
+    // 1. BODY
+    // ======================================================
+
     const body: CheckoutRequest = await req.json();
 
-    if (!body.checkoutSlug) {
+    if (
+      !body.checkoutSlug ||
+      typeof body.checkoutSlug !== "string"
+    ) {
       return NextResponse.json(
         {
           error: "Checkout slug obrigatório.",
@@ -21,6 +30,23 @@ export async function POST(req: Request) {
         }
       );
     }
+
+    // Evita receber uma string gigantesca
+    // desnecessariamente no endpoint.
+    if (body.checkoutSlug.length > 500) {
+      return NextResponse.json(
+        {
+          error: "Checkout slug inválido.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    // ======================================================
+    // 2. AUTENTICAÇÃO
+    // ======================================================
 
     const supabase = await createClient();
 
@@ -40,19 +66,25 @@ export async function POST(req: Request) {
     }
 
     // ======================================================
-    // BUSCA O PRODUTO
+    // 3. BUSCA O PRODUTO
     // ======================================================
 
-    const { data: product, error } = await supabase
+    const {
+      data: product,
+      error: productError,
+    } = await supabase
       .from("products_checkout")
       .select("*")
-      .eq("checkout_slug", body.checkoutSlug)
+      .eq(
+        "checkout_slug",
+        body.checkoutSlug
+      )
       .maybeSingle();
 
-    if (error) {
+    if (productError) {
       console.error(
         "Erro ao buscar produto:",
-        error
+        productError
       );
 
       return NextResponse.json(
@@ -76,6 +108,10 @@ export async function POST(req: Request) {
       );
     }
 
+    // ======================================================
+    // 4. STATUS DO PRODUTO
+    // ======================================================
+
     if (
       !product.is_active ||
       product.status !== "active"
@@ -91,7 +127,27 @@ export async function POST(req: Request) {
     }
 
     // ======================================================
-    // CONTA STRIPE CONNECT DO PRODUTOR
+    // 5. VALIDA PRODUTOR
+    // ======================================================
+
+    if (!product.user_id) {
+      console.error(
+        "Produto sem produtor associado:",
+        product.id
+      );
+
+      return NextResponse.json(
+        {
+          error: "Produto inválido.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    // ======================================================
+    // 6. CONTA STRIPE CONNECT
     // ======================================================
 
     const {
@@ -100,13 +156,21 @@ export async function POST(req: Request) {
     } = await admin
       .from("profiles")
       .select("stripe_account_id")
-      .eq("id", product.user_id)
+      .eq(
+        "id",
+        product.user_id
+      )
       .single();
 
     if (
       sellerProfileError ||
       !sellerProfile?.stripe_account_id
     ) {
+      console.error(
+        "Conta Stripe do produtor não encontrada:",
+        sellerProfileError
+      );
+
       return NextResponse.json(
         {
           error:
@@ -122,94 +186,273 @@ export async function POST(req: Request) {
       sellerProfile.stripe_account_id;
 
     // ======================================================
-    // URLS
+    // 7. URLS
     // ======================================================
 
     const baseUrl =
       process.env.NODE_ENV === "development"
         ? "http://localhost:3000"
-        : process.env.NEXT_PUBLIC_SITE_URL!;
+        : process.env.NEXT_PUBLIC_SITE_URL;
 
-    // ======================================================
-    // VALOR DA VENDA
-    // ======================================================
+    if (!baseUrl) {
+      console.error(
+        "NEXT_PUBLIC_SITE_URL não configurada."
+      );
 
-    const amount = Math.round(
-      Number(product.price) * 100
-    );
-
-    if (amount <= 0) {
       return NextResponse.json(
         {
-          error: "Valor do produto inválido.",
+          error:
+            "URL da plataforma não configurada.",
         },
         {
-          status: 400
+          status: 500,
         }
       );
     }
 
     // ======================================================
-    // COMISSÃO DA URANOVA
+    // 8. CODIFICA SLUG
+    // ======================================================
     //
-    // Uranova fica com 10% da venda.
+    // Importante:
+    //
+    // O slug pode conter:
+    //
+    // 📦
+    // —
+    // ç
+    // ã
+    //
+    // O navegador consegue trabalhar com isso,
+    // mas o Stripe exige URL percent-encoded.
     //
     // Exemplo:
     //
-    // Venda: R$100,00
-    // Uranova: R$10,00
-    // Produtor: R$90,00
+    // 📦-teste-fase-1-—-segurança
     //
-    // A tarifa da Stripe NÃO entra nesse cálculo.
-    // A tarifa da Stripe é tratada separadamente pela Stripe.
+    // vira:
+    //
+    // %F0%9F%93%A6-teste-fase-1-%E2%80%94-seguran%C3%A7a
+    //
     // ======================================================
 
-    const platformFee = Math.round(
-      amount * 0.10
-    );
+    const encodedCheckoutSlug =
+      encodeURIComponent(
+        product.checkout_slug
+      );
+
+    // ======================================================
+    // 9. PREÇO
+    // ======================================================
+
+    const productPrice =
+      Number(product.price);
+
+    if (
+      !Number.isFinite(productPrice) ||
+      productPrice <= 0
+    ) {
+      console.error(
+        "Preço do produto inválido:",
+        product.price
+      );
+
+      return NextResponse.json(
+        {
+          error:
+            "Valor do produto inválido.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    // Stripe trabalha com centavos.
+    const amount =
+      Math.round(
+        productPrice * 100
+      );
+
+    if (
+      !Number.isSafeInteger(amount) ||
+      amount <= 0
+    ) {
+      console.error(
+        "Valor Stripe inválido:",
+        {
+          productPrice,
+          amount,
+        }
+      );
+
+      return NextResponse.json(
+        {
+          error:
+            "Valor do produto inválido.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    // ======================================================
+    // 10. COMISSÃO URANOVA
+    // ======================================================
+
+    const platformFee =
+      Math.round(
+        amount *
+          (PLATFORM_FEE_PERCENT / 100)
+      );
 
     const sellerAmount =
       amount - platformFee;
 
+    if (
+      !Number.isSafeInteger(
+        platformFee
+      ) ||
+      platformFee <= 0
+    ) {
+      console.error(
+        "Comissão Uranova inválida:",
+        platformFee
+      );
+
+      return NextResponse.json(
+        {
+          error:
+            "Erro no cálculo da comissão.",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    if (
+      !Number.isSafeInteger(
+        sellerAmount
+      ) ||
+      sellerAmount < 0
+    ) {
+      console.error(
+        "Valor do produtor inválido:",
+        sellerAmount
+      );
+
+      return NextResponse.json(
+        {
+          error:
+            "Erro no cálculo do valor do produtor.",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
     // ======================================================
-    // STRIPE CHECKOUT
-    //
-    // DESTINATION CHARGE
-    //
-    // A cobrança acontece na conta da Uranova.
-    //
-    // application_fee_amount:
-    //   comissão da Uranova.
-    //
-    // transfer_data.destination:
-    //   conta Stripe Connect do produtor.
-    //
-    // Dessa forma a Stripe realiza a transferência
-    // para o saldo da conta Connect do produtor.
-    //
-    // A Uranova NÃO precisa criar manualmente uma
-    // transferência posteriormente.
+    // 11. LOG
+    // ======================================================
+
+    console.log(
+      "===================================="
+    );
+
+    console.log(
+      "URANOVA STRIPE CHECKOUT"
+    );
+
+    console.log(
+      "===================================="
+    );
+
+    console.log(
+      "Produto:",
+      product.title
+    );
+
+    console.log(
+      "Produto ID:",
+      product.id
+    );
+
+    console.log(
+      "Seller ID:",
+      product.user_id
+    );
+
+    console.log(
+      "Stripe Connect:",
+      sellerStripeAccountId
+    );
+
+    console.log(
+      "Valor:",
+      productPrice
+    );
+
+    console.log(
+      "Valor em centavos:",
+      amount
+    );
+
+    console.log(
+      "Comissão Uranova:",
+      platformFee
+    );
+
+    console.log(
+      "Valor produtor:",
+      sellerAmount
+    );
+
+    // ======================================================
+    // 12. STRIPE CHECKOUT
     // ======================================================
 
     const session =
       await stripe.checkout.sessions.create({
         mode: "payment",
 
+        // ==================================================
+        // URL DE SUCESSO
+        // ==================================================
+
         success_url:
           `${baseUrl}/checkout/success` +
           `?session_id={CHECKOUT_SESSION_ID}`,
 
-        cancel_url:
-          `${baseUrl}/checkout/${product.checkout_slug}`,
+        // ==================================================
+        // URL DE CANCELAMENTO
+        // ==================================================
 
-        client_reference_id: product.id,
+        cancel_url:
+          `${baseUrl}/checkout/${encodedCheckoutSlug}`,
+
+        // ==================================================
+        // REFERÊNCIA
+        // ==================================================
+
+        client_reference_id:
+          product.id,
+
+        // ==================================================
+        // METADATA DA SESSION
+        // ==================================================
 
         metadata: {
-          product_id: product.id,
+          product_id:
+            product.id,
 
-          seller_id: product.user_id,
+          seller_id:
+            product.user_id,
 
-          customer_id: user.id,
+          customer_id:
+            user.id,
 
           checkout_slug:
             product.checkout_slug,
@@ -224,33 +467,31 @@ export async function POST(req: Request) {
             sellerStripeAccountId,
         },
 
+        // ==================================================
+        // PAYMENT INTENT
+        // ==================================================
+
         payment_intent_data: {
-          // ==================================================
-          // COMISSÃO DA URANOVA
-          // ==================================================
+          // =================================================
+          // COMISSÃO URANOVA
+          // =================================================
 
           application_fee_amount:
             platformFee,
 
-          // ==================================================
-          // CONTA CONNECT DO PRODUTOR
-          // ==================================================
-
-          transfer_data: {
-            destination:
-              sellerStripeAccountId,
-          },
-
-          // ==================================================
-          // METADADOS DO PAGAMENTO
-          // ==================================================
+          // =================================================
+          // METADATA DO PAYMENT INTENT
+          // =================================================
 
           metadata: {
-            product_id: product.id,
+            product_id:
+              product.id,
 
-            seller_id: product.user_id,
+            seller_id:
+              product.user_id,
 
-            customer_id: user.id,
+            customer_id:
+              user.id,
 
             checkout_slug:
               product.checkout_slug,
@@ -264,18 +505,11 @@ export async function POST(req: Request) {
             seller_amount:
               String(sellerAmount),
           },
-
-          // ==================================================
-          // AGRUPAMENTO DA VENDA
-          // ==================================================
-
-          transfer_group:
-            `uranova_order_${product.id}`,
         },
 
-        // ====================================================
+        // ==================================================
         // PRODUTO
-        // ====================================================
+        // ==================================================
 
         line_items: [
           {
@@ -284,27 +518,57 @@ export async function POST(req: Request) {
             price_data: {
               currency: "brl",
 
-              unit_amount: amount,
+              unit_amount:
+                amount,
 
               product_data: {
-                name: product.title,
+                name:
+                  product.title,
 
                 description:
                   product.description ??
                   undefined,
 
-                images: product.image_url
-                  ? [product.image_url]
-                  : [],
+                images:
+                  product.image_url
+                    ? [
+                        product.image_url,
+                      ]
+                    : [],
               },
             },
           },
         ],
-      });
+      },
+      {
+        stripeAccount: sellerStripeAccountId,
+      }
+    );
 
     // ======================================================
-    // RESPOSTA
+    // 13. RESPOSTA
     // ======================================================
+
+    if (!session.url) {
+      console.error(
+        "Stripe não retornou URL de checkout."
+      );
+
+      return NextResponse.json(
+        {
+          error:
+            "Não foi possível criar o checkout.",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    console.log(
+      "Checkout Stripe criado:",
+      session.id
+    );
 
     return NextResponse.json({
       success: true,
@@ -319,7 +583,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        error: "Erro interno.",
+        error:
+          "Erro interno.",
       },
       {
         status: 500,

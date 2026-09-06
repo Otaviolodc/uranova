@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 
 import { createClient } from "@/lib/supabase/server";
-import { getUserBalance } from "@/lib/services/balance";
+import { getUserFinancialSummary } from "@/lib/services/balance";
 import { getUserAchievement } from "@/lib/services/achievement";
 import {
   DIGITAL_ACHIEVEMENTS,
@@ -20,9 +20,9 @@ export default async function AchievementsPage() {
     redirect("/login");
   }
 
-  const balance = await getUserBalance(user.id);
+  const balance = await getUserFinancialSummary(user.id);
 
-  const totalEarned = balance?.total_earned ?? 0;
+  const totalEarned = balance?.total_net ?? 0;
 
   const current = getUserAchievement(totalEarned);
 

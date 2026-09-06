@@ -1,5 +1,5 @@
 import BalanceCard from "@/components/finance/BalanceCard";
-import { getUserBalance } from "@/lib/services/balance";
+import { getUserFinancialSummary } from "@/lib/services/balance";
 
 interface FinanceCardsProps {
   userId: string;
@@ -8,26 +8,26 @@ interface FinanceCardsProps {
 export default async function FinanceCards({
   userId,
 }: FinanceCardsProps) {
-  const balance = await getUserBalance(userId);
+  const balance = await getUserFinancialSummary(userId);
 
   return (
     <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
       <BalanceCard
-        title="Saldo Disponível"
-        value={balance?.available_balance ?? 0}
+        title="Receita Bruta"
+        value={balance?.total_gross ?? 0}
+        color="blue"
+      />
+
+      <BalanceCard
+        title="Comissão Uranova"
+        value={balance?.total_platform_fee ?? 0}
         color="green"
       />
 
       <BalanceCard
-        title="Saldo Pendente"
-        value={balance?.pending_balance ?? 0}
+        title="Taxas Stripe"
+        value={balance?.total_stripe_fee ?? 0}
         color="yellow"
-      />
-
-      <BalanceCard
-        title="Total Recebido"
-        value={balance?.total_earned ?? 0}
-        color="blue"
       />
     </div>
   );

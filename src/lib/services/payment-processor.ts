@@ -1,13 +1,12 @@
-import { processSale } from "@/lib/services/financial";
 import { stripe } from "@/lib/stripe";
 import { admin } from "@/lib/supabase/admin";
 import Stripe from "stripe";
 
+const PLATFORM_FEE_PERCENT = 10;
+
 interface ProcessCheckoutCompletedParams {
   session: Stripe.Checkout.Session;
 }
-
-const PLATFORM_FEE_PERCENT = 10;
 
 /**
  * ============================================================
@@ -16,31 +15,23 @@ const PLATFORM_FEE_PERCENT = 10;
  *
  * MODELO FINANCEIRO URANOVA
  *
- * Exemplo de uma venda de R$100,00:
+ * Direct Charge — Stripe Connect
  *
- * Venda                         R$100,00
- * Comissão Uranova 10%         R$ 10,00
- * Taxa Stripe                   R$  4,38
- * Líquido após Stripe           R$ 95,62
- * Produtor                      R$ 85,62
- * Resultado líquido Uranova    R$ 10,00
+ * Exemplo:
  *
- * IMPORTANTE:
+ * Venda                    R$100,00
+ * Uranova 10%              R$ 10,00
+ * Stripe                   desconta sua taxa do produtor
+ * Produtor                 R$90,00 - taxa Stripe
  *
- * A comissão da Uranova é calculada sobre o valor bruto da venda.
+ * A comissão Uranova NÃO é reduzida pela taxa Stripe.
  *
- * A taxa da Stripe é uma despesa da operação e é descontada
- * do valor que seria destinado ao produtor.
+ * O pagamento é criado diretamente na conta Stripe Connect
+ * do produtor.
  *
- * Portanto:
+ * A Uranova recebe sua application_fee_amount.
  *
- * produtor = venda - comissão Uranova - taxa Stripe
- *
- * A Uranova permanece com os 10% integrais.
- *
- * O pagamento utiliza Destination Charge do Stripe Connect.
- *
- * Não é criada Transfer manualmente.
+ * NÃO existe Transfer manual.
  */
 export async function processCheckoutCompleted({
   session,
@@ -143,7 +134,7 @@ export async function processCheckoutCompleted({
     );
 
     console.log(
-      "Seller Stripe Account:",
+      "Stripe Connect:",
       sellerStripeAccountId
     );
 
@@ -206,7 +197,7 @@ export async function processCheckoutCompleted({
     }
 
     console.log(
-      "Produto encontrado:",
+      "Produto:",
       product.title
     );
 
@@ -231,9 +222,7 @@ export async function processCheckoutCompleted({
       error: existingCustomerProductError,
     } = await admin
       .from("customer_products")
-      .select(
-        "id, order_id"
-      )
+      .select("id, order_id")
       .eq(
         "customer_id",
         customerId
@@ -262,7 +251,7 @@ export async function processCheckoutCompleted({
       null;
 
     // ======================================================
-    // 10. CRIA PEDIDO SE NECESSÁRIO
+    // 10. CRIA PEDIDO
     // ======================================================
 
     if (!orderId) {
@@ -330,11 +319,7 @@ export async function processCheckoutCompleted({
         order.id;
 
       console.log(
-        "Pedido criado com sucesso."
-      );
-
-      console.log(
-        "Order ID:",
+        "Pedido criado:",
         order.id
       );
     } else {
@@ -345,7 +330,7 @@ export async function processCheckoutCompleted({
     }
 
     // ======================================================
-    // 11. LIBERA PRODUTO PARA CLIENTE
+    // 11. LIBERA PRODUTO
     // ======================================================
 
     const {
@@ -425,8 +410,6 @@ export async function processCheckoutCompleted({
       session,
       sellerId,
       sellerStripeAccountId,
-      customerId,
-      product,
       paymentIntentId,
       orderId,
       customerName,
@@ -434,7 +417,7 @@ export async function processCheckoutCompleted({
     });
 
     console.log(
-      "Checkout processado."
+      "Checkout processado com sucesso."
     );
 
   } catch (error) {
@@ -451,34 +434,26 @@ export async function processCheckoutCompleted({
  * PROCESSAMENTO FINANCEIRO
  * ============================================================
  *
- * MODELO FINANCEIRO:
+ * DIRECT CHARGE
  *
- * Venda:                  R$100,00
- * Comissão Uranova:      R$ 10,00
- * Taxa Stripe:            R$  4,38
- * Líquido após Stripe:    R$ 95,62
- * Produtor:               R$ 85,62
- * Uranova líquida:        R$ 10,00
+ * Venda:
+ * R$100,00
  *
- * Fórmula:
+ * Uranova:
+ * R$10,00
  *
- * platformFee =
- *   grossAmount * 10%
+ * Stripe:
+ * desconta sua taxa da conta do produtor
  *
- * producerAmount =
- *   grossAmount - platformFee - stripeFee
+ * Produtor:
+ * R$90,00 - taxa Stripe
  *
- * platformNet =
- *   platformFee
- *
- * A taxa Stripe NÃO é descontada da comissão Uranova.
+ * A Uranova recebe exatamente sua comissão.
  */
 async function processFinancialSettlement({
   session,
   sellerId,
   sellerStripeAccountId,
-  customerId,
-  product,
   paymentIntentId,
   orderId,
   customerName,
@@ -487,15 +462,13 @@ async function processFinancialSettlement({
   session: Stripe.Checkout.Session;
   sellerId: string;
   sellerStripeAccountId: string;
-  customerId: string;
-  product: any;
   paymentIntentId: string;
   orderId: string;
   customerName: string;
   customerEmail: string;
 }) {
   // ======================================================
-  // 1. VERIFICA SE JÁ FOI PROCESSADO
+  // 1. IDEMPOTÊNCIA
   // ======================================================
 
   const {
@@ -528,16 +501,19 @@ async function processFinancialSettlement({
       "Pagamento financeiro já processado."
     );
 
-    console.log(
-      "Payment Intent já registrado:",
-      paymentIntentId
-    );
-
     return;
   }
 
   // ======================================================
   // 2. PAYMENT INTENT
+  // ======================================================
+  //
+  // IMPORTANTE:
+  //
+  // O Payment Intent pertence à conta Stripe do produtor.
+  //
+  // Por isso precisamos informar stripeAccount.
+  //
   // ======================================================
 
   const paymentIntent =
@@ -547,6 +523,10 @@ async function processFinancialSettlement({
         expand: [
           "latest_charge.balance_transaction",
         ],
+      },
+      {
+        stripeAccount:
+          sellerStripeAccountId,
       }
     );
 
@@ -589,10 +569,6 @@ async function processFinancialSettlement({
       "Charge ainda não disponível."
     );
 
-    console.log(
-      "Financeiro ficará pendente para processamento posterior."
-    );
-
     return;
   }
 
@@ -604,6 +580,10 @@ async function processFinancialSettlement({
             expand: [
               "balance_transaction",
             ],
+          },
+          {
+            stripeAccount:
+              sellerStripeAccountId,
           }
         )
       : latestCharge;
@@ -616,7 +596,12 @@ async function processFinancialSettlement({
     typeof charge.balance_transaction ===
     "string"
       ? await stripe.balanceTransactions.retrieve(
-          charge.balance_transaction
+          charge.balance_transaction,
+          {},
+          {
+            stripeAccount:
+              sellerStripeAccountId,
+          }
         )
       : charge.balance_transaction;
 
@@ -625,10 +610,6 @@ async function processFinancialSettlement({
   ) {
     console.log(
       "Balance Transaction ainda não disponível."
-    );
-
-    console.log(
-      "Financeiro será processado posteriormente."
     );
 
     return;
@@ -643,11 +624,6 @@ async function processFinancialSettlement({
       balanceTransaction.fee
     ) / 100;
 
-  const stripeNet =
-    Number(
-      balanceTransaction.net
-    ) / 100;
-
   if (
     !Number.isFinite(
       stripeFee
@@ -655,32 +631,15 @@ async function processFinancialSettlement({
     stripeFee < 0
   ) {
     console.error(
-      "Tarifa Stripe inválida:",
+      "Taxa Stripe inválida:",
       stripeFee
     );
 
     return;
   }
 
-  console.log(
-    "Stripe fee real:",
-    stripeFee
-  );
-
-  console.log(
-    "Stripe net:",
-    stripeNet
-  );
-
   // ======================================================
   // 7. COMISSÃO URANOVA
-  // ======================================================
-  //
-  // A Uranova SEMPRE fica com 10% do valor bruto.
-  //
-  // R$100,00 x 10% = R$10,00
-  //
-  // A taxa Stripe não reduz esta comissão.
   // ======================================================
 
   const platformFee =
@@ -691,37 +650,18 @@ async function processFinancialSettlement({
     ) / 100;
 
   // ======================================================
-  // 8. VALOR LÍQUIDO APÓS TAXA STRIPE
+  // 8. PRODUTOR
   // ======================================================
   //
-  // Exemplo:
+  // A taxa Stripe é responsabilidade do produtor.
   //
-  // R$100,00 - R$4,38 = R$95,62
-  // ======================================================
-
-  const netAfterStripeFee =
-    Math.round(
-      (
-        grossAmount -
-        stripeFee
-      ) *
-        100
-    ) / 100;
-
-  // ======================================================
-  // 9. VALOR DO PRODUTOR
-  // ======================================================
+  // Portanto:
   //
-  // O produtor recebe:
+  // produtor =
+  // venda
+  // - Uranova
+  // - Stripe
   //
-  // Venda
-  // - Comissão Uranova
-  // - Taxa Stripe
-  //
-  // R$100,00
-  // - R$10,00
-  // - R$4,38
-  // = R$85,62
   // ======================================================
 
   const producerAmount =
@@ -735,19 +675,18 @@ async function processFinancialSettlement({
     ) / 100;
 
   // ======================================================
-  // 10. RESULTADO LÍQUIDO DA URANOVA
+  // 9. URANOVA
   // ======================================================
   //
-  // A Uranova fica integralmente com sua comissão.
+  // A comissão da Uranova permanece integral.
   //
-  // R$10,00
   // ======================================================
 
   const platformNet =
     platformFee;
 
   // ======================================================
-  // 11. VALIDAÇÕES
+  // 10. VALIDAÇÕES
   // ======================================================
 
   if (
@@ -759,20 +698,6 @@ async function processFinancialSettlement({
     console.error(
       "Comissão Uranova inválida:",
       platformFee
-    );
-
-    return;
-  }
-
-  if (
-    !Number.isFinite(
-      netAfterStripeFee
-    ) ||
-    netAfterStripeFee < 0
-  ) {
-    console.error(
-      "Valor líquido após Stripe inválido:",
-      netAfterStripeFee
     );
 
     return;
@@ -793,16 +718,7 @@ async function processFinancialSettlement({
   }
 
   // ======================================================
-  // 12. CONCILIAÇÃO FINANCEIRA
-  // ======================================================
-  //
-  // Venda =
-  // Uranova + Produtor + Stripe
-  //
-  // R$100,00 =
-  // R$10,00 + R$85,62 + R$4,38
-  //
-  // = R$100,00
+  // 11. CONCILIAÇÃO
   // ======================================================
 
   const calculatedTotal =
@@ -831,10 +747,9 @@ async function processFinancialSettlement({
 
     console.error({
       grossAmount,
-      stripeFee,
       platformFee,
+      stripeFee,
       producerAmount,
-      platformNet,
       calculatedTotal,
       grossTotal,
     });
@@ -843,7 +758,7 @@ async function processFinancialSettlement({
   }
 
   // ======================================================
-  // 13. LOG FINANCEIRO
+  // 12. LOG
   // ======================================================
 
   console.log(
@@ -874,17 +789,12 @@ async function processFinancialSettlement({
   );
 
   console.log(
-    "Valor líquido após Stripe:",
-    netAfterStripeFee
-  );
-
-  console.log(
     "Produtor:",
     producerAmount
   );
 
   console.log(
-    "Uranova líquida:",
+    "Uranova:",
     platformNet
   );
 
@@ -894,19 +804,7 @@ async function processFinancialSettlement({
   );
 
   // ======================================================
-  // 14. NÃO CRIA TRANSFER
-  // ======================================================
-
-  console.log(
-    "Transferência manual desativada."
-  );
-
-  console.log(
-    "Produtor recebe pelo Stripe Connect."
-  );
-
-  // ======================================================
-  // 15. REGISTRA PAGAMENTO
+  // 13. REGISTRA PAGAMENTO
   // ======================================================
 
   const {
@@ -958,7 +856,7 @@ async function processFinancialSettlement({
     .maybeSingle();
 
   // ======================================================
-  // 15.1. PAGAMENTO JÁ INSERIDO POR OUTRA EXECUÇÃO
+  // 13.1. IDEMPOTÊNCIA
   // ======================================================
 
   if (
@@ -968,12 +866,7 @@ async function processFinancialSettlement({
       paymentError.code === "23505"
     ) {
       console.log(
-        "Pagamento já foi registrado por outra execução."
-      );
-
-      console.log(
-        "Payment Intent duplicado ignorado:",
-        paymentIntentId
+        "Pagamento já registrado por outra execução."
       );
 
       return;
@@ -1002,36 +895,7 @@ async function processFinancialSettlement({
   );
 
   // ======================================================
-  // 16. FINANCEIRO DO PRODUTOR
-  // ======================================================
-  //
-  // Aqui entra exatamente o valor que o produtor
-  // efetivamente tem direito a receber:
-  //
-  // R$85,62 no exemplo de R$100,00.
-  // ======================================================
-
-  const financialResult =
-    await processSale({
-      userId:
-        sellerId,
-
-      orderId:
-        orderId,
-
-      amount:
-        producerAmount,
-
-      description:
-        `Venda: ${product.title}`,
-    });
-
-  console.log(
-    financialResult.message
-  );
-
-  // ======================================================
-  // 17. FINAL
+  // 14. FINAL
   // ======================================================
 
   console.log(
@@ -1043,38 +907,32 @@ async function processFinancialSettlement({
   );
 
   console.log(
+    "===================================="
+  );
+
+  console.log(
     "Payment Intent:",
     paymentIntentId
   );
 
   console.log(
-    "Valor bruto:",
+    "Venda:",
     grossAmount
   );
 
   console.log(
-    "Comissão Uranova:",
+    "Uranova:",
     platformFee
   );
 
   console.log(
-    "Taxa Stripe:",
+    "Stripe:",
     stripeFee
-  );
-
-  console.log(
-    "Valor líquido após Stripe:",
-    netAfterStripeFee
   );
 
   console.log(
     "Produtor:",
     producerAmount
-  );
-
-  console.log(
-    "Resultado líquido Uranova:",
-    platformNet
   );
 
   console.log(
@@ -1085,19 +943,20 @@ async function processFinancialSettlement({
 
 /**
  * ============================================================
- * PROCESSA UM PAYMENT INTENT NOVAMENTE
+ * RETRY FINANCEIRO
  * ============================================================
  *
- * Usado pelo webhook para:
+ * Usado quando o webhook recebe:
  *
  * - payment_intent.succeeded
  * - charge.succeeded
  * - charge.updated
  *
- * O retry NÃO cria transferência.
+ * O retry NÃO cria Transfer.
  */
 export async function processPaymentIntentSettlement(
-  paymentIntentId: string
+  paymentIntentId: string,
+  stripeAccountId: string
 ) {
   try {
     console.log(
@@ -1118,7 +977,7 @@ export async function processPaymentIntentSettlement(
     );
 
     // ======================================================
-    // 1. VERIFICA SE JÁ FOI PROCESSADO
+    // 1. LOCALIZA PAYMENT
     // ======================================================
 
     const {
@@ -1151,11 +1010,6 @@ export async function processPaymentIntentSettlement(
         "Payment Intent já possui pagamento registrado."
       );
 
-      console.log(
-        "Retry financeiro ignorado:",
-        paymentIntentId
-      );
-
       return;
     }
 
@@ -1164,19 +1018,25 @@ export async function processPaymentIntentSettlement(
     // ======================================================
 
     const sessions =
-      await stripe.checkout.sessions.list({
-        payment_intent:
-          paymentIntentId,
+      await stripe.checkout.sessions.list(
+        {
+          payment_intent:
+            paymentIntentId,
 
-        limit: 1,
-      });
+          limit: 1,
+        },
+        {
+          stripeAccount:
+            stripeAccountId,
+        }
+      );
 
     const session =
       sessions.data[0];
 
     if (!session) {
       console.log(
-        "Checkout Session não encontrada para Payment Intent:",
+        "Checkout Session não encontrada:",
         paymentIntentId
       );
 
@@ -1209,7 +1069,7 @@ export async function processPaymentIntentSettlement(
     }
 
     // ======================================================
-    // 4. CONTA STRIPE DO PRODUTOR
+    // 4. CONTA STRIPE
     // ======================================================
 
     const {
@@ -1233,6 +1093,25 @@ export async function processPaymentIntentSettlement(
       console.error(
         "Conta Stripe do produtor não encontrada no retry:",
         sellerProfileError
+      );
+
+      return;
+    }
+
+    const sellerStripeAccountId =
+      sellerProfile.stripe_account_id;
+
+    if (
+      sellerStripeAccountId !==
+      stripeAccountId
+    ) {
+      console.error(
+        "Inconsistência: conta Stripe do evento diferente da conta Stripe do produtor.",
+        {
+          eventAccount: stripeAccountId,
+          sellerAccount: sellerStripeAccountId,
+          sellerId,
+        }
       );
 
       return;
@@ -1303,14 +1182,14 @@ export async function processPaymentIntentSettlement(
       !customerProduct?.order_id
     ) {
       console.error(
-        "Pedido ainda não encontrado para o produto do cliente. O retry financeiro será ignorado."
+        "Pedido ainda não encontrado para o produto do cliente."
       );
 
       return;
     }
 
     // ======================================================
-    // 7. PROCESSA FINANCEIRO NOVAMENTE
+    // 7. PROCESSA NOVAMENTE
     // ======================================================
 
     await processFinancialSettlement({
@@ -1318,12 +1197,7 @@ export async function processPaymentIntentSettlement(
 
       sellerId,
 
-      sellerStripeAccountId:
-        sellerProfile.stripe_account_id,
-
-      customerId,
-
-      product,
+      sellerStripeAccountId,
 
       paymentIntentId,
 

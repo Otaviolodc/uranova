@@ -12,6 +12,18 @@ interface FinancialResult {
   message: string;
 }
 
+/**
+ * Registra a receita líquida do produtor.
+ *
+ * IMPORTANTE:
+ * A comissão da Uranova NÃO é processada aqui.
+ *
+ * A comissão da Uranova é recebida diretamente pelo Stripe
+ * através de application_fee_amount.
+ *
+ * Este serviço serve apenas para registrar no banco
+ * o valor financeiro pertencente ao produtor.
+ */
 export async function processSale({
   userId,
   orderId,
@@ -24,31 +36,47 @@ export async function processSale({
 
   console.log("User:", userId);
   console.log("Order:", orderId);
-  console.log("Amount:", amount);
+  console.log("Producer amount:", amount);
   console.log("Description:", description);
 
   if (!userId || !orderId) {
     throw new Error("Dados financeiros inválidos.");
   }
 
-  if (amount <= 0) {
+  if (!Number.isFinite(amount) || amount <= 0) {
     throw new Error("Valor financeiro inválido.");
   }
 
-  // ======================================================
-  // PROCESSA A TRANSAÇÃO FINANCEIRA
-  // ======================================================
+  /**
+   * ==========================================================
+   * NOVO FLUXO
+   * ==========================================================
+   *
+   * NÃO usamos mais:
+   *
+   * - process_financial_transaction
+   * - RPC financeira antiga
+   * - cálculo da comissão Uranova
+   *
+   * O Stripe já processou:
+   *
+   * Venda
+   * - 10% Uranova
+   * - taxa Stripe
+   * = valor destinado ao produtor
+   *
+   * Aqui apenas registramos o valor do produtor.
+   */
 
-  const { error } = await admin.rpc(
-    "process_financial_transaction",
-    {
-      p_user_id: userId,
-      p_order_id: orderId,
-      p_type: "sale",
-      p_amount: amount,
-      p_description: description,
-    }
-  );
+  const { error } = await admin
+    .from("financial_transactions")
+    .insert({
+      user_id: userId,
+      order_id: orderId,
+      type: "sale",
+      amount,
+      description,
+    });
 
   if (error) {
     console.error("====================================");
@@ -57,7 +85,7 @@ export async function processSale({
     console.error(error);
 
     throw new Error(
-      "Erro ao processar transação financeira."
+      "Erro ao registrar transação financeira."
     );
   }
 
@@ -70,13 +98,15 @@ export async function processSale({
   return {
     success: true,
     message:
-      "Transação financeira processada com sucesso.",
+      "Transação financeira registrada com sucesso.",
   };
 }
 
-// ======================================================
-// HISTÓRICO FINANCEIRO
-// ======================================================
+/**
+ * ==========================================================
+ * HISTÓRICO FINANCEIRO
+ * ==========================================================
+ */
 
 export async function getFinancialHistory(
   userId: string
