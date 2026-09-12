@@ -13,16 +13,9 @@ interface FinancialResult {
 }
 
 /**
- * Registra a receita líquida do produtor.
- *
- * IMPORTANTE:
- * A comissão da Uranova NÃO é processada aqui.
- *
- * A comissão da Uranova é recebida diretamente pelo Stripe
- * através de application_fee_amount.
- *
- * Este serviço serve apenas para registrar no banco
- * o valor financeiro pertencente ao produtor.
+ * Legacy compatibility shim.
+ * Financial settlements are created exclusively by the Stripe
+ * payment processor in `payments`.
  */
 export async function processSale({
   userId,
@@ -30,98 +23,45 @@ export async function processSale({
   amount,
   description,
 }: ProcessSaleParams): Promise<FinancialResult> {
-  console.log("====================================");
-  console.log("FINANCIAL SERVICE");
-  console.log("====================================");
-
-  console.log("User:", userId);
-  console.log("Order:", orderId);
-  console.log("Producer amount:", amount);
-  console.log("Description:", description);
-
-  if (!userId || !orderId) {
-    throw new Error("Dados financeiros inválidos.");
-  }
-
-  if (!Number.isFinite(amount) || amount <= 0) {
-    throw new Error("Valor financeiro inválido.");
-  }
-
-  /**
-   * ==========================================================
-   * NOVO FLUXO
-   * ==========================================================
-   *
-   * NÃO usamos mais:
-   *
-   * - process_financial_transaction
-   * - RPC financeira antiga
-   * - cálculo da comissão Uranova
-   *
-   * O Stripe já processou:
-   *
-   * Venda
-   * - 10% Uranova
-   * - taxa Stripe
-   * = valor destinado ao produtor
-   *
-   * Aqui apenas registramos o valor do produtor.
-   */
-
-  const { error } = await admin
-    .from("financial_transactions")
-    .insert({
-      user_id: userId,
-      order_id: orderId,
-      type: "sale",
-      amount,
-      description,
-    });
-
-  if (error) {
-    console.error("====================================");
-    console.error("FINANCIAL ERROR");
-    console.error("====================================");
-    console.error(error);
-
-    throw new Error(
-      "Erro ao registrar transação financeira."
-    );
-  }
-
-  console.log(
-    "Transação financeira registrada com sucesso."
+  console.warn(
+    "processSale is deprecated and no longer writes financial_transactions.",
+    { userId, orderId, amount, description }
   );
 
-  console.log("====================================");
-
   return {
-    success: true,
+    success: false,
     message:
-      "Transação financeira registrada com sucesso.",
+      "O fluxo financeiro antigo foi desativado. O pagamento deve ser processado pelo Stripe webhook.",
   };
 }
 
 /**
- * ==========================================================
- * HISTÓRICO FINANCEIRO
- * ==========================================================
+ * Histórico financeiro oficial da Uranova.
+ * `payments` é a fonte de verdade para vendas liquidadas.
  */
-
-export async function getFinancialHistory(
-  userId: string
-) {
+export async function getFinancialHistory(userId: string) {
   const { data, error } = await admin
-    .from("financial_transactions")
-    .select("*")
+    .from("payments")
+    .select(
+      "id, status, created_at, original_value, value, final_value, platform_fee, stripe_fee, net_value"
+    )
     .eq("user_id", userId)
-    .order("created_at", {
-      ascending: false,
-    });
+    .eq("status", "PAID")
+    .order("created_at", { ascending: false });
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return data;
+  return (data ?? []).map((payment) => ({
+    id: payment.id,
+    created_at: payment.created_at,
+    type: "sale",
+    description: "Venda aprovada",
+    amount: Number(payment.final_value ?? 0),
+    gross_amount: Number(payment.original_value ?? payment.value ?? 0),
+    platform_fee: Number(payment.platform_fee ?? 0),
+    stripe_fee: Number(payment.stripe_fee ?? 0),
+    net_value: Number(payment.net_value ?? 0),
+  }));
 }
