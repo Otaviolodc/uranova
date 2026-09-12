@@ -11,22 +11,50 @@ import { admin } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 
-export async function POST(req: Request) {
-  const signature =
-    req.headers.get("stripe-signature");
+/**
+ * Verifica se o PaymentIntent já foi registrado como PAID.
+ *
+ * IMPORTANTE:
+ * O payment processor possui alguns retornos silenciosos para situações
+ * transitórias do Stripe (por exemplo, Charge/Balance Transaction ainda
+ * não disponível). O webhook NÃO pode marcar o evento como processed
+ * nesses casos, porque isso impediria o retry automático do Stripe.
+ */
+async function assertPaymentSettled(paymentIntentId: string) {
+  const { data, error } = await admin
+    .from("payments")
+    .select("id, status, payment_provider_id")
+    .eq("payment_provider_id", paymentIntentId)
+    .maybeSingle();
 
-  // ============================================================
-  // 1. VERIFICA ASSINATURA
-  // ============================================================
+  if (error) {
+    throw new Error(
+      `Erro ao verificar settlement do pagamento ${paymentIntentId}: ${error.message}`
+    );
+  }
+
+  if (!data || data.status !== "PAID") {
+    throw new Error(
+      `Settlement ainda não confirmado para PaymentIntent ${paymentIntentId}.`
+    );
+  }
+
+  return data;
+}
+
+function getPaymentIntentIdFromCharge(charge: Stripe.Charge) {
+  return typeof charge.payment_intent === "string"
+    ? charge.payment_intent
+    : charge.payment_intent?.id ?? null;
+}
+
+export async function POST(req: Request) {
+  const signature = req.headers.get("stripe-signature");
 
   if (!signature) {
     return NextResponse.json(
-      {
-        error: "Assinatura ausente.",
-      },
-      {
-        status: 400,
-      }
+      { error: "Assinatura ausente." },
+      { status: 400 }
     );
   }
 
@@ -35,119 +63,48 @@ export async function POST(req: Request) {
   let event: Stripe.Event;
 
   // ============================================================
-  // 2. VALIDA ASSINATURA STRIPE
+  // 1. VALIDA ASSINATURA STRIPE
   // ============================================================
-
   try {
-    event =
-      stripe.webhooks.constructEvent(
-        body,
-        signature,
-        process.env.STRIPE_WEBHOOK_SECRET!
-      );
-  } catch (error) {
-    console.error(
-      "WEBHOOK SIGNATURE ERROR:",
-      error
+    event = stripe.webhooks.constructEvent(
+      body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET!
     );
+  } catch (error) {
+    console.error("WEBHOOK SIGNATURE ERROR:", error);
 
     return NextResponse.json(
-      {
-        error: "Assinatura inválida.",
-      },
-      {
-        status: 400,
-      }
+      { error: "Assinatura inválida." },
+      { status: 400 }
     );
   }
 
-  // ============================================================
-  // 3. LOG DO EVENTO
-  // ============================================================
-
-  console.log(
-    "================================================="
-  );
-
-  console.log(
-    "STRIPE WEBHOOK"
-  );
-
-  console.log(
-    "Event ID:",
-    event.id
-  );
-
-  console.log(
-    "Event Type:",
-    event.type
-  );
-
-  console.log(
-    "================================================="
-  );
-
-  // ============================================================
-  // 4. REGISTRA EVENTO / IDEMPOTÊNCIA
-  // ============================================================
-  //
-  // Cada evento Stripe possui um ID único.
-  //
-  // O event_id possui UNIQUE no banco.
-  //
-  // Isso impede que o mesmo evento seja processado
-  // várias vezes.
-  //
-  // ============================================================
+  console.log("=================================================");
+  console.log("STRIPE WEBHOOK");
+  console.log("Event ID:", event.id);
+  console.log("Event Type:", event.type);
+  console.log("Stripe Account:", event.account ?? "platform");
+  console.log("=================================================");
 
   try {
-    const {
-      data: existingEvent,
-      error: existingEventError,
-    } = await admin
+    // ============================================================
+    // 2. IDEMPOTÊNCIA DO EVENTO
+    // ============================================================
+    const { data: existingEvent, error: existingEventError } = await admin
       .from("stripe_webhook_events")
-      .select(
-        "id, event_id, event_type, status, created_at, processed_at"
-      )
-      .eq(
-        "event_id",
-        event.id
-      )
+      .select("id, event_id, event_type, status, created_at, processed_at")
+      .eq("event_id", event.id)
       .maybeSingle();
 
     if (existingEventError) {
-      console.error(
-        "Erro ao verificar evento Stripe:",
-        existingEventError
-      );
-
-      return NextResponse.json(
-        {
-          error:
-            "Erro ao verificar evento.",
-        },
-        {
-          status: 500,
-        }
+      throw new Error(
+        `Erro ao verificar evento Stripe: ${existingEventError.message}`
       );
     }
 
-    // ==========================================================
-    // 4.1 EVENTO JÁ PROCESSADO
-    // ==========================================================
-
-    if (
-      existingEvent?.status ===
-      "processed"
-    ) {
-      console.log(
-        "Evento Stripe já processado."
-      );
-
-      console.log(
-        "Evento ignorado:",
-        event.id
-      );
+    if (existingEvent?.status === "processed") {
+      console.log("Evento Stripe já processado:", event.id);
 
       return NextResponse.json({
         received: true,
@@ -155,198 +112,90 @@ export async function POST(req: Request) {
       });
     }
 
-    // ==========================================================
-    // 4.2 EVENTO AINDA SENDO PROCESSADO
-    // ==========================================================
+    if (existingEvent?.status === "processing") {
+      console.log("Evento Stripe já está sendo processado:", event.id);
 
-    if (
-      existingEvent?.status ===
-      "processing"
-    ) {
-      console.log(
-        "Evento Stripe já está sendo processado."
-      );
-
-      console.log(
-        "Event ID:",
-        event.id
-      );
-
-      // Retornamos 409 para que o Stripe possa tentar
-      // novamente posteriormente.
       return NextResponse.json(
-        {
-          error:
-            "Evento já está sendo processado.",
-        },
-        {
-          status: 409,
-        }
+        { error: "Evento já está sendo processado." },
+        { status: 409 }
       );
     }
 
-    // ==========================================================
-    // 4.3 EVENTO FALHOU ANTERIORMENTE
-    // ==========================================================
-
-    if (
-      existingEvent?.status ===
-      "failed"
-    ) {
-      console.log(
-        "Evento encontrado como failed."
-      );
-
-      console.log(
-        "Tentando processar novamente:",
-        event.id
-      );
-
-      const {
-        error: retryUpdateError,
-      } = await admin
+    if (existingEvent?.status === "failed") {
+      const { error: retryUpdateError } = await admin
         .from("stripe_webhook_events")
         .update({
-          status:
-            "processing",
-
-          processed_at:
-            null,
+          status: "processing",
+          processed_at: null,
         })
-        .eq(
-          "event_id",
-          event.id
-        );
+        .eq("event_id", event.id);
 
-      if (
-        retryUpdateError
-      ) {
-        console.error(
-          "Erro ao reativar evento para processamento:",
-          retryUpdateError
-        );
-
-        return NextResponse.json(
-          {
-            error:
-              "Erro ao preparar nova tentativa.",
-          },
-          {
-            status: 500,
-          }
+      if (retryUpdateError) {
+        throw new Error(
+          `Erro ao reativar evento para processamento: ${retryUpdateError.message}`
         );
       }
     }
-
-    // ==========================================================
-    // 4.4 EVENTO NOVO
-    // ==========================================================
 
     if (!existingEvent) {
-      const {
-        error: insertEventError,
-      } = await admin
-        .from(
-          "stripe_webhook_events"
-        )
+      const { error: insertEventError } = await admin
+        .from("stripe_webhook_events")
         .insert({
-          event_id:
-            event.id,
-
-          event_type:
-            event.type,
-
-          status:
-            "processing",
+          event_id: event.id,
+          event_type: event.type,
+          status: "processing",
         });
 
-      // ========================================================
-      // PROTEÇÃO CONTRA CONCORRÊNCIA
-      // ========================================================
-      //
-      // Se duas requisições chegarem exatamente ao mesmo tempo,
-      // o UNIQUE event_id impede a duplicação.
-      //
-      // ========================================================
+      // Duas entregas simultâneas do mesmo evento.
+      if (insertEventError?.code === "23505") {
+        console.log("Evento já registrado por outra execução:", event.id);
 
-      if (
-        insertEventError
-      ) {
-        if (
-          insertEventError.code ===
-          "23505"
-        ) {
-          console.log(
-            "Evento já registrado por outra execução."
-          );
-
-          return NextResponse.json({
-            received: true,
-            duplicate: true,
-          });
-        }
-
-        console.error(
-          "Erro ao registrar evento Stripe:",
-          insertEventError
-        );
-
-        return NextResponse.json(
-          {
-            error:
-              "Erro ao registrar evento.",
-          },
-          {
-            status: 500,
-          }
-        );
+        return NextResponse.json({
+          received: true,
+          duplicate: true,
+        });
       }
 
-      console.log(
-        "Novo evento Stripe registrado."
-      );
+      if (insertEventError) {
+        throw new Error(
+          `Erro ao registrar evento Stripe: ${insertEventError.message}`
+        );
+      }
     }
 
-    // ==========================================================
-    // 5. PROCESSAMENTO DO EVENTO
-    // ==========================================================
-
+    // ============================================================
+    // 3. PROCESSAMENTO
+    // ============================================================
     switch (event.type) {
-
-      // ========================================================
-      // CHECKOUT CONCLUÍDO
-      // ========================================================
-
       case "checkout.session.completed": {
-        console.log(
-          "Checkout concluído."
-        );
+        const session = event.data.object as Stripe.Checkout.Session;
 
-        const session =
-          event.data.object as Stripe.Checkout.Session;
+        await processCheckoutCompleted({ session });
 
-        await processCheckoutCompleted({
-          session,
-        });
+        const paymentIntentId = session.payment_intent
+          ? String(session.payment_intent)
+          : null;
+
+        if (!paymentIntentId) {
+          throw new Error(
+            `Checkout ${session.id} não possui PaymentIntent.`
+          );
+        }
+
+        // O processor pode ter concluído o pedido/liberação mas ainda
+        // estar aguardando a Charge/Balance Transaction. Nesse caso,
+        // lançar erro mantém o evento como failed e permite retry do Stripe.
+        await assertPaymentSettled(paymentIntentId);
 
         break;
       }
 
-      // ========================================================
-      // PAYMENT INTENT SUCCEEDED
-      // ========================================================
-
       case "payment_intent.succeeded": {
-        console.log(
-          "Pagamento aprovado."
-        );
-
-        const paymentIntent =
-          event.data.object as Stripe.PaymentIntent;
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
         if (!event.account) {
           throw new Error(
-            "Conta Stripe Connect não identificada no evento."
+            "Conta Stripe Connect não identificada no evento payment_intent.succeeded."
           );
         }
 
@@ -355,195 +204,97 @@ export async function POST(req: Request) {
           event.account
         );
 
+        await assertPaymentSettled(paymentIntent.id);
+
         break;
       }
 
-      // ========================================================
-      // CHARGE SUCCEEDED
-      // ========================================================
+      case "charge.succeeded":
+      case "charge.updated": {
+        const charge = event.data.object as Stripe.Charge;
+        const paymentIntentId = getPaymentIntentIdFromCharge(charge);
 
-      case "charge.succeeded": {
-        console.log(
-          "Charge criada com sucesso."
-        );
-
-        const charge =
-          event.data.object as Stripe.Charge;
-
-        const paymentIntentId =
-          typeof charge.payment_intent ===
-          "string"
-            ? charge.payment_intent
-            : charge.payment_intent?.id;
-
-        if (
-          paymentIntentId
-        ) {
+        // charge.updated pode existir sem PaymentIntent em alguns cenários.
+        // Não há settlement financeiro para executar nesses casos.
+        if (!paymentIntentId) {
           console.log(
-            "Tentando processar financeiro pelo Charge:",
-            paymentIntentId
+            `Charge ${charge.id} sem PaymentIntent. Evento ignorado.`
           );
+          break;
+        }
 
-          if (!event.account) {
-            throw new Error(
-              "Conta Stripe Connect não identificada no evento."
-            );
-          }
-
-          await processPaymentIntentSettlement(
-            paymentIntentId,
-            event.account
-          );
-        } else {
-          console.log(
-            "Payment Intent não encontrado no Charge."
+        if (!event.account) {
+          throw new Error(
+            `Conta Stripe Connect não identificada no evento ${event.type}.`
           );
         }
 
-        break;
-      }
-
-      // ========================================================
-      // FATURA PAGA
-      // ========================================================
-
-      case "invoice.paid": {
-        console.log(
-          "Fatura paga."
+        await processPaymentIntentSettlement(
+          paymentIntentId,
+          event.account
         );
 
+        await assertPaymentSettled(paymentIntentId);
+
         break;
       }
 
-      // ========================================================
-      // ASSINATURA CRIADA
-      // ========================================================
+      case "invoice.paid": {
+        console.log("Fatura paga. Evento sem impacto no fluxo de venda digital.");
+        break;
+      }
 
       case "customer.subscription.created": {
         console.log(
-          "Assinatura criada."
+          "Assinatura criada. Evento sem impacto no fluxo de venda digital."
         );
-
         break;
       }
-
-      // ========================================================
-      // OUTROS EVENTOS
-      // ========================================================
 
       default: {
-        console.log(
-          "Evento ignorado:",
-          event.type
-        );
-
+        console.log("Evento ignorado:", event.type);
         break;
       }
     }
 
     // ============================================================
-    // 6. MARCA EVENTO COMO PROCESSADO
+    // 4. SÓ MARCA COMO PROCESSED APÓS O PROCESSAMENTO REAL
     // ============================================================
-
-    const {
-      error: processedUpdateError,
-    } = await admin
-      .from(
-        "stripe_webhook_events"
-      )
+    const { error: processedUpdateError } = await admin
+      .from("stripe_webhook_events")
       .update({
-        status:
-          "processed",
-
-        processed_at:
-          new Date().toISOString(),
+        status: "processed",
+        processed_at: new Date().toISOString(),
       })
-      .eq(
-        "event_id",
-        event.id
-      );
+      .eq("event_id", event.id);
 
-    if (
-      processedUpdateError
-    ) {
-      console.error(
-        "Erro ao marcar evento como processed:",
-        processedUpdateError
-      );
-
-      return NextResponse.json(
-        {
-          error:
-            "Evento processado, mas não foi possível atualizar o controle.",
-        },
-        {
-          status: 500,
-        }
+    if (processedUpdateError) {
+      throw new Error(
+        `Evento processado, mas não foi possível atualizar o controle: ${processedUpdateError.message}`
       );
     }
 
-    // ============================================================
-    // 7. FINAL
-    // ============================================================
+    console.log("=================================================");
+    console.log("WEBHOOK PROCESSADO COM SUCESSO");
+    console.log("Event ID:", event.id);
+    console.log("Event Type:", event.type);
+    console.log("=================================================");
 
-    console.log(
-      "================================================="
-    );
-
-    console.log(
-      "WEBHOOK PROCESSADO COM SUCESSO"
-    );
-
-    console.log(
-      "Event ID:",
-      event.id
-    );
-
-    console.log(
-      "Event Type:",
-      event.type
-    );
-
-    console.log(
-      "================================================="
-    );
-
-    return NextResponse.json({
-      received: true,
-    });
-
+    return NextResponse.json({ received: true });
   } catch (error) {
+    console.error("ERRO AO PROCESSAR WEBHOOK:", error);
 
-    // ============================================================
-    // 8. MARCA EVENTO COMO FAILED
-    // ============================================================
-
-    console.error(
-      "ERRO AO PROCESSAR WEBHOOK:",
-      error
-    );
-
-    const {
-      error: failedUpdateError,
-    } = await admin
-      .from(
-        "stripe_webhook_events"
-      )
+    // O status failed é importante para auditoria e para permitir que
+    // uma nova entrega do mesmo evento tente o processamento novamente.
+    const { error: failedUpdateError } = await admin
+      .from("stripe_webhook_events")
       .update({
-        status:
-          "failed",
-
-        processed_at:
-          null,
+        status: "failed",
+        processed_at: null,
       })
-      .eq(
-        "event_id",
-        event.id
-      );
+      .eq("event_id", event.id);
 
-    if (
-      failedUpdateError
-    ) {
+    if (failedUpdateError) {
       console.error(
         "Erro ao marcar evento como failed:",
         failedUpdateError
@@ -551,13 +302,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      {
-        error:
-          "Erro ao processar webhook.",
-      },
-      {
-        status: 500,
-      }
+      { error: "Erro ao processar webhook." },
+      { status: 500 }
     );
   }
 }
