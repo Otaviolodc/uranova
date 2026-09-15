@@ -1,107 +1,15 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase/client";
-
-type Order = {
-  id: string;
-  customer_name: string | null;
-  customer_email: string | null;
-  amount: number;
-  status: string;
-  created_at: string;
-};
-
-type Customer = {
-  name: string;
-  email: string;
-  purchases: number;
-  total: number;
-  lastPurchase: string;
-};
-
-export default function CustomersPage() {
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  async function fetchCustomers() {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from("orders")
-      .select(`
-        id,
-        customer_name,
-        customer_email,
-        amount,
-        status,
-        created_at
-      `)
-      .eq("user_id", user.id)
-      .eq("status", "PAID")
-      .order("created_at", {
-        ascending: false,
-      });
-
-    if (error) {
-      console.error("Customers:", error);
-      setLoading(false);
-      return;
-    }
-
-    const orders = (data as Order[]) || [];
-
-    const customerMap = new Map<string, Customer>();
-
-    orders.forEach((order) => {
-      const email =
-        order.customer_email?.trim().toLowerCase() ||
-        "sem-email";
-
-      const name =
-        order.customer_name?.trim() ||
-        "Cliente";
-
-      const existing = customerMap.get(email);
-
-      if (existing) {
-        existing.purchases += 1;
-        existing.total += Number(order.amount);
-      } else {
-        customerMap.set(email, {
-          name,
-          email:
-            order.customer_email?.trim() ||
-            "E-mail não informado",
-          purchases: 1,
-          total: Number(order.amount),
-          lastPurchase: order.created_at,
-        });
-      }
-    });
-
-    setCustomers(Array.from(customerMap.values()));
-    setLoading(false);
-  }
-
-  useEffect(() => {
-    fetchCustomers();
-  }, []);
-
-  const totalCustomers = customers.length;
-
-  const totalRevenue = customers.reduce(
-    (total, customer) => total + customer.total,
-    0
-  );
-
+import { requireFinanceUser } from "@/lib/finance/access";
+import { getFinanceSummary } from "@/lib/services/finance-reader";
+import { admin } from "@/lib/supabase/admin";
+export default async function CustomersPage() {
+  const user = await requireFinanceUser();
+  const summary = await getFinanceSummary(user.id);
+  const { data, error } = await admin.rpc("finance_customers", { p_user: user.id });
+  if (error) throw new Error(error.message);
+  const customers = data.customers;
+  const totalCustomers = data.count;
+  const totalRevenue = summary.gross_cents / 100;
+  const loading = false;
   return (
     <div className="p-8">
 
@@ -113,7 +21,7 @@ export default function CustomersPage() {
         </h1>
 
         <p className="text-zinc-400 mt-2">
-          Gerencie os clientes que compraram seus produtos.
+          Compradores de vendas verificadas. Lista dos ?ltimos 500 clientes.
         </p>
 
       </div>

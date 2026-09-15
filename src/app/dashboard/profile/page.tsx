@@ -300,7 +300,7 @@ export default function ProfilePage() {
 
         <button
           onClick={() =>
-            router.push("/dashboard/finance/simulator")
+            router.push("/dashboard/finance")
           }
           className="
             group
@@ -388,11 +388,11 @@ export default function ProfilePage() {
               <div>
 
                 <h2 className="text-xl font-black">
-                  Simulador
+                  Financeiro
                 </h2>
 
                 <p className="text-zinc-400 mt-2 leading-relaxed">
-                  Simule suas vendas, consulte as taxas e descubra
+                  Consulte suas vendas confirmadas, taxas e veja
                   quanto você recebe em cada transação.
                 </p>
 
@@ -422,7 +422,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="mt-5 text-green-400 font-bold text-sm">
-              Abrir simulador →
+              Abrir financeiro →
             </div>
 
           </div>

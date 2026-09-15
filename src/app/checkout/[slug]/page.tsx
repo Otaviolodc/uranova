@@ -1,4 +1,3 @@
-import CouponBox from "@/components/checkout/CouponBox";
 import StripeCheckout from "@/components/checkout/StripeCheckout";
 
 import { createClient } from "@/lib/supabase/server";
@@ -113,9 +112,6 @@ export default async function CheckoutPage({
                 R$ {Number(product.price).toFixed(2)}
               </div>
 
-              <CouponBox
-                price={Number(product.price)}
-              />
 
             </div>
 

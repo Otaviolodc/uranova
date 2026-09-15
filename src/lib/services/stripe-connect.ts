@@ -1,5 +1,6 @@
 import { stripe } from "@/lib/stripe";
 import { admin } from "@/lib/supabase/admin";
+import { assertStripeLive } from "@/lib/stripe";
 
 /**
  * ============================================================
@@ -33,7 +34,7 @@ import { admin } from "@/lib/supabase/admin";
  * através de:
  *
  * application_fee_amount
- * transfer_data.destination
+ * O Stripe-Account identifica a cobrança direta na conta do produtor.
  *
  * O payment-processor também NÃO deve criar Transfer
  * manualmente para essa venda.
@@ -50,6 +51,7 @@ import { admin } from "@/lib/supabase/admin";
 export async function createStripeConnectAccount(
   userId: string
 ) {
+  assertStripeLive();
   // ==========================================================
   // 1. BUSCA O PERFIL DO PRODUTOR
   // ==========================================================
@@ -163,7 +165,7 @@ export async function createStripeConnectAccount(
         },
 
         dashboard:
-          "express",
+          "full",
 
         configuration: {
           // ==================================================
@@ -205,10 +207,10 @@ export async function createStripeConnectAccount(
 
           responsibilities: {
             fees_collector:
-              "application",
+              "stripe",
 
             losses_collector:
-              "application",
+              "stripe",
           },
         },
 

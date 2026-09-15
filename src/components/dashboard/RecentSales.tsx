@@ -1,87 +1,14 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase/client";
-
-type Sale = {
-  id: string;
-  customer_name: string | null;
-  amount: number;
-  status: string;
-  created_at: string;
-  products:
-    | {
-        title: string;
-      }[]
-    | null;
-};
-
-export default function RecentSales() {
-  const [sales, setSales] = useState<Sale[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  async function fetchSales() {
-    try {
-      // ======================================================
-      // USUÁRIO AUTENTICADO
-      // ======================================================
-
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError || !user) {
-        setSales([]);
-        return;
-      }
-
-      // ======================================================
-      // ÚLTIMAS VENDAS APROVADAS
-      // ======================================================
-
-      const { data, error } = await supabase
-        .from("orders")
-        .select(`
-          id,
-          customer_name,
-          amount,
-          status,
-          created_at,
-          products (
-            title
-          )
-        `)
-        .eq("user_id", user.id)
-        .eq("status", "PAID")
-        .order("created_at", {
-          ascending: false,
-        })
-        .limit(10);
-
-      if (error) {
-        console.error("RecentSales:", error);
-        setSales([]);
-        return;
-      }
-
-      setSales((data as Sale[]) || []);
-    } catch (error) {
-      console.error("RecentSales:", error);
-      setSales([]);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // ======================================================
-  // CARREGAMENTO
-  // ======================================================
-
-  useEffect(() => {
-    fetchSales();
-  }, []);
-
+import { requireFinanceUser } from "@/lib/finance/access";
+import { admin } from "@/lib/supabase/admin";
+export default async function RecentSales() {
+  const user = await requireFinanceUser();
+  const { data, error } = await admin.from("orders")
+    .select("id,customer_name,amount,status,created_at,products(title)")
+    .eq("user_id",user.id).not("stripe_payment_intent_id","is",null)
+    .order("created_at",{ascending:false}).limit(10);
+  if (error) throw new Error(error.message);
+  const sales = data ?? [];
+  const loading = false;
   return (
     <div
       className="

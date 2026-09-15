@@ -1,85 +1,18 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { requireFinanceUser } from "@/lib/finance/access";
+import { getFinanceSummary } from "@/lib/services/finance-reader";
 import TopProducts from "@/components/dashboard/TopProducts";
 import RecentSales from "@/components/dashboard/RecentSales";
 import SalesChart from "@/components/charts/SalesChart";
 import QuickActions from "@/components/dashboard/QuickActions";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 
-type Order = {
-  amount: number;
-  created_at: string;
-  status: string;
-};
 
-export default function DashboardPage() {
-  const [revenue, setRevenue] = useState(0);
-  const [sales, setSales] = useState(0);
-  const [ticket, setTicket] = useState(0);
-
-  async function fetchOrders() {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) return;
-
-    const {
-      data,
-      error,
-    } = await supabase
-      .from("orders")
-      .select(`
-        amount,
-        created_at,
-        status
-      `)
-      .eq("user_id", user.id)
-      .eq("status", "PAID");
-
-    if (error) {
-      console.error("Dashboard:", error);
-      return;
-    }
-
-    const orders: Order[] = data || [];
-
-    // ======================================================
-    // VENDAS APROVADAS
-    // ======================================================
-
-    const totalSales = orders.length;
-
-    // ======================================================
-    // RECEITA TOTAL
-    // ======================================================
-
-    const totalRevenue = orders.reduce(
-      (total, order) =>
-        total + Number(order.amount),
-      0
-    );
-
-    // ======================================================
-    // TICKET MÉDIO
-    // ======================================================
-
-    const averageTicket =
-      totalSales > 0
-        ? totalRevenue / totalSales
-        : 0;
-
-    setRevenue(totalRevenue);
-    setSales(totalSales);
-    setTicket(averageTicket);
-  }
-
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
+export default async function DashboardPage() {
+  const user = await requireFinanceUser();
+  const summary = await getFinanceSummary(user.id);
+  const revenue = summary.gross_cents / 100;
+  const sales = summary.approved_sales;
+  const ticket = sales ? revenue / sales : 0;
   return (
     <div className="p-6 md:p-8">
 

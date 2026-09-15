@@ -90,8 +90,8 @@ export default function StripeConnectButton({
               </p>
 
               <p className="mt-2 text-xs text-zinc-500">
-                Sua conta está configurada para receber
-                suas vendas pela Uranova.
+                Conta vinculada. A disponibilidade para vendas e saques depende
+                da conclusão do cadastro e da configuração Stripe.
               </p>
             </>
           )}
@@ -112,7 +112,7 @@ export default function StripeConnectButton({
             BOTÃO
         ==================================================== */}
 
-        {!isConnected && (
+        {(
           <button
             type="button"
             onClick={handleConnectStripe}

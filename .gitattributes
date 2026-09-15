@@ -1,0 +1,2 @@
+# Preserve the approved migration bytes and SHA-256 across checkouts.
+supabase/migrations/20260913014834_official_finance.sql -text

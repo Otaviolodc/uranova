@@ -35,26 +35,7 @@ function getTransactionType(type: string) {
 export default async function FinancialHistory({
   userId,
 }: FinancialHistoryProps) {
-  const allTransactions = await getFinancialHistory(userId);
-
-  // ==========================================================
-  // NOVO FLUXO FINANCEIRO
-  // ==========================================================
-  //
-  // A Uranova não utiliza mais saque manual.
-  //
-  // Os valores do produtor são enviados automaticamente
-  // pela Stripe através do Stripe Connect.
-  //
-  // Por isso, registros antigos do tipo "withdraw"
-  // não devem mais aparecer no histórico financeiro.
-  //
-
-  const transactions = allTransactions.filter(
-    (transaction) =>
-      transaction.type !== "withdraw" &&
-      transaction.type !== "withdrawal"
-  );
+  const transactions = await getFinancialHistory(userId);
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">

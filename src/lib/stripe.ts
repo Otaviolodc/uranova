@@ -1,3 +1,4 @@
+import "server-only";
 import Stripe from "stripe";
 
 export const stripe = new Stripe(
@@ -6,3 +7,9 @@ export const stripe = new Stripe(
     apiVersion: "2026-06-24.dahlia",
   }
 );
+
+export function assertStripeLive() {
+  if (!/^(sk|rk)_live_/.test(process.env.STRIPE_SECRET_KEY ?? "")) {
+    throw new Error("Stripe Live não configurado.");
+  }
+}

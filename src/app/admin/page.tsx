@@ -1,7 +1,9 @@
+import { getFinanceSummary } from "@/lib/services/finance-reader";
 import AdminCard from "@/components/admin/AdminCard";
 import { admin } from "@/lib/supabase/admin";
 
 export default async function AdminPage() {
+  const summary = await getFinanceSummary();
   const supabase = admin;
 
   // ======================================================
@@ -41,39 +43,9 @@ export default async function AdminPage() {
   // PEDIDOS PAGOS
   // ======================================================
 
-  const { data: paidOrders } = await supabase
-    .from("orders")
-    .select("amount")
-    .eq("status", "PAID");
-
-  // ======================================================
-  // FATURAMENTO
-  // ======================================================
-
-  const revenue =
-    paidOrders?.reduce(
-      (total, order) => total + Number(order.amount),
-      0
-    ) ?? 0;
-
-  // ======================================================
-  // VENDAS PAGAS
-  // ======================================================
-
-  const paidOrdersCount = paidOrders?.length ?? 0;
-
-  // ======================================================
-  // TICKET MÉDIO
-  // ======================================================
-
-  const averageTicket =
-    paidOrdersCount > 0
-      ? revenue / paidOrdersCount
-      : 0;
-
-  // ======================================================
-  // FORMATAÇÃO DE MOEDA
-  // ======================================================
+  const revenue = summary.gross_cents / 100;
+  const paidOrdersCount = summary.approved_sales;
+  const averageTicket = paidOrdersCount ? revenue / paidOrdersCount : 0;
 
   const formatCurrency = (value: number) =>
     value.toLocaleString("pt-BR", {

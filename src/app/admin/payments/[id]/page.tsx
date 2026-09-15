@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { admin } from "@/lib/supabase/admin";
+import { requireFinanceAdmin } from "@/lib/finance/access";
 
 interface PaymentPageProps {
   params: Promise<{
@@ -10,6 +11,7 @@ interface PaymentPageProps {
 export default async function PaymentPage({
   params,
 }: PaymentPageProps) {
+  await requireFinanceAdmin();
   const { id } = await params;
 
   const supabase = admin;
@@ -30,9 +32,16 @@ export default async function PaymentPage({
   if (!order) {
     notFound();
   }
+  const { data: payment, error: paymentError } = await admin.from("payments")
+    .select("finance_verified,stripe_checkout_session_id,payment_provider_id")
+    .eq("order_id", id).maybeSingle();
+  if (paymentError) throw new Error(paymentError.message);
 
   return (
     <div className="space-y-8">
+      <p className={payment?.finance_verified ? "text-green-400" : "text-amber-300"}>
+        {payment?.finance_verified ? "Venda verificada com Stripe Live" : "Pedido histórico: ainda não conciliado com Stripe Live. Não integra o saldo oficial."}
+      </p>
 
       <div>
 

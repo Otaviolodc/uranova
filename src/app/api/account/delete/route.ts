@@ -19,6 +19,18 @@ export async function POST() {
   }
 
   try {
+    const { data: profile, error: profileReadError } = await admin.from("profiles")
+      .select("stripe_account_id").eq("id", user.id).single();
+    if (profileReadError) throw profileReadError;
+    const checks = await Promise.all([
+      admin.from("orders").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+      admin.from("payments").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+      admin.from("customer_products").select("id", { count: "exact", head: true }).eq("customer_id", user.id),
+    ]);
+    if (checks.some((r) => r.error)) throw new Error("Falha ao verificar hist?rico financeiro.");
+    if (profile.stripe_account_id || checks.some((r) => (r.count ?? 0) > 0)) {
+      return Response.json({ error: "Esta conta possui v?nculo financeiro. Solicite o encerramento ao suporte para preservar o hist?rico." }, { status: 409 });
+    }
     // Analytics
 const { error: analyticsError } = await admin
   .from("analytics")
@@ -34,22 +46,6 @@ const { error: checkoutError } = await admin
   .eq("user_id", user.id);
 
 if (checkoutError) throw checkoutError;
-
-// Pedidos
-const { error: ordersError } = await admin
-  .from("orders")
-  .delete()
-  .eq("user_id", user.id);
-
-if (ordersError) throw ordersError;
-
-// Pagamentos
-const { error: paymentsError } = await admin
-  .from("payments")
-  .delete()
-  .eq("user_id", user.id);
-
-if (paymentsError) throw paymentsError;
 
 // Cupons
 const { error: couponsError } = await admin

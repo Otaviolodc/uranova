@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:finance": "node --experimental-test-module-mocks --import ./tests/register.mjs --test tests/*.test.mjs",
+    "lint:finance": "eslint src/lib/finance src/lib/services/payment-processor.ts src/lib/services/payouts.ts src/lib/services/finance-reader.ts src/lib/services/balance.ts src/lib/services/financial.ts src/lib/services/stripe-connect.ts src/lib/stripe.ts src/lib/supabase/admin.ts src/app/api/finance src/app/api/stripe src/app/api/account/delete src/app/admin/payments src/app/admin/page.tsx src/app/dashboard/page.tsx src/app/dashboard/finance src/app/dashboard/customers src/app/dashboard/profile src/app/checkout/success src/components/finance src/components/charts/SalesChart.tsx src/components/dashboard/TopProducts.tsx src/components/dashboard/RecentSales.tsx tests scripts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -28,12 +30,14 @@
     "stripe": "^22.3.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.39",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
+    "supabase": "2.101.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
