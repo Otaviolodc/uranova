@@ -79,7 +79,7 @@ export default function ProfilePreview({
       {/* CELULAR */}
       <div
         className="
-          w-[320px]
+          w-[320px] max-w-full
           h-[650px]
           bg-black
           rounded-[50px]

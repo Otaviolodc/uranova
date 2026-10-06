@@ -198,11 +198,11 @@ if (error) {
           border
           border-zinc-800
           rounded-3xl
-          overflow-hidden
+          overflow-x-auto
         "
       >
 
-        <table className="w-full">
+        <table className="w-full min-w-[640px]">
 
           <thead>
 

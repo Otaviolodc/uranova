@@ -97,7 +97,7 @@ export default async function CheckoutPage({
               🚀 Produto Digital
             </div>
 
-            <h1 className="text-5xl font-bold leading-tight">
+            <h1 className="text-3xl sm:text-5xl font-bold leading-tight">
               {product.title}
             </h1>
 
@@ -108,7 +108,7 @@ export default async function CheckoutPage({
             {/* PREÇO */}
             <div className="mt-10">
 
-              <div className="text-6xl font-black text-green-400 mt-2">
+              <div className="text-4xl sm:text-6xl font-black text-green-400 mt-2">
                 R$ {Number(product.price).toFixed(2)}
               </div>
 

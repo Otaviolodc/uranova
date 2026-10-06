@@ -12,7 +12,7 @@ export default function Hero() {
             Plataforma completa para criadores digitais
           </span>
 
-          <h1 className="text-6xl xl:text-7xl font-bold mt-6 leading-tight">
+          <h1 className="text-4xl sm:text-6xl xl:text-7xl font-bold mt-6 leading-tight">
             Venda cursos,
             <br />
             e-books e
@@ -24,7 +24,7 @@ export default function Hero() {
             Crie sua estrutura digital completa em uma única plataforma.
           </p>
 
-          <div className="flex gap-4 mt-10">
+          <div className="flex flex-wrap gap-4 mt-10">
 
             <Link
               href="/auth/login"
@@ -56,13 +56,13 @@ export default function Hero() {
 
         </div>
 
-        <div className="glass rounded-3xl p-8">
+        <div className="glass rounded-3xl p-4 sm:p-8">
 
           <h3 className="text-2xl font-bold">
             Dashboard Uranova
           </h3>
 
-          <div className="grid grid-cols-2 gap-4 mt-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
 
             <Card title="Receita" value="R$ 12.847" />
             <Card title="Vendas" value="324" />

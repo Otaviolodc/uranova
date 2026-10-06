@@ -44,7 +44,7 @@ export default async function RecentSales() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full min-w-[640px]">
           <thead
             className="
               border-b

@@ -314,10 +314,10 @@ export default function Topbar() {
           {isNotificationsOpen && (
             <div
               className="
-                absolute
-                right-0
+                fixed sm:absolute
+                left-4 right-4 sm:left-auto sm:right-0
                 mt-3
-                w-[calc(100vw-2rem)]
+                w-auto max-h-[calc(100dvh-11rem)] overflow-y-auto
                 sm:w-96
                 max-w-96
                 rounded-2xl
@@ -326,7 +326,7 @@ export default function Topbar() {
                 bg-zinc-950
                 shadow-2xl
                 z-50
-                overflow-hidden
+                overscroll-contain
                 animate-in
                 fade-in
                 zoom-in-95

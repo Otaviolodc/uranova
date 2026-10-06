@@ -25,10 +25,10 @@ export default function MobilePreview({
   links,
 }: Props) {
   return (
-    <div className="xl:sticky xl:top-6">
+    <div className="min-w-0 max-w-full xl:sticky xl:top-6">
 
       {/* CELULAR */}
-      <div className="w-[340px] h-[700px] bg-black rounded-[40px] border-8 border-zinc-800 shadow-2xl overflow-hidden">
+      <div className="w-[340px] max-w-full h-[700px] bg-black rounded-[40px] border-8 border-zinc-800 shadow-2xl overflow-hidden">
       
         {/* TOPO */}
         <div className="h-6 bg-zinc-900 flex items-center justify-center">
@@ -37,7 +37,7 @@ export default function MobilePreview({
 
         {/* CONTEÚDO */}
         <div
-          className="h-full overflow-y-auto px-5 py-8"
+          className="h-[calc(100%-1.5rem)] overflow-y-auto px-5 py-8"
           style={{
             background:
               "linear-gradient(180deg,#050505,#111111)",
@@ -73,7 +73,7 @@ export default function MobilePreview({
           </div>
 
           {/* REDES */}
-          <div className="flex justify-center gap-3 mt-5">
+          <div className="flex flex-wrap justify-center gap-3 mt-5">
 
             {profile?.instagram && (
               <a
@@ -159,7 +159,7 @@ export default function MobilePreview({
 
      )}
 
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
 
           <h2 className="text-white font-bold text-lg">
             {link.title}

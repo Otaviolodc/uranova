@@ -71,7 +71,7 @@ export default function DeleteAccountPage() {
 </div>
 
       {/* Card */}
-      <div className="rounded-2xl border border-red-500/20 bg-zinc-900 p-8">
+      <div className="rounded-2xl border border-red-500/20 bg-zinc-900 p-4 sm:p-8">
 
         <div className="mb-8 flex items-center gap-3">
           <TriangleAlert className="text-red-400" />
@@ -221,9 +221,9 @@ export default function DeleteAccountPage() {
 
       {showModal && (
 
-<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+<div className="fixed inset-0 z-[80] overflow-y-auto p-4 flex items-center justify-center bg-black/80 backdrop-blur-sm">
 
-  <div className="w-full max-w-md rounded-3xl border border-red-500/20 bg-zinc-900 p-8">
+  <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-3xl border border-red-500/20 bg-zinc-900 p-4 sm:p-8">
 
     <div className="flex items-center gap-3">
 

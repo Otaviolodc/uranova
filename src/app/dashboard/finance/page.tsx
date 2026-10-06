@@ -43,7 +43,7 @@ export default async function FinancePage() {
   const payouts = await getFinancePayouts(user.id);
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* HEADER */}
       <div className="mb-10">
         <h1 className="text-3xl font-bold text-white">

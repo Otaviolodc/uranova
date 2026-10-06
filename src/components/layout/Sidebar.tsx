@@ -3,7 +3,7 @@
 import AchievementProgress from "@/components/dashboard/AchievementProgress";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type MenuItem = {
   icon: string;
@@ -17,7 +17,6 @@ interface SidebarProps {
 }
 
 export default function Sidebar({
-  userId,
   totalEarned,
 }: SidebarProps) {
 
@@ -108,532 +107,77 @@ export default function Sidebar({
     },
   ];
 
+
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const dialog = dialogRef.current;
+    const trigger = triggerRef.current;
+    const previousOverflow = document.body.style.overflow;
+    dialog?.showModal();
+    document.body.style.overflow = "hidden";
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const closeOnDesktop = () => { if (desktop.matches) setMobileOpen(false); };
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => {
+      desktop.removeEventListener("change", closeOnDesktop);
+      dialog?.close();
+      document.body.style.overflow = previousOverflow;
+      trigger?.focus();
+    };
+  }, [mobileOpen]);
+
+  function navigation(compact: boolean) {
+    return (
+      <nav aria-label="Navegação do painel" className="flex flex-col gap-3">
+        {[
+          { title: "CRIADOR", items: creatorMenu },
+          { title: "CLIENTE", items: customerMenu },
+          { title: "PERSONALIZAÇÃO", items: customizationMenu },
+        ].map((group, index) => (
+          <div key={group.title} className="flex flex-col gap-3">
+            {!compact && <p className={index ? "mt-5 border-t border-zinc-800 pt-5 text-xs font-bold tracking-widest text-green-400" : "mb-2 text-xs font-bold tracking-widest text-green-400"}>{group.title}</p>}
+            {group.items.map((item) => {
+              const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
+              return <Link key={item.href} href={item.href} prefetch={true} title={item.name}
+                aria-current={active ? "page" : undefined}
+                onClick={() => setMobileOpen(false)}
+                className={"flex items-center " + (compact ? "justify-center" : "gap-3") + " px-5 py-3 rounded-2xl border transition-all duration-200 " + (active ? "bg-green-500 text-black border-green-400 shadow-[0_0_25px_rgba(34,197,94,0.45)]" : "bg-zinc-900 border-zinc-800 text-white hover:bg-zinc-800 hover:border-green-500/30")}>
+                <span className="text-xl" aria-hidden="true">{item.icon}</span>
+                {!compact && <span>{item.name}</span>}
+              </Link>;
+            })}
+          </div>
+        ))}
+      </nav>
+    );
+  }
+
   return (
     <>
-
-      {/* ==================================================
-          TOPO MOBILE
-      ================================================== */}
-
-      <div
-        className="
-          md:hidden
-          fixed
-          top-0
-          left-0
-          right-0
-          z-50
-          bg-zinc-950
-          border-b
-          border-zinc-800
-          px-4
-          py-4
-          flex
-          items-center
-          justify-between
-        "
-      >
-        <h2 className="font-bold text-white">
-          Uranova
-        </h2>
-
-        <button
-          type="button"
-          onClick={() =>
-            setMobileOpen(!mobileOpen)
-          }
-          className="
-            text-2xl
-            text-white
-          "
-          aria-label="Abrir menu"
-        >
-          ☰
-        </button>
+      <div className="mobile-navigation-bar lg:hidden fixed top-0 left-0 right-0 z-[70] bg-zinc-950 border-b border-zinc-800 px-4 py-4 flex items-center justify-between">
+        <h2 className="font-bold text-white">Uranova</h2>
+        <button ref={triggerRef} type="button" onClick={() => setMobileOpen(true)}
+          aria-label="Abrir menu" aria-expanded={mobileOpen} aria-controls="mobile-navigation"
+          className="h-11 w-11 text-2xl text-white">☰</button>
       </div>
-
-      {/* ==================================================
-          MENU MOBILE
-      ================================================== */}
-
-      {mobileOpen && (
-        <div
-          className="
-            md:hidden
-            fixed
-            inset-0
-            z-40
-            bg-zinc-950
-            pt-20
-            px-4
-            overflow-y-auto
-            overscroll-contain
-            pb-10
-            [scrollbar-width:none]
-            [-ms-overflow-style:none]
-            [-webkit-overflow-scrolling:touch]
-          "
-        >
-          <nav className="flex flex-col gap-3 pb-20">
-
-            {!collapsed && (
-              <div className="mb-2">
-
-                <p
-                  className="
-                    text-xs
-                    font-bold
-                    uppercase
-                    tracking-widest
-                    text-green-400
-                  "
-                >
-                  CRIADOR
-                </p>
-
-              </div>
-            )}
-
-            {creatorMenu.map((item) => (
-
-              <Link
-                key={item.href}
-                href={item.href}
-                prefetch={true}
-                title={item.name}
-                onClick={() =>
-                  setMobileOpen(false)
-                }
-                className={`
-                  flex
-                  items-center
-                  ${collapsed ? "justify-center" : "gap-3"}
-                  px-5
-                  py-3
-                  rounded-2xl
-                  border
-                  transition-all
-                  duration-200
-
-                  ${
-                    pathname === item.href ||
-                    (
-                      item.href !== "/dashboard" &&
-                      pathname.startsWith(item.href)
-                    )
-                      ? "bg-green-500 text-black border-green-400 shadow-[0_0_25px_rgba(34,197,94,0.45)]"
-                      : "bg-zinc-900 border-zinc-800 text-white hover:bg-zinc-800 hover:border-green-500/30"
-                  }
-                `}
-              >
-
-                <span className="text-xl">
-                  {item.icon}
-                </span>
-
-                {!collapsed && (
-                  <span>
-                    {item.name}
-                  </span>
-                )}
-
-              </Link>
-
-            ))}
-
-            {!collapsed && (
-              <>
-                <div className="border-t border-zinc-800 my-5" />
-
-                <p
-                  className="
-                    text-xs
-                    font-bold
-                    uppercase
-                    tracking-widest
-                    text-green-400
-                  "
-                >
-                  CLIENTE
-                </p>
-              </>
-            )}
-
-            {customerMenu.map((item) => (
-
-              <Link
-                key={item.href}
-                href={item.href}
-                prefetch={true}
-                title={item.name}
-                onClick={() =>
-                  setMobileOpen(false)
-                }
-                className={`
-                  flex
-                  items-center
-                  ${collapsed ? "justify-center" : "gap-3"}
-                  px-5
-                  py-3
-                  rounded-2xl
-                  border
-                  transition-all
-                  duration-200
-
-                  ${
-                    pathname === item.href ||
-                    (
-                      item.href !== "/dashboard" &&
-                      pathname.startsWith(item.href)
-                    )
-                      ? "bg-green-500 text-black border-green-400 shadow-[0_0_25px_rgba(34,197,94,0.45)]"
-                      : "bg-zinc-900 border-zinc-800 text-white hover:bg-zinc-800 hover:border-green-500/30"
-                  }
-                `}
-              >
-
-                <span>
-                  {item.icon}
-                </span>
-
-                {!collapsed && (
-                  <span>
-                    {item.name}
-                  </span>
-                )}
-
-              </Link>
-
-            ))}
-
-            {!collapsed && (
-              <>
-                <div className="border-t border-zinc-800 my-5" />
-
-                <p
-                  className="
-                    text-xs
-                    font-bold
-                    uppercase
-                    tracking-widest
-                    text-green-400
-                  "
-                >
-                  PERSONALIZAÇÃO
-                </p>
-              </>
-            )}
-
-            {customizationMenu.map((item) => (
-
-              <Link
-                key={item.href}
-                href={item.href}
-                prefetch={true}
-                title={item.name}
-                onClick={() =>
-                  setMobileOpen(false)
-                }
-                className={`
-                  flex
-                  items-center
-                  ${collapsed ? "justify-center" : "gap-3"}
-                  px-5
-                  py-3
-                  rounded-2xl
-                  border
-                  transition-all
-                  duration-200
-
-                  ${
-                    pathname === item.href ||
-                    (
-                      item.href !== "/dashboard" &&
-                      pathname.startsWith(item.href)
-                    )
-                      ? "bg-green-500 text-black border-green-400 shadow-[0_0_25px_rgba(34,197,94,0.45)]"
-                      : "bg-zinc-900 border-zinc-800 text-white hover:bg-zinc-800 hover:border-green-500/30"
-                  }
-                `}
-              >
-
-                <span>
-                  {item.icon}
-                </span>
-
-                {!collapsed && (
-                  <span>
-                    {item.name}
-                  </span>
-                )}
-
-              </Link>
-
-            ))}
-
-          </nav>
+      <dialog ref={dialogRef} id="mobile-navigation" aria-label="Menu Uranova"
+        onCancel={() => setMobileOpen(false)} onClose={() => setMobileOpen(false)}
+        className="m-0 h-dvh max-h-dvh w-full max-w-full border-0 bg-zinc-950 p-4 text-white backdrop:bg-black/70">
+        <div className="sticky top-0 z-10 mb-4 flex items-center justify-between bg-zinc-950 pt-[env(safe-area-inset-top)]">
+          <h2 className="font-bold">Uranova</h2>
+          <button type="button" autoFocus onClick={() => setMobileOpen(false)} aria-label="Fechar menu" className="h-11 w-11 text-2xl">×</button>
         </div>
-      )}
-
-      {/* ==================================================
-          SIDEBAR DESKTOP
-      ================================================== */}
-
-      <aside
-        className={`
-          hidden
-          md:flex
-          ${collapsed ? "w-24" : "w-72"}
-          min-h-screen
-          bg-zinc-950/90
-          backdrop-blur-xl
-          border-r
-          border-zinc-800
-          p-5
-          flex-col
-          gap-6
-          transition-all
-          duration-300
-        `}
-      >
-
-        {/* ==================================================
-            BOTÃO RECOLHER
-        ================================================== */}
-
-        <button
-          type="button"
-          onClick={() =>
-            setCollapsed(!collapsed)
-          }
-          aria-label={
-            collapsed
-              ? "Expandir menu"
-              : "Recolher menu"
-          }
-          className="
-            bg-zinc-900
-            border
-            border-zinc-800
-            rounded-2xl
-            p-3
-            text-white
-            mb-6
-            hover:border-green-500
-            transition
-          "
-        >
-          ☰
-        </button>
-
-        {/* ==================================================
-            FATURAMENTO
-            NÃO ALTERADO
-        ================================================== */}
-
-        {!collapsed && (
-          <div className="mb-4">
-            <AchievementProgress
-              totalEarned={totalEarned}
-            />
-          </div>
-        )}
-
-        {/* ==================================================
-            NAVEGAÇÃO
-        ================================================== */}
-
-        <nav className="flex flex-col gap-3">
-
-          {!collapsed && (
-            <p
-              className="
-                text-xs
-                font-bold
-                uppercase
-                tracking-widest
-                text-green-400
-                mb-2
-              "
-            >
-              CRIADOR
-            </p>
-          )}
-
-          {creatorMenu.map((item) => (
-
-            <Link
-              key={item.href}
-              href={item.href}
-              prefetch={true}
-              title={item.name}
-              className={`
-                flex
-                items-center
-                ${collapsed ? "justify-center" : "gap-3"}
-                px-5
-                py-3
-                rounded-2xl
-                border
-                transition-all
-                duration-200
-
-                ${
-                  pathname === item.href ||
-                  (
-                    item.href !== "/dashboard" &&
-                    pathname.startsWith(item.href)
-                  )
-                    ? "bg-green-500 text-black border-green-400 shadow-[0_0_25px_rgba(34,197,94,0.45)]"
-                    : "bg-zinc-900 border-zinc-800 text-white hover:bg-zinc-800 hover:border-green-500/30"
-                }
-              `}
-            >
-
-              <span className="text-xl">
-                {item.icon}
-              </span>
-
-              {!collapsed && (
-                <span>
-                  {item.name}
-                </span>
-              )}
-
-            </Link>
-
-          ))}
-
-          {!collapsed && (
-            <>
-              <div className="border-t border-zinc-800 my-5" />
-
-              <p
-                className="
-                  text-xs
-                  font-bold
-                  uppercase
-                  tracking-widest
-                  text-green-400
-                  mb-2
-                "
-              >
-                CLIENTE
-              </p>
-            </>
-          )}
-
-          {customerMenu.map((item) => (
-
-            <Link
-              key={item.href}
-              href={item.href}
-              prefetch={true}
-              title={item.name}
-              className={`
-                flex
-                items-center
-                ${collapsed ? "justify-center" : "gap-3"}
-                px-5
-                py-3
-                rounded-2xl
-                border
-                transition-all
-                duration-200
-
-                ${
-                  pathname === item.href ||
-                  (
-                    item.href !== "/dashboard" &&
-                    pathname.startsWith(item.href)
-                  )
-                    ? "bg-green-500 text-black border-green-400 shadow-[0_0_25px_rgba(34,197,94,0.45)]"
-                    : "bg-zinc-900 border-zinc-800 text-white hover:bg-zinc-800 hover:border-green-500/30"
-                }
-              `}
-            >
-
-              <span>
-                {item.icon}
-              </span>
-
-              {!collapsed && (
-                <span>
-                  {item.name}
-                </span>
-              )}
-
-            </Link>
-
-          ))}
-
-          {!collapsed && (
-            <>
-              <div className="border-t border-zinc-800 my-5" />
-
-              <p
-                className="
-                  text-xs
-                  font-bold
-                  uppercase
-                  tracking-widest
-                  text-green-400
-                  mb-2
-                "
-              >
-                PERSONALIZAÇÃO
-              </p>
-            </>
-          )}
-
-          {customizationMenu.map((item) => (
-
-            <Link
-              key={item.href}
-              href={item.href}
-              prefetch={true}
-              title={item.name}
-              className={`
-                flex
-                items-center
-                ${collapsed ? "justify-center" : "gap-3"}
-                px-5
-                py-3
-                rounded-2xl
-                border
-                transition-all
-                duration-200
-
-                ${
-                  pathname === item.href ||
-                  (
-                    item.href !== "/dashboard" &&
-                    pathname.startsWith(item.href)
-                  )
-                    ? "bg-green-500 text-black border-green-400 shadow-[0_0_25px_rgba(34,197,94,0.45)]"
-                    : "bg-zinc-900 border-zinc-800 text-white hover:bg-zinc-800 hover:border-green-500/30"
-                }
-              `}
-            >
-
-              <span>
-                {item.icon}
-              </span>
-
-              {!collapsed && (
-                <span>
-                  {item.name}
-                </span>
-              )}
-
-            </Link>
-
-          ))}
-
-        </nav>
-
+        <div className="pb-[max(2rem,env(safe-area-inset-bottom))]">{navigation(false)}</div>
+      </dialog>
+      <aside className={"hidden lg:flex " + (collapsed ? "w-24" : "w-72") + " shrink-0 min-h-screen bg-zinc-950/90 backdrop-blur-xl border-r border-zinc-800 p-5 flex-col gap-6 transition-all duration-300"}>
+        <button type="button" onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
+          className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 text-white mb-6 hover:border-green-500 transition">☰</button>
+        {!collapsed && <div className="mb-4"><AchievementProgress totalEarned={totalEarned} /></div>}
+        {navigation(collapsed)}
       </aside>
-
     </>
   );
 }

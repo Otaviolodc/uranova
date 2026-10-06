@@ -19,7 +19,7 @@ export default function SupportButton() {
         title="Central de Ajuda"
         className="
           fixed
-          bottom-6
+          bottom-[max(1.5rem,env(safe-area-inset-bottom))]
           right-6
           z-50
 

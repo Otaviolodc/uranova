@@ -15,11 +15,11 @@ export default function SalesChart() {
     return () => controller.abort();
   }, [period]);
   return <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-    <div className="mb-5 flex justify-between gap-4"><h2 className="text-xl font-bold">Vendas Stripe Live</h2>
+    <div className="mb-5 flex flex-wrap justify-between gap-4"><h2 className="text-xl font-bold">Vendas Stripe Live</h2>
       <select aria-label="Período" className="rounded bg-zinc-800 p-2" value={period} onChange={(e) => setPeriod(e.target.value)}>
         <option value="7d">7 dias</option><option value="30d">30 dias</option><option value="90d">90 dias</option><option value="12m">12 meses</option>
       </select></div>
-    {error ? <p role="alert">{error}</p> : <div className="h-72"><ResponsiveContainer width="100%" height="100%">
+    {error ? <p role="alert">{error}</p> : <div className="h-72 min-w-0"><ResponsiveContainer width="100%" height="100%">
       <AreaChart data={data}><XAxis dataKey="label" /><YAxis /><Tooltip formatter={(v) => Number(v).toLocaleString("pt-BR", {style:"currency",currency:"BRL"})} />
         <Area type="monotone" dataKey="revenue" name="Vendas brutas" stroke="#22c55e" fill="#14532d" />
       </AreaChart>

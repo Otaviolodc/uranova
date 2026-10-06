@@ -15,7 +15,7 @@ export default async function PaymentsPage() {
     <h1 className="text-3xl font-bold">Financeiro Uranova</h1>
     <FinanceSummary />
     <h2 className="text-xl">Últimas 100 vendas verificadas</h2>
-    <div className="overflow-x-auto"><table className="w-full text-left"><thead><tr>
+    <div className="overflow-x-auto"><table className="w-full min-w-[720px] text-left"><thead><tr>
       <th>Pedido</th><th>Bruto</th><th>Uranova</th><th>Stripe</th><th>Produtor</th>
     </tr></thead><tbody>{payments.map((p) => <tr key={p.id} className="border-b border-zinc-800">
       <td className="py-3"><Link href={"/admin/payments/" + p.order_id}>{p.order_id.slice(0,8)}</Link></td>

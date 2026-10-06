@@ -21,7 +21,7 @@ export default function EmptyState({
         border-dashed
         border-zinc-700
         rounded-3xl
-        p-12
+        p-5 sm:p-12
         flex
         flex-col
         items-center

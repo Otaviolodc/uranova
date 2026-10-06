@@ -254,7 +254,7 @@ if (error) {
 
   <div className="flex bg-black text-white min-h-screen">
 
-    <div className="flex-1 p-4 md:p-8 pt-20 md:pt-8">
+    <div className="min-w-0 flex-1 p-4 md:p-8">
 
     <SettingsHeader
       title="Aparência"
@@ -266,7 +266,7 @@ if (error) {
     />
 
         {/* GRID */}
-    <div className="grid grid-cols-1 xl:grid-cols-[1fr_350px] gap-8 items-start">
+    <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_350px] gap-8 items-start">
 
       {/* COLUNA ESQUERDA */}
       <div>

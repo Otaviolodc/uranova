@@ -30,7 +30,7 @@ export default async function ProductsPage() {
       <div className="
         flex
         items-center
-        justify-between
+        justify-between flex-wrap gap-4
         mb-8
       ">
 
@@ -77,13 +77,13 @@ export default async function ProductsPage() {
         border
         border-zinc-800
         rounded-2xl
-        overflow-hidden
+        overflow-x-auto
       ">
 
         {/* HEADER */}
         <div className="
           grid
-          grid-cols-5
+          min-w-[720px] grid-cols-5
           gap-4
           p-5
           border-b
@@ -108,7 +108,7 @@ export default async function ProductsPage() {
             key={product.id}
             className="
               grid
-              grid-cols-5
+              min-w-[720px] grid-cols-5
               gap-4
               p-5
               border-b

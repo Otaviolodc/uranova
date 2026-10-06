@@ -589,10 +589,10 @@ if (!user) {
   return (
     <div className="flex bg-black text-white min-h-screen">
 
-      <div className="flex-1 p-4 md:p-8 pt-20 md:pt-8 flex gap-8">
+      <div className="min-w-0 flex-1 p-4 md:p-8 flex flex-col xl:flex-row gap-8">
 
         {/* CONTEÚDO */}
-        <div className="flex-1">
+        <div className="min-w-0 w-full xl:w-auto xl:flex-1">
 
           {/* HEADER */}
           <div className="flex items-center justify-between mb-10">
@@ -653,7 +653,7 @@ if (!user) {
 
             {links.length === 0 ? (
 
-  <div className="p-16 text-center text-gray-500">
+  <div className="p-6 sm:p-16 text-center text-gray-500">
     Nenhum link criado
   </div>
 
@@ -811,7 +811,7 @@ if (!user) {
 
         </div>
 
-        <div className="xl:hidden fixed bottom-5 right-5 z-40">
+        <div className="xl:hidden w-full">
 
   <button
     onClick={() => {
@@ -838,7 +838,7 @@ if (!user) {
 </div>
 
   {/* PREVIEW DESKTOP */}
-<div className="hidden xl:flex flex-col items-center">
+<div className="hidden xl:flex w-[340px] shrink-0 flex-col items-center">
 
   <MobilePreview
     profile={profile}
@@ -871,7 +871,7 @@ if (!user) {
 </div>
 
 {/* PREVIEW MOBILE */}
-<div className="xl:hidden mt-8 flex justify-center">
+<div className="xl:hidden min-w-0 w-full flex justify-center">
 
   <MobilePreview
     profile={profile}
@@ -888,7 +888,7 @@ if (!user) {
               inset-0
               bg-black/70
               backdrop-blur-sm
-              z-50
+              z-[80]
               overflow-y-auto
               p-6
             "
@@ -902,7 +902,7 @@ if (!user) {
               w-full
               max-w-lg
               rounded-3xl
-              p-8
+              p-4 sm:p-8
               mx-auto
               my-10
             "

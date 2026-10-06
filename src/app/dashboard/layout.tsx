@@ -33,10 +33,10 @@ export default async function DashboardLayout({
         totalEarned={balance?.total_net ?? 0}
       />
 
-      <div className="flex flex-col flex-1 min-h-screen">
+      <div className="dashboard-content flex min-w-0 flex-col flex-1 min-h-screen">
         <Topbar />
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="min-w-0 flex-1">
           {children}
         </main>
       </div>

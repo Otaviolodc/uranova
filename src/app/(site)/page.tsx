@@ -5,7 +5,7 @@ import CTA from "@/components/home/CTA";
 
 export default function PricingPage() {
   return (
-    <main className="bg-black text-white overflow-hidden">
+    <main className="bg-black text-white">
       <Hero />
       <TrustBar />
       <Products />

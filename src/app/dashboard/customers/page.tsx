@@ -128,7 +128,7 @@ export default async function CustomersPage() {
 
           <div className="overflow-x-auto">
 
-            <table className="w-full">
+            <table className="w-full min-w-[640px]">
 
               <thead className="bg-zinc-950 border-b border-zinc-800">
 

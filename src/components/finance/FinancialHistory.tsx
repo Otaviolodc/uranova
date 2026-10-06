@@ -58,7 +58,7 @@ export default async function FinancialHistory({
       ====================================================== */}
 
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full min-w-[640px]">
           <thead className="border-b border-zinc-800 text-zinc-400">
             <tr>
               <th className="p-5 text-left">

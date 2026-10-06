@@ -126,13 +126,13 @@ export default function CoursePlayer({
 }
 
   return (
-    <div className="max-w-7xl mx-auto p-8">
+    <div className="max-w-7xl mx-auto p-4 md:p-8">
 
       <h1 className="text-3xl font-bold mb-8">
         {product.title}
       </h1>
 
-      <div className="grid lg:grid-cols-[340px_1fr] gap-8">
+      <div className="grid lg:grid-cols-[340px_minmax(0,1fr)] gap-8">
 
         <aside
           className="
@@ -206,7 +206,7 @@ export default function CoursePlayer({
           ))}
         </aside>
 
-        <main ref={playerTopRef}>
+        <main className="min-w-0" ref={playerTopRef}>
 
           <div
             className="
@@ -235,7 +235,7 @@ export default function CoursePlayer({
     mt-6
     rounded-2xl
     bg-zinc-900
-    p-8
+    p-4 sm:p-8
   "
 >
 
@@ -304,7 +304,7 @@ export default function CoursePlayer({
 
     <div
   className="
-    whitespace-pre-wrap
+    whitespace-pre-wrap [overflow-wrap:anywhere]
     leading-8
     text-zinc-300
   "
@@ -364,7 +364,7 @@ export default function CoursePlayer({
   </Link>
 </div>
 
-<div className="mt-10 flex items-center justify-between border-t border-zinc-800 pt-6">
+<div className="mt-10 flex flex-wrap gap-3 items-center justify-between border-t border-zinc-800 pt-6">
 
   <button
     disabled={!previousLesson}

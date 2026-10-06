@@ -12,7 +12,7 @@ export default function Loading() {
 
           <div className="mb-4 h-6 w-40 rounded-full bg-zinc-800" />
 
-          <div className="h-10 w-80 rounded-lg bg-zinc-800" />
+          <div className="h-10 w-80 max-w-full rounded-lg bg-zinc-800" />
 
           <div className="mt-3 h-4 w-full max-w-2xl rounded bg-zinc-900" />
           <div className="mt-2 h-4 w-2/3 max-w-xl rounded bg-zinc-900" />
@@ -53,7 +53,7 @@ export default function Loading() {
 
           <div>
             <div className="h-8 w-64 rounded-lg bg-zinc-800" />
-            <div className="mt-2 h-4 w-80 rounded bg-zinc-900" />
+            <div className="mt-2 h-4 w-80 max-w-full rounded bg-zinc-900" />
           </div>
 
           <div className="h-4 w-16 rounded bg-zinc-900" />
@@ -88,7 +88,7 @@ export default function Loading() {
               </div>
 
 
-              <div className="mt-5 h-4 w-72 rounded bg-zinc-900" />
+              <div className="mt-5 h-4 w-72 max-w-full rounded bg-zinc-900" />
 
 
               <div className="mt-5 grid grid-cols-2 gap-3">

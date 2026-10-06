@@ -12,7 +12,7 @@ export default function PageHeader({
   return (
     <div className="flex flex-col gap-6 mb-8 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 className="text-4xl font-black text-white">
+        <h1 className="text-3xl sm:text-4xl font-black text-white">
           {title}
         </h1>
 

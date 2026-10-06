@@ -17,7 +17,7 @@ export default function SettingsPreview({
   profile,
 }: Props) {
   return (
-    <div className="xl:sticky xl:top-8 self-start">
+    <div className="min-w-0 max-w-full xl:sticky xl:top-8 self-start">
 
       {/* PREVIEW */}
       <div
@@ -38,7 +38,7 @@ export default function SettingsPreview({
             Página pública
           </p>
 
-          <h3 className="text-xl font-black text-white mt-1 whitespace-nowrap">
+          <h3 className="text-xl font-black text-white mt-1">
             Prévia em tempo real
           </h3>
 
@@ -136,7 +136,7 @@ export default function SettingsPreview({
 
           <div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
 
               <h3 className="text-white font-black">
                 Personalização avançada

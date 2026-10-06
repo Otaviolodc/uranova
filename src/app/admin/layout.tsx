@@ -1,3 +1,4 @@
+import AdminNavigation from "@/components/layout/AdminNavigation";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
@@ -49,7 +50,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col md:flex-row">
+    <div className="min-h-screen bg-black text-white flex flex-col lg:flex-row">
 
       {/* ==================================================
           SIDEBAR
@@ -58,12 +59,12 @@ export default async function AdminLayout({
       <aside
         className="
           w-full
-          md:w-72
-          md:min-h-screen
+          shrink-0 lg:w-72
+          lg:min-h-screen
           bg-zinc-950
           border-b
-          md:border-b-0
-          md:border-r
+          lg:border-b-0
+          lg:border-r
           border-zinc-800
           flex
           flex-col
@@ -72,6 +73,7 @@ export default async function AdminLayout({
         "
       >
 
+        <AdminNavigation>
         {/* LOGO */}
 
         <div className="flex items-center justify-center md:justify-start mb-8 md:mb-12">
@@ -388,6 +390,7 @@ export default async function AdminLayout({
           </span>
         </a>
 
+        </AdminNavigation>
       </aside>
 
       {/* ==================================================
@@ -399,7 +402,7 @@ export default async function AdminLayout({
           flex-1
           min-w-0
           bg-black
-          overflow-x-hidden
+          [overflow-wrap:anywhere]
         "
       >
 

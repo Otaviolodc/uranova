@@ -28,8 +28,8 @@ export default function PayoutForm() {
     <p className="text-zinc-400">A Stripe administra os depósitos bancários. Solicitações aqui exigem calendário manual e saldo conciliado. Contas com depósitos automáticos seguem o calendário Stripe.</p>
     <button disabled={busy} onClick={() => submit(false)} className="rounded-lg bg-zinc-800 px-4 py-2">Atualizar conciliação</button>
     <form onSubmit={(e) => { e.preventDefault(); void submit(true); }} className="flex flex-wrap gap-3">
-      <label>Valor em reais <input required inputMode="decimal" value={amount} disabled={busy || submitted}
-        onChange={(e) => setAmount(e.target.value)} className="ml-2 rounded bg-zinc-800 p-2" placeholder="100,00" /></label>
+      <label className="min-w-0 w-full sm:w-auto">Valor em reais <input required inputMode="decimal" value={amount} disabled={busy || submitted}
+        onChange={(e) => setAmount(e.target.value)} className="mt-2 block w-full sm:mt-0 sm:ml-2 sm:inline-block sm:w-auto rounded bg-zinc-800 p-2" placeholder="100,00" /></label>
       <button disabled={busy} className="rounded-lg bg-green-700 px-4 py-2">{busy ? "Aguarde…" : "Solicitar / consultar saque"}</button>
     </form>
     <p role="status">{message}</p>

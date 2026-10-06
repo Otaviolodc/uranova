@@ -29,13 +29,15 @@ export default function SupportPanel({
 
   return (
     <div
+      inert={!open}
+      aria-hidden={!open}
       className={`
         fixed
-        bottom-20
-        right-6
-        z-50
+        bottom-[calc(5.5rem+env(safe-area-inset-bottom))]
+        right-4 sm:right-6
+        z-[80]
 
-        w-[390px]
+        w-[calc(100%-2rem)] sm:w-[390px] max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain
         rounded-2xl
 
         border border-white/10
@@ -68,9 +70,10 @@ export default function SupportPanel({
 
         <button
           onClick={onClose}
+          aria-label="Fechar ajuda"
           className="
             rounded-lg
-            p-2
+            flex h-11 w-11 shrink-0 items-center justify-center p-2
             transition
             hover:bg-red-500/20
           "

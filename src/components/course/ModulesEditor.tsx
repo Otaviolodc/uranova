@@ -124,7 +124,7 @@ async function createModule() {
             "
           />
 
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
 
             <button
               onClick={createModule}
@@ -193,7 +193,7 @@ async function createModule() {
     "
   >
 
-    <div className="flex justify-between items-center">
+    <div className="flex flex-wrap gap-3 justify-between items-center">
 
       <h2 className="font-bold text-lg">
         📚 {module.title}

@@ -6,9 +6,9 @@ export default function CTA() {
 
       <div className="max-w-6xl mx-auto">
 
-        <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-[40px] p-20 text-center shadow-2xl shadow-green-500/20">
+        <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-[40px] p-5 sm:p-10 lg:p-20 text-center shadow-2xl shadow-green-500/20">
 
-          <h2 className="text-5xl font-bold">
+          <h2 className="text-3xl sm:text-5xl font-bold">
             Comece gratuitamente
           </h2>
 

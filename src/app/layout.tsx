@@ -1,5 +1,12 @@
 import "./globals.css";
+import type { Viewport } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata = {
   title: "Uranova - Plataforma Completa para Criadores Digitais",

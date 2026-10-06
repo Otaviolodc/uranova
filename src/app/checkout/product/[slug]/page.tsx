@@ -173,7 +173,7 @@ if (!product) {
 </div>
 
             {/* TÍTULO */}
-            <h1 className="text-6xl font-black leading-tight">
+            <h1 className="text-4xl sm:text-6xl font-black leading-tight">
 
               {product.title}
 
@@ -196,7 +196,7 @@ if (!product) {
 
               </p>
 
-              <h2 className="text-7xl font-black text-green-400 mt-2">
+              <h2 className="text-4xl sm:text-7xl font-black text-green-400 mt-2">
 
                 R$ {product.price}
 
@@ -314,7 +314,7 @@ if (!product) {
 </div>
 
             {/* INFO PRODUTO */}
-            <div className="grid grid-cols-3 gap-4 mt-10">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-10">
 
              <div className="bg-zinc-900 rounded-2xl p-5 border border-zinc-800">
 

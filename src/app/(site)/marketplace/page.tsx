@@ -122,7 +122,7 @@ if (sortBy === "az") {
 
   <div className="flex bg-black text-white min-h-screen">
 
-    <div className="flex-1">
+    <div className="min-w-0 flex-1">
 
       {/* HERO */}
       <div className="border-b border-zinc-800 bg-gradient-to-b from-zinc-900 to-black">
@@ -199,7 +199,7 @@ if (sortBy === "az") {
 
             </div>
 
-            <div className="grid grid-cols-3 gap-6 mt-12">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12">
 
   <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
     <h2 className="text-4xl font-black text-green-400">
@@ -560,7 +560,7 @@ if (sortBy === "az") {
       border
       border-zinc-800
       rounded-3xl
-      p-10
+      p-5 sm:p-10
       text-center
     "
   >

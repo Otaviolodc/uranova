@@ -18,7 +18,7 @@ export default function Navbar() {
           max-w-7xl
           mx-auto
           px-6
-          h-20
+          min-h-20 py-3 lg:py-0 flex-wrap gap-3 lg:h-20
           flex
           items-center
           justify-between
@@ -99,13 +99,23 @@ export default function Navbar() {
           </Link>
         </nav>
 
+        <details className="relative lg:hidden">
+          <summary className="cursor-pointer rounded-xl border border-zinc-700 px-4 py-3">Menu</summary>
+          <nav aria-label="Menu principal" className="absolute right-0 top-full z-50 mt-2 w-56 max-w-[calc(100vw-2rem)] rounded-xl border border-zinc-700 bg-zinc-950 p-2">
+            <Link className="block rounded-lg p-3" href="/#produtos">Produtos</Link>
+            <Link className="block rounded-lg p-3" href="/#recursos">Recursos</Link>
+            <Link className="block rounded-lg p-3" href="/#membros">Área de Membros</Link>
+            <Link className="block rounded-lg p-3" href="/#faq">FAQ</Link>
+          </nav>
+        </details>
+
         {/* Botões */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
 
           <Link
             href="/auth/login"
             className="
-              px-5
+              px-3 sm:px-5
               py-2.5
               rounded-xl
               border
@@ -122,7 +132,7 @@ export default function Navbar() {
           <Link
             href="/auth/login"
             className="
-              px-5
+              px-3 sm:px-5
               py-2.5
               rounded-xl
               bg-green-500

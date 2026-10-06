@@ -364,7 +364,7 @@ async function deleteProduct(id: string) {
 
   <div className="flex bg-black text-white min-h-screen">
 
-    <div className="flex-1 p-4 md:p-8 pt-20 md:pt-8">
+    <div className="min-w-0 flex-1 p-4 md:p-8">
 
       {/* HEADER */}
       <div className="mb-10">

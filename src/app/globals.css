@@ -23,6 +23,7 @@ html {
 
 body {
   min-height: 100vh;
+  min-height: 100dvh;
   background: #050505;
   color: var(--foreground);
 
@@ -34,6 +35,32 @@ body {
 
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Allow content, including user-entered names and URLs, to shrink and wrap. */
+@layer base {
+  h1, h2, h3, h4, p, a, button, label, td, dd {
+    overflow-wrap: anywhere;
+  }
+
+  input, select, textarea { min-width: 0; max-width: 100%; }
+  video, iframe { max-width: 100%; }
+}
+
+.dashboard-content {
+  padding-top: calc(5rem + env(safe-area-inset-top));
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.mobile-navigation-bar {
+  min-height: calc(5rem + env(safe-area-inset-top));
+  padding-top: calc(1rem + env(safe-area-inset-top));
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+@media (min-width: 1024px) {
+  .dashboard-content { padding-top: 0; }
 }
 
 ::selection {
