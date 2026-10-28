@@ -1,5 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
+
 import Image from "next/image";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function PublicPage({
   params,
@@ -37,7 +38,7 @@ export default async function PublicPage({
     data: profile,
     error: profileError,
   } = await supabase
-    .from("profiles")
+    .from("public_profiles")
     .select(`
       id,
       username,
@@ -129,7 +130,7 @@ export default async function PublicPage({
   // ==========================================================
 
   const { data: products } = await supabase
-    .from("products_checkout")
+    .from("public_checkouts")
     .select("*")
     .eq("user_id", profile.id)
     .eq("status", "active")
@@ -489,7 +490,7 @@ export default async function PublicPage({
               >
 
                 {product.image_url && (
-                  <img
+                  <Image unoptimized loading="eager" width={640} height={208}
                     src={product.image_url}
                     alt={product.title}
                     className="

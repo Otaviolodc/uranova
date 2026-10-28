@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 
-import { supabase } from "@/lib/supabase/client";
+
 
 import {
   ArrowLeft,
@@ -45,8 +45,8 @@ const handleSubmit = async (e: FormEvent) => {
     return;
   }
 
-  if (newPassword.length < 8) {
-    setError("A nova senha deve possuir pelo menos 8 caracteres.");
+  if (newPassword.length < 12) {
+    setError("A nova senha deve possuir pelo menos 12 caracteres.");
     return;
   }
 
@@ -58,13 +58,9 @@ const handleSubmit = async (e: FormEvent) => {
   setLoading(true);
 
   try {
-  const { error } = await supabase.auth.updateUser({
-    password: newPassword,
-  });
-
-  if (error) {
-    throw error;
-  }
+  const response = await fetch("/api/account/password", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({currentPassword,newPassword})});
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error);
 
   setSuccess("Senha alterada com sucesso.");
 
@@ -238,7 +234,7 @@ const handleSubmit = async (e: FormEvent) => {
           {/* Aviso */}
           <div className="rounded-xl border border-violet-500/30 bg-violet-500/10 p-4">
             <p className="text-sm text-zinc-300">
-              Sua nova senha deve possuir pelo menos <strong>8 caracteres</strong>,
+              Sua nova senha deve possuir pelo menos <strong>12 caracteres</strong>,
               incluindo letras e números para maior segurança.
             </p>
           </div>

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   Shield,
   CreditCard,
@@ -26,7 +27,7 @@ export default function TrustBar() {
 function Item({
   icon,
   text,
-}: any) {
+}: { icon: ReactNode; text: string }) {
   return (
     <div className="flex items-center gap-3 text-zinc-300">
       {icon}

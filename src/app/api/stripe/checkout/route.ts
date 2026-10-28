@@ -1,3 +1,7 @@
+import { integrationUnavailable } from "@/lib/security/staging-policy";
+import { rateLimit } from "@/lib/security/rate-limit";
+import { safeError, sameOrigin,jsonBody } from "@/lib/security/request";
+import { exactKeys } from "@/lib/security/validation";
 import { NextResponse } from "next/server";
 import { stripe, assertStripeLive } from "@/lib/stripe";
 import { admin } from "@/lib/supabase/admin";
@@ -6,10 +10,14 @@ import { platformFeeCents, priceToCents } from "@/lib/finance/money";
 import { assertDirectChargeAccount } from "@/lib/services/payment-processor";
 
 export async function POST(req: Request) {
+  const unavailable = integrationUnavailable(); if (unavailable) return unavailable;
+
   try {
-    const user = await requireFinanceUser();
+    sameOrigin(req);
+    const user = await requireFinanceUser(); await rateLimit("checkout", user.id);
     assertStripeLive();
-    const { checkoutSlug } = await req.json();
+    const body=await jsonBody(req); exactKeys(body,["checkoutSlug"]);
+    const { checkoutSlug } = body;
     if (typeof checkoutSlug !== "string" || !checkoutSlug || checkoutSlug.length > 500) {
       return NextResponse.json({ error: "Checkout inválido." }, { status: 400 });
     }
@@ -41,8 +49,6 @@ export async function POST(req: Request) {
     if (!session.livemode || !session.url) throw new Error("Invalid Stripe Live checkout");
     return NextResponse.json({ success: true, url: session.url });
   } catch (error) {
-    console.error("Checkout failed", error instanceof Error ? error.message : "unknown");
-    return NextResponse.json({ error: "Não foi possível iniciar o pagamento. Verifique a configuração Stripe com o suporte." },
-      { status: error instanceof Error && error.message === "UNAUTHENTICATED" ? 401 : 503 });
+    return safeError(error);
   }
 }

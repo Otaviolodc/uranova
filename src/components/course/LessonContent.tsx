@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface LessonContentProps {
   lessonId: string;
@@ -16,9 +16,11 @@ export default function LessonContent({
   const [text, setText] = useState(content ?? "");
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
+  const [previousContent, setPreviousContent] = useState(content);
+  if (previousContent !== content) {
+    setPreviousContent(content);
     setText(content ?? "");
-  }, [content]);
+  }
 
   async function handleSave() {
     try {

@@ -3,7 +3,6 @@
 import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Link from "next/link";
 
 import AuthCard from "@/components/auth/AuthCard";
 import AuthLogo from "@/components/auth/AuthLogo";
@@ -26,12 +25,19 @@ export default function ResetPasswordPage() {
     return;
   }
 
-  if (password.length < 6) {
-    alert("A senha deve possuir pelo menos 6 caracteres.");
+  if (password.length < 12 || password.length > 128) {
+    alert("A senha deve possuir entre 12 e 128 caracteres.");
     return;
   }
 
   setLoading(true);
+
+  const {data: {user}, error: sessionError} = await supabase.auth.getUser();
+  if (sessionError || !user) {
+    setLoading(false);
+    alert("Abra um link de recuperação válido antes de redefinir a senha.");
+    return;
+  }
 
   const { error } = await supabase.auth.updateUser({
     password,
@@ -45,6 +51,8 @@ export default function ResetPasswordPage() {
   }
 
   alert("Senha alterada com sucesso!");
+
+  await supabase.auth.signOut({scope:"local"});
 
   router.push("/auth/login");
 }

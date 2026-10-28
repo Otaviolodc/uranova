@@ -1,0 +1,12 @@
+﻿import assert from 'node:assert/strict';
+import { writeFileSync } from 'node:fs';
+import { preferredAccess, groupLibraryAccesses } from '../src/lib/customer-library.ts';
+const size=2000,now=Date.parse('2026-10-21T12:00:00Z');let reads=0;
+const records=Array.from({length:size},(_,i)=>({id:String(i),get product_id(){reads++;return String(i);},status:'active',expires_at:null,unlocked_at:'2026-01-01'}));
+const ids=Array.from({length:size},(_,i)=>String(i));
+const baseline=ids.map(id=>preferredAccess(records.filter(row=>row.product_id===id),now));const baselineReads=reads;reads=0;
+const grouped=groupLibraryAccesses(records,now);const optimizedReads=reads;
+assert.deepEqual(ids.map(id=>grouped.get(id)),baseline);
+assert.equal(baselineReads,size*size);assert.equal(optimizedReads,size*2);
+const result={fixture:{accesses:size,distinctProducts:size,synthetic:true},measurement:'Reads of product_id while selecting one access per product; excludes queries, sorting titles and rendering.',baselineReads,optimizedReads,selectionIdentical:true,initialCards:{fixtureProducts:50,before:50,after:24,afterShowMore:48},limitations:['No elapsed-time, throughput, database or production latency claim.','Unique-product fixture; duplicate cases also covered in unit tests.','Browser performance and visual rendering not measured.']};
+writeFileSync('docs/PHASE-5-PERFORMANCE.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));

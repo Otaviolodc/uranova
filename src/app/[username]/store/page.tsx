@@ -1,13 +1,14 @@
-import Image from "next/image";
+import CatalogImage from "@/components/marketplace/CatalogImage";
+import StoreCatalog from "@/components/marketplace/StoreCatalog";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function StorePage({
   params,
 }: {
-  params: { username: string };
+  params: Promise<{ username: string }>;
 }) {
 
-  const { username } = params;
+  const { username } = await params;
 
   const supabase = await createClient();
 
@@ -16,7 +17,7 @@ const {
   data: profile,
   error: profileError,
 } = await supabase
-  .from("profiles")
+  .from("public_profiles")
   .select(`
     id,
     username,
@@ -26,7 +27,10 @@ const {
   .eq("username", username)
   .maybeSingle();
 
-  if (profileError || !profile) {
+  if (profileError) {
+    return <div role="alert" className="min-h-screen bg-black text-white flex items-center justify-center">Não foi possível carregar a loja. Atualize a página para tentar novamente.</div>;
+  }
+  if (!profile) {
 
   return (
     <div className="
@@ -46,6 +50,7 @@ const {
   // PRODUCTS
 const {
   data: products,
+  error: productsError,
 } = await supabase
   .from("products")
   .select(`
@@ -53,7 +58,8 @@ const {
     title,
     price,
     image_url,
-    affiliate_url
+    affiliate_url,
+    marketplace
   `)
   .eq("user_id", profile.id);
 
@@ -71,24 +77,8 @@ const {
 
           <div className="flex flex-col md:flex-row items-center gap-8">
 
-            <Image
-              src={
-                profile.avatar_url ||
-                "/avatar.png"
-              }
-              alt={profile.username}
-              width={128}
-              height={128}
-              unoptimized
-              className="
-                w-32
-                h-32
-                rounded-full
-                border-4
-                border-green-500
-                object-cover
-              "
-            />
+            <CatalogImage src={profile.avatar_url} alt={profile.username}
+              className="w-32 h-32 shrink-0 rounded-full border-4 border-green-500" />
 
             <div>
 
@@ -108,194 +98,7 @@ const {
 
       </div>
 
-      {/* SEARCH */}
-      <div className="max-w-7xl mx-auto px-6">
-
-        <input
-          type="text"
-          placeholder="🔍 Buscar produto..."
-          className="
-            w-full
-            bg-zinc-900
-            border
-            border-zinc-800
-            rounded-3xl
-            px-6
-            py-5
-            outline-none
-            text-lg
-            mb-10
-          "
-        />
-
-      </div>
-
-      {/* MARKETPLACES */}
-      <div className="max-w-7xl mx-auto px-6 flex gap-4 overflow-x-auto pb-6">
-
-        {[
-          "Todos",
-          "Shopee",
-          "Amazon",
-          "Hotmart",
-          "Eduzz",
-          "Braip",
-        ].map((item) => (
-
-          <button
-            key={item}
-            className="
-              whitespace-nowrap
-              px-6
-              py-3
-              rounded-2xl
-              bg-zinc-900
-              hover:bg-green-500
-              hover:text-black
-              transition
-              font-semibold
-            "
-          >
-            {item}
-          </button>
-
-        ))}
-
-      </div>
-
-      {/* TITLE */}
-      <div className="max-w-7xl mx-auto px-6 mt-8 mb-8">
-
-        <h2 className="text-4xl font-black">
-          🔥 Produtos Recomendados
-        </h2>
-
-        <p className="text-zinc-400 mt-2">
-          Produtos selecionados da loja
-        </p>
-
-      </div>
-
-      {/* GRID */}
-      <div
-        className="
-          max-w-7xl
-          mx-auto
-          px-6
-          grid
-          grid-cols-1
-          sm:grid-cols-2
-          lg:grid-cols-3
-          xl:grid-cols-4
-          gap-6
-          pb-20
-        "
-      >
-
-        {safeProducts.length === 0 ? (
-
-  <div className="
-    col-span-full
-    text-center
-    text-zinc-400
-    py-20
-  ">
-    Nenhum produto encontrado
-  </div>
-
-) : (
-
-  safeProducts.map((product) => (
-
-    <div
-      key={product.id}
-      className="
-        bg-zinc-900
-        border
-        border-zinc-800
-        rounded-3xl
-        overflow-hidden
-        hover:border-green-500
-        hover:-translate-y-2
-        transition-all
-        duration-300
-      "
-    >
-
-      {/* IMAGE */}
-      <div className="relative">
-
-        <Image
-          src={
-            product.image_url ||
-            "/logo.png"
-          }
-          alt={product.title}
-          width={500}
-          height={500}
-          unoptimized
-          className="
-            w-full
-            h-72
-            object-cover
-          "
-        />
-
-        <div className="absolute top-4 left-4 bg-green-500 text-black text-xs font-black px-3 py-1 rounded-full">
-          PROMO
-        </div>
-
-      </div>
-
-      {/* CONTENT */}
-      <div className="p-5">
-
-        <h3 className="font-bold text-xl line-clamp-2 min-h-[60px]">
-          {product.title}
-        </h3>
-
-        <div className="mt-4">
-
-          <span className="text-4xl font-black text-green-400">
-            R$ {product.price}
-          </span>
-
-        </div>
-
-        <a
-          href={product.affiliate_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="
-            block
-            w-full
-            mt-5
-            bg-green-500
-            hover:bg-green-400
-            transition
-            text-black
-            py-4
-            rounded-2xl
-            font-black
-            text-lg
-            text-center
-          "
-        >
-
-          Comprar Agora
-
-        </a>
-
-      </div>
-
-    </div>
-
-  ))
-
-)}
-
-      </div>
-
+      <StoreCatalog products={safeProducts} failed={Boolean(productsError)} />
     </div>
   );
 }

@@ -1,100 +1,18 @@
+import { integrationUnavailable } from "@/lib/security/staging-policy";
+import { rateLimit, trackingPrincipal } from "@/lib/security/rate-limit";
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-
-export async function GET(
-  req: Request,
-  context: { params: Promise<{ slug: string }> }
-) {
-  try {
-
-    const supabase = await createClient();
-
-    const { slug } = await context.params;
-
-    if (!slug) {
-      return new Response("Slug inválido", {
-        status: 400,
-      });
-    }
-
-    // 🔎 buscar link
-    const { data: link } = await supabase
-      .from("links")
-      .select("*")
-      .eq("slug", slug)
-      .single();
-
-    if (!link) {
-      return new Response("Link não encontrado", {
-        status: 404,
-      });
-    }
-
-    console.log("LINK COMPLETO:");
-    console.log(link);
-
-    // 🔥 atualizar total de clicks
-    await supabase
-      .from("links")
-      .update({
-        clicks: (link.clicks || 0) + 1,
-      })
-      .eq("id", link.id);
-
-    // 📅 data atual
-    const today = new Date()
-      .toISOString()
-      .split("T")[0];
-
-    const { data: existing } = await supabase
-      .from("link_clicks_daily")
-      .select("*")
-      .eq("link_id", link.id)
-      .eq("date", today)
-      .maybeSingle();
-
-    if (existing) {
-
-      await supabase
-        .from("link_clicks_daily")
-        .update({
-          clicks: existing.clicks + 1,
-        })
-        .eq("id", existing.id);
-
-    } else {
-
-      await supabase
-        .from("link_clicks_daily")
-        .insert([
-          {
-            link_id: link.id,
-            date: today,
-            clicks: 1,
-          },
-        ]);
-
-    }
-
-    console.log("LINK:", link);
-    console.log("URL:", link.affiliate_url);
-
-    return NextResponse.redirect(
-      new URL(link.affiliate_url)
-    );
-
-    } catch (err: any) {
-
-      console.log("ERRO COMPLETO:");
-      console.log(err);
-
-    return new Response(
-      err?.message || "Erro interno",
-      {
-        status: 500,
-      }
-    );
-
-  }
-
-}
+import { admin } from "@/lib/supabase/admin";
+import { text,safeExternalUrl } from "@/lib/security/validation";
+import { safeError } from "@/lib/security/request";
+export async function GET(req:Request,context:{params:Promise<{slug:string}>}){
+  const unavailable = integrationUnavailable(); if (unavailable) return unavailable;
+try{
+ await rateLimit("tracking", trackingPrincipal(req));
+ const slug=text((await context.params).slug,200);
+ const {data:link,error}=await admin.from("links").select("id,affiliate_url").eq("slug",slug).single();
+ if(error||!link)return new Response("Link indisponivel",{status:404});
+ const destination=safeExternalUrl(link.affiliate_url);
+ const {error:tracking}=await admin.rpc("track_click_with_date",{link_slug:slug});
+ if(tracking)throw new Error("TRACKING_FAILED");
+ return NextResponse.redirect(destination);
+}catch(error){return safeError(error);}}

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 export default function PayoutForm() {
   const router = useRouter();
   const key = useRef<string | null>(null);
+  const [currentPassword,setCurrentPassword]=useState("");
   const [amount, setAmount] = useState("");
   const [busy, setBusy] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -15,7 +16,7 @@ export default function PayoutForm() {
       if (payout && !key.current) { key.current = crypto.randomUUID(); setSubmitted(true); }
       const response = await fetch(payout ? "/api/finance/payout" : "/api/finance/sync", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: payout ? JSON.stringify({ amount, requestKey: key.current }) : undefined,
+        body: payout ? JSON.stringify({ amount, requestKey: key.current, currentPassword }) : undefined,
       });
       const data = await response.json();
       setMessage(data.error ?? (payout ? "Solicitação registrada. Acompanhe o histórico." : "Conciliação atualizada."));
@@ -30,6 +31,7 @@ export default function PayoutForm() {
     <form onSubmit={(e) => { e.preventDefault(); void submit(true); }} className="flex flex-wrap gap-3">
       <label className="min-w-0 w-full sm:w-auto">Valor em reais <input required inputMode="decimal" value={amount} disabled={busy || submitted}
         onChange={(e) => setAmount(e.target.value)} className="mt-2 block w-full sm:mt-0 sm:ml-2 sm:inline-block sm:w-auto rounded bg-zinc-800 p-2" placeholder="100,00" /></label>
+      <label>Senha atual<input required type="password" autoComplete="current-password" value={currentPassword} onChange={e=>setCurrentPassword(e.target.value)} className="block rounded bg-zinc-800 p-2" /></label>
       <button disabled={busy} className="rounded-lg bg-green-700 px-4 py-2">{busy ? "Aguarde…" : "Solicitar / consultar saque"}</button>
     </form>
     <p role="status">{message}</p>

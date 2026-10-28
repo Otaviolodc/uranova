@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, ChevronDown, Globe2 } from "lucide-react";
+import { Bell, Globe2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -21,6 +21,8 @@ type Notification = {
 export default function Topbar() {
   const router = useRouter();
 
+  const [readError, setReadError] = useState(false);
+  const [reading, setReading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
 
   const [isNotificationsOpen, setIsNotificationsOpen] =
@@ -28,6 +30,7 @@ export default function Topbar() {
 
   const notificationsRef =
     useRef<HTMLDivElement>(null);
+  const notificationsButton = useRef<HTMLButtonElement>(null);
 
   const [notifications, setNotifications] =
     useState<Notification[]>([]);
@@ -38,14 +41,18 @@ export default function Topbar() {
 
   useEffect(() => {
     let mounted = true;
+    let generation = 0;
 
     async function fetchProfile() {
+      const request = ++generation;
+      try {
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
-      if (!mounted) return;
+      if (!mounted || request !== generation) return;
 
+      setReading(true); setReadError(false);
       if (!user) {
         setProfile(null);
         setNotifications([]);
@@ -65,10 +72,10 @@ export default function Topbar() {
         .eq("id", user.id)
         .single();
 
-      if (!mounted) return;
+      if (!mounted || request !== generation) return;
 
-      if (error) {
-        console.error("Topbar:", error);
+      if (error || !data) {
+        setProfile(null); setNotifications([]); setReadError(true);
         return;
       }
 
@@ -93,22 +100,21 @@ export default function Topbar() {
           ascending: false,
         });
 
-      if (!mounted) return;
+      if (!mounted || request !== generation) return;
 
       if (notificationsError) {
-        console.error(
-          "Notifications:",
-          notificationsError
-        );
+        setNotifications([]); setReadError(true);
         return;
       }
 
       setNotifications(
         (notificationsData as Notification[]) ?? []
       );
+      } catch { if (mounted && request === generation) { setProfile(null); setNotifications([]); setReadError(true); } }
+      finally { if (mounted && request === generation) setReading(false); }
     }
 
-    fetchProfile();
+    void fetchProfile();
 
     // ----------------------------------------------------
     // OBSERVAR ALTERAÇÕES DE AUTENTICAÇÃO
@@ -131,6 +137,12 @@ export default function Topbar() {
   // ======================================================
 
   useEffect(() => {
+    function handleKey(event: KeyboardEvent) {
+      if (event.key === "Escape" && isNotificationsOpen) {
+        setIsNotificationsOpen(false);
+        notificationsButton.current?.focus();
+      }
+    }
     function handleClickOutside(event: MouseEvent) {
       if (
         notificationsRef.current &&
@@ -146,14 +158,16 @@ export default function Topbar() {
       "mousedown",
       handleClickOutside
     );
+    document.addEventListener("keydown", handleKey);
 
     return () => {
+      document.removeEventListener("keydown", handleKey);
       document.removeEventListener(
         "mousedown",
         handleClickOutside
       );
     };
-  }, []);
+  }, [isNotificationsOpen]);
 
   // ======================================================
   // ABRIR PÁGINA DE PLANO
@@ -224,7 +238,9 @@ export default function Topbar() {
 
         <button
           type="button"
-          title="Idioma"
+          title="Idioma dispon?vel: portugu?s brasileiro"
+          disabled
+          aria-label="Idioma: portugu?s brasileiro"
           className="
             hidden
             sm:flex
@@ -246,10 +262,7 @@ export default function Topbar() {
 
           <span>pt-BR</span>
 
-          <ChevronDown
-            size={14}
-            className="text-zinc-500"
-          />
+
         </button>
 
         {/* ==================================================
@@ -264,6 +277,9 @@ export default function Topbar() {
             type="button"
             title="Notificações"
             aria-label="Abrir notificações"
+            ref={notificationsButton}
+            aria-expanded={isNotificationsOpen}
+            aria-controls="dashboard-notifications"
             onClick={() =>
               setIsNotificationsOpen(
                 !isNotificationsOpen
@@ -313,6 +329,9 @@ export default function Topbar() {
 
           {isNotificationsOpen && (
             <div
+              id="dashboard-notifications"
+              role="region"
+              aria-label="Notificações"
               className="
                 fixed sm:absolute
                 left-4 right-4 sm:left-auto sm:right-0
@@ -339,7 +358,7 @@ export default function Topbar() {
                 </h3>
               </div>
 
-              {notifications.length === 0 ? (
+              {reading ? <p role="status" className="p-5">Carregando notificações...</p> : readError ? <p role="alert" className="p-5">Não foi possível carregar perfil ou notificações. Atualize a página para tentar novamente.</p> : notifications.length === 0 ? (
                 <div className="px-5 py-10 text-center">
 
                   <div className="flex justify-center mb-3">

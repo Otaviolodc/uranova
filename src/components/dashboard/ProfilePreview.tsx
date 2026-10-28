@@ -1,3 +1,5 @@
+
+import Image from "next/image";
 type Props = {
   username: string;
   bio: string;
@@ -131,7 +133,7 @@ export default function ProfilePreview({
               }}
             >
 
-              <img
+              <Image unoptimized loading="eager" width={112} height={112}
                 src={avatarUrl || "/logo.png"}
                 alt="Avatar do perfil"
                 className="

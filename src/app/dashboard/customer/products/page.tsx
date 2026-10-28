@@ -2,16 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import CatalogImage from "@/components/marketplace/CatalogImage";
+import { loadCustomerLibrary, libraryDestination, readableDate, type LibraryProduct } from "@/lib/customer-library";
+import { normalizeCategory, matchesCatalogSearch } from "@/lib/public-catalog";
 import { supabase } from "@/lib/supabase/client";
 
-type Product = {
-  id: string;
-  title: string;
-  image_url: string | null;
-  description: string | null;
-  type: string | null;
-  unlocked_at?: string;
-};
+type Product = LibraryProduct;
 
 const categories = [
   { value: "all", label: "Todos" },
@@ -33,11 +29,11 @@ const typeLabels: Record<string, string> = {
 function getProductTypeLabel(type: string | null) {
   if (!type) return "Produto digital";
 
-  return typeLabels[type] || "Produto digital";
+  return typeLabels[normalizeCategory(type)] || "Produto digital";
 }
 
 function getProductActionLabel(type: string | null) {
-  switch (type) {
+  switch (normalizeCategory(type)) {
     case "course":
       return "Acessar Curso";
 
@@ -64,96 +60,25 @@ export default function CustomerProductsPage() {
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
+  const [visibleCount, setVisibleCount] = useState(24);
 
+
+
+  const [error, setError] = useState("");
+  const [retry, setRetry] = useState(0);
   useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  async function fetchProducts() {
-    setLoading(true);
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      setLoading(false);
-      return;
+    let active = true;
+    async function load() {
+      try {
+        const data = await loadCustomerLibrary(supabase);
+        if (active) { setProducts(data); setError(""); }
+      } catch (cause) {
+        if (active) setError(cause instanceof Error && cause.message === "SESSION_REQUIRED" ? "Entre novamente na sua conta para consultar a biblioteca." : "Não foi possível carregar a biblioteca. Tente novamente.");
+      } finally { if (active) setLoading(false); }
     }
-
-    const {
-      data: customerProducts,
-      error: customerError,
-    } = await supabase
-      .from("customer_products")
-      .select("*")
-      .eq("customer_id", user.id);
-
-    if (customerError) {
-      console.error(
-        "Erro ao buscar produtos do cliente:",
-        customerError
-      );
-
-      setLoading(false);
-      return;
-    }
-
-    if (!customerProducts?.length) {
-      setProducts([]);
-      setLoading(false);
-      return;
-    }
-
-    const productIds = customerProducts.map(
-      (item) => item.product_id
-    );
-
-    const {
-      data,
-      error,
-    } = await supabase
-      .from("products")
-      .select(`
-        id,
-        title,
-        image_url,
-        type
-      `)
-      .in("id", productIds);
-
-    if (error) {
-      console.error(
-        "Erro ao buscar produtos:",
-        error
-      );
-
-      setLoading(false);
-      return;
-    }
-
-    const formattedProducts: Product[] =
-      (data || []).map((product) => {
-        const customerProduct =
-          customerProducts.find(
-            (item) =>
-              item.product_id === product.id
-          );
-
-        return {
-          id: product.id,
-          title: product.title,
-          image_url: product.image_url,
-          type: product.type,
-          description: null,
-          unlocked_at:
-            customerProduct?.unlocked_at,
-        };
-      });
-
-    setProducts(formattedProducts);
-    setLoading(false);
-  }
+    void load();
+    return () => { active = false; };
+  }, [retry]);
 
   const filteredProducts = useMemo(() => {
     const normalizedSearch =
@@ -162,13 +87,11 @@ export default function CustomerProductsPage() {
     return products.filter((product) => {
       const matchesSearch =
         !normalizedSearch ||
-        product.title
-          .toLowerCase()
-          .includes(normalizedSearch);
+        matchesCatalogSearch(product.title, normalizedSearch);
 
       const matchesCategory =
         category === "all" ||
-        product.type === category;
+        normalizeCategory(product.type) === category;
 
       return (
         matchesSearch &&
@@ -177,13 +100,13 @@ export default function CustomerProductsPage() {
     });
   }, [products, search, category]);
 
-  const productCount = products.length;
+  const productCount = products.filter(product => product.available).length;
 
   const filteredCount =
     filteredProducts.length;
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-4 sm:p-8">
 
       {/* ==========================================================
           HEADER
@@ -324,8 +247,9 @@ export default function CustomerProductsPage() {
                 type="text"
                 value={search}
                 onChange={(e) =>
-                  setSearch(e.target.value)
+                  { setSearch(e.target.value); setVisibleCount(24); }
                 }
+                aria-label="Buscar na biblioteca"
                 placeholder="Buscar nos meus produtos..."
                 className="
                   w-full
@@ -391,9 +315,10 @@ export default function CustomerProductsPage() {
               return (
                 <button
                   key={item.value}
+                  aria-pressed={active}
                   type="button"
                   onClick={() =>
-                    setCategory(item.value)
+                    { setCategory(item.value); setVisibleCount(24); }
                   }
                   className={`
                     shrink-0
@@ -420,6 +345,8 @@ export default function CustomerProductsPage() {
         </div>
 
       )}
+
+      {error && <div role="alert" className="mb-6 rounded-xl border border-red-500/40 p-5">{error} <button className="underline" onClick={() => { setLoading(true); setError(""); setRetry(value => value + 1); }}>Tentar novamente</button></div>}
 
       {/* ==========================================================
           LOADING
@@ -475,7 +402,7 @@ export default function CustomerProductsPage() {
           PRODUTOS
       ========================================================== */}
 
-      {!loading && filteredProducts.length > 0 && (
+      {!loading && !error && filteredProducts.length > 0 && (
 
         <div
           className="
@@ -487,7 +414,7 @@ export default function CustomerProductsPage() {
           "
         >
 
-          {filteredProducts.map((product) => (
+          {filteredProducts.slice(0, visibleCount).map((product) => (
 
             <div
               key={product.id}
@@ -511,21 +438,7 @@ export default function CustomerProductsPage() {
 
               <div className="relative h-56 overflow-hidden bg-zinc-950">
 
-                <img
-                  src={
-                    product.image_url ||
-                    "/placeholder.png"
-                  }
-                  alt={product.title}
-                  className="
-                    h-full
-                    w-full
-                    object-cover
-                    transition-transform
-                    duration-500
-                    group-hover:scale-105
-                  "
-                />
+                <CatalogImage src={product.image_url} alt={product.title} className="h-full w-full object-cover" />
 
                 {/* GRADIENT */}
 
@@ -584,7 +497,7 @@ export default function CustomerProductsPage() {
                     shadow-green-500/20
                   "
                 >
-                  LIBERADO
+                  {product.accessLabel}
                 </div>
 
               </div>
@@ -637,7 +550,7 @@ export default function CustomerProductsPage() {
                     </span>
 
                     <span className="text-sm font-bold text-green-400">
-                      Liberado
+                      {product.accessLabel}
                     </span>
 
                   </div>
@@ -649,13 +562,7 @@ export default function CustomerProductsPage() {
                     </span>
 
                     <span className="text-sm font-medium text-zinc-300">
-                      {product.unlocked_at
-                        ? new Date(
-                            product.unlocked_at
-                          ).toLocaleDateString(
-                            "pt-BR"
-                          )
-                        : "-"}
+                      {readableDate(product.unlocked_at)}
                     </span>
 
                   </div>
@@ -664,12 +571,8 @@ export default function CustomerProductsPage() {
 
                 {/* BOTÃO */}
 
-                <Link
-                  href={
-                    product.type === "course"
-                      ? `/dashboard/my-courses/${product.id}`
-                      : `/dashboard/customer/products/${product.id}`
-                  }
+                {product.available ? <Link
+                  href={libraryDestination(product)}
                   className="
                     mt-5
                     flex
@@ -708,7 +611,7 @@ export default function CustomerProductsPage() {
                     <path d="M5 12h14" />
                     <path d="m13 6 6 6-6 6" />
                   </svg>
-                </Link>
+                </Link> : <p className="mt-5 text-sm text-zinc-400">{product.accessLabel}. Consulte as informações da sua aquisição ou contate o suporte.</p>}
 
               </div>
 
@@ -720,11 +623,13 @@ export default function CustomerProductsPage() {
 
       )}
 
+      {!loading && !error && filteredProducts.length > visibleCount && <button className="mt-6 rounded-xl border border-zinc-700 px-5 py-3 focus-visible:outline-2" onClick={() => setVisibleCount(count => count + 24)}>Mostrar mais produtos ({Math.min(visibleCount, filteredProducts.length)} de {filteredProducts.length})</button>}
+
       {/* ==========================================================
           NENHUM PRODUTO
       ========================================================== */}
 
-      {!loading &&
+      {!loading && !error &&
         products.length === 0 && (
 
           <div
@@ -823,7 +728,7 @@ export default function CustomerProductsPage() {
           FILTRO SEM RESULTADOS
       ========================================================== */}
 
-      {!loading &&
+      {!loading && !error &&
         products.length > 0 &&
         filteredProducts.length === 0 && (
 

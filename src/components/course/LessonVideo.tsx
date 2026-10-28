@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface LessonVideoProps {
   lessonId: string;
@@ -25,10 +25,12 @@ export default function LessonVideo({
 
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
+  const [previousVideo, setPreviousVideo] = useState({ videoProvider, videoUrl });
+  if (previousVideo.videoProvider !== videoProvider || previousVideo.videoUrl !== videoUrl) {
+    setPreviousVideo({ videoProvider, videoUrl });
     setProvider(videoProvider ?? "youtube");
     setUrl(videoUrl ?? "");
-  }, [videoProvider, videoUrl]);
+  }
 
   async function handleSave() {
     try {

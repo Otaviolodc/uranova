@@ -1,11 +1,12 @@
+import { requireAdminPage } from "@/lib/security/admin-page";
 import Link from "next/link";
-import { createClient }
-from "@/lib/supabase/server";
+import { admin } from "@/lib/supabase/admin";
 
 export default async function UsersPage() {
+  await requireAdminPage();
 
   const supabase =
-    await createClient();
+    admin;
 
   // USERS
   const { data: users } = await supabase

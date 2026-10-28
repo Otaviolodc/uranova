@@ -1,3 +1,5 @@
+import { uuid } from "@/lib/security/validation";
+import { requireAdminPage } from "@/lib/security/admin-page";
 import { notFound } from "next/navigation";
 import { admin } from "@/lib/supabase/admin";
 
@@ -10,7 +12,8 @@ interface UserPageProps {
 export default async function UserPage({
   params,
 }: UserPageProps) {
-  const { id } = await params;
+  await requireAdminPage();
+  const { id } = await params; uuid(id);
 
   const supabase = admin;
 

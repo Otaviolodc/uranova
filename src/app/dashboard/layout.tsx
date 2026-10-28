@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { redirect } from "next/navigation";
-import { getUserFinancialSummary } from "@/lib/services/balance";
+import SidebarFinance from "@/components/finance/SidebarFinance";
 
 import SupportButton from "@/components/support/SupportButton";
 import Sidebar from "@/components/layout/Sidebar";
@@ -24,13 +24,13 @@ export default async function DashboardLayout({
     redirect("/auth/login");
   }
 
-  const balance = await getUserFinancialSummary(user.id);
-
   return (
     <div className="flex bg-black min-h-screen">
       <Sidebar
         userId={user.id}
-        totalEarned={balance?.total_net ?? 0}
+        financialSummary={<Suspense fallback={<p role="status">Carregando resumo financeiro…</p>}>
+          <SidebarFinance userId={user.id} />
+        </Suspense>}
       />
 
       <div className="dashboard-content flex min-w-0 flex-col flex-1 min-h-screen">

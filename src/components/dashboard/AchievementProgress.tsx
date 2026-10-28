@@ -25,7 +25,7 @@ export default function AchievementProgress({
 
         <div>
           <p className="text-xs text-zinc-400">
-            Faturamento
+            Receita líquida acumulada do produtor
           </p>
 
           <p className="mt-1 text-sm font-semibold text-white">

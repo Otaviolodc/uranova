@@ -1,7 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 
 type ProductCardProps = {
-  product: any;
+  product: { title: string; type: string; price: number | string; image_url: string | null; checkout_slug: string };
 };
 
 export default function ProductCard({
@@ -37,7 +38,7 @@ export default function ProductCard({
       <div className="relative">
 
         {product.image_url ? (
-          <img
+          <Image unoptimized loading="eager" width={640} height={224}
             src={product.image_url}
             alt={product.title}
             className="

@@ -1,7 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { authStagingEnabled } from "@/lib/security/staging-policy";
 
 export async function createClient() {
+  authStagingEnabled();
   const cookieStore = await cookies();
 
   return createServerClient(

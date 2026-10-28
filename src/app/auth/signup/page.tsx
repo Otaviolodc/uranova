@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { useState } from "react";
-import Link from "next/link";
 
 import AuthCard from "@/components/auth/AuthCard";
 import AuthLogo from "@/components/auth/AuthLogo";
@@ -38,8 +37,8 @@ export default function SignupPage() {
     return;
   }
 
-  if (password.length < 6) {
-    alert("A senha deve possuir pelo menos 6 caracteres.");
+  if (password.length < 12 || password.length > 128) {
+    alert("A senha deve possuir entre 12 e 128 caracteres.");
     return;
   }
 
@@ -50,10 +49,11 @@ export default function SignupPage() {
 
   setLoading(true);
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
+      emailRedirectTo: window.location.origin + "/auth/callback",
       data: {
         username: name,
       },
@@ -66,13 +66,8 @@ export default function SignupPage() {
     return;
   }
 
-  const login = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (login.error) {
-    alert(login.error.message);
+  if (!data.session) {
+    alert("Confira seu e-mail para confirmar o cadastro antes de entrar.");
     setLoading(false);
     return;
   }

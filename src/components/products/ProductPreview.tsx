@@ -1,3 +1,5 @@
+import CatalogImage from "@/components/marketplace/CatalogImage";
+
 interface Props {
   title: string;
   description: string;
@@ -105,10 +107,11 @@ export default function ProductPreview({
           "
         >
           {imageUrl ? (
-            <img
+            <CatalogImage
               src={imageUrl}
               alt={title || "Imagem do produto"}
               className="
+                [&_img]:object-contain
                 w-full
                 h-full
                 object-contain
@@ -212,6 +215,7 @@ export default function ProductPreview({
           {/* CTA */}
           <button
             type="button"
+            disabled
             className="
               mt-6
               w-full
@@ -233,7 +237,7 @@ export default function ProductPreview({
               shadow-green-500/10
             "
           >
-            Comprar Agora
+            Prévia do botão de compra
           </button>
 
         </div>

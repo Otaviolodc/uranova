@@ -16,8 +16,7 @@ export default async function CheckoutPage({
 
   const decodedSlug = decodeURIComponent(slug);
 
-  console.log("Slug recebido:", slug);
-  console.log("Slug decodificado:", decodedSlug);
+
 
   const supabase = await createClient();
 
@@ -25,13 +24,12 @@ export default async function CheckoutPage({
     data: product,
     error,
   } = await supabase
-    .from("products_checkout")
+    .from("public_checkouts")
     .select("*")
     .eq("checkout_slug", decodedSlug)
     .maybeSingle();
 
-  console.log("Produto:", product);
-  console.log("Erro:", error);
+
 
   if (error) {
     return (

@@ -1,3 +1,4 @@
+import { assertIntegrationsEnabled } from "@/lib/security/staging-policy";
 import "server-only";
 import { randomUUID } from "node:crypto";
 import type Stripe from "stripe";
@@ -7,6 +8,7 @@ import { cents } from "@/lib/finance/money";
 import { assertDirectChargeAccount } from "./payment-processor";
 
 export async function sellerForAccount(accountId: string) {
+  assertIntegrationsEnabled();
   const { data, error } = await admin.from("profiles").select("id,stripe_account_id")
     .eq("stripe_account_id", accountId).maybeSingle();
   if (error) throw new Error(error.message);
@@ -14,6 +16,7 @@ export async function sellerForAccount(accountId: string) {
 }
 
 export async function recordPayout(userId: string, accountId: string, payout: Stripe.Payout, started: string) {
+  assertIntegrationsEnabled();
   if (!payout.livemode || payout.currency !== "brl") throw new Error("Invalid Live BRL payout");
   const { error } = await admin.rpc("record_stripe_payout", {
     p_user: userId, p_account: accountId, p_started: started,
@@ -26,6 +29,7 @@ export async function recordPayout(userId: string, accountId: string, payout: St
 
 /** Reconcile external payouts too: automatic Stripe payouts must never be paid again locally. */
 export async function syncProducerFinance(userId: string, accountId: string) {
+  assertIntegrationsEnabled();
   assertStripeLive();
   const started = new Date().toISOString();
   const token = randomUUID();
@@ -60,6 +64,7 @@ export async function syncProducerFinance(userId: string, accountId: string) {
 }
 
 export async function requestProducerPayout(userId: string, requestKey: string, amount: number) {
+  assertIntegrationsEnabled();
   cents(amount);
   if (amount <= 0 || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestKey)) {
     throw new Error("Invalid payout request");

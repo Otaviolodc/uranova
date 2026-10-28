@@ -1,6 +1,7 @@
 "use client";
 
-import { uploadPrivateFile } from "@/lib/services/storage.service";
+import { useProductUploads } from "@/hooks/useProductUploads";
+import { validateProductDraft } from "@/lib/products/editor-validation";
 import { useProducts } from "@/hooks/useProducts";
 import type { Product } from "@/types/product";
 import ProductForm from "@/components/products/ProductForm";
@@ -10,7 +11,29 @@ import ProductStats from "@/components/products/ProductStats";
 import { supabase }
 from "@/lib/supabase/client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+async function readProducts(): Promise<Product[]> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("SESSION_REQUIRED");
+
+
+  const { data, error } = await supabase
+    .from("products_checkout")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", {
+      ascending: false,
+    });
+
+
+
+  if (error) throw error;
+  return data || [];
+}
 
 export default function StorePage() {
 
@@ -29,165 +52,57 @@ export default function StorePage() {
   resetProduct,
 } = useProducts();
 
-const fetchProducts = async () => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+const uploads = useProductUploads(updateField);
+const saving = useRef(false);
+const uncertainSave = useRef(false);
+const [saveBlocked, setSaveBlocked] = useState(false);
+const [notice, setNotice] = useState("");
+const [listLoading, setListLoading] = useState(true);
+const [listError, setListError] = useState("");
+const listRequest = useRef(0);
 
-  if (!user) return;
-
-  console.log("USER:", user.id);
-
-  const { data, error } = await supabase
-    .from("products_checkout")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", {
-      ascending: false,
-    });
-
-  console.log("DATA:", data);
-  console.log("ERROR:", error);
-
-  if (error) {
-    console.error(error);
-    return;
+const fetchProducts = useCallback(async () => {
+  const request = ++listRequest.current;
+  try {
+  const data = await readProducts();
+  if (request === listRequest.current) { setProducts(data || []); setListError(""); }
+  } catch {
+    if (request === listRequest.current) setListError("LIST_FAILED");
+  } finally {
+    if (request === listRequest.current) setListLoading(false);
   }
-
-  setProducts(data || []);
-};
+}, [setProducts]);
 
   useEffect(() => {
-  fetchProducts();
-}, []);
-   
-  async function handleUpload(
-  e: React.ChangeEvent<HTMLInputElement>
-) {
-  console.log("UPLOAD INICIADO");
+    let active = true;
+    readProducts().then((data) => {
+      if (active) { setProducts(data); setListError(""); }
+    }, () => { if (active) setListError("LIST_FAILED"); })
+      .finally(() => { if (active) setListLoading(false); });
+    return () => { active = false; };
+  }, [setProducts]);
 
-  const file = e.target.files?.[0];
-
-  console.log("ARQUIVO:", file);
-
-  if (!file) return;
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  console.log("USER:", user);
-
-  if (!user) return;
-
-  const fileExt = file.name.split(".").pop();
-
-  const fileName =
-    `${user.id}-${Date.now()}.${fileExt}`;
-
-  console.log("NOME:", fileName);
-
-  const { error } =
-    await supabase.storage
-      .from("products-images")
-      .upload(fileName, file);
-
-  console.log("UPLOAD ERROR:", error);
-
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
-  const { data } =
-    supabase.storage
-      .from("products-images")
-      .getPublicUrl(fileName);
-
-  console.log("PUBLIC URL:", data.publicUrl);
-
-  updateField(
-    "image_url",
-    data.publicUrl
-  );
+async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  const files = Array.from(e.target.files ?? []); e.target.value = "";
+  if (saving.current || uncertainSave.current) return;
+  await uploads.upload(files, "cover");
 }
 
-async function handleProductFileUpload(
-  e: React.ChangeEvent<HTMLInputElement>
-) {
-  console.log("=== UPLOAD PRODUTO ===");
-
-  const files = Array.from(e.target.files ?? []);
-
-  if (files.length === 0) return;
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return;
-
-  // PDF e E-book continuam aceitando apenas 1 arquivo
-  if (product.type !== "bundle") {
-    const file = files[0];
-
-    const fileExt = file.name.split(".").pop();
-
-    const fileName =
-      `${user.id}-${Date.now()}.${fileExt}`;
-
-    const filePath = await uploadPrivateFile(
-      "products",
-      file,
-      fileName
-    );
-
-    if (!filePath) {
-      alert("Erro ao enviar o arquivo.");
-      return;
-    }
-
-    updateField("file_path", filePath);
-
-    console.log("ARQUIVO ÚNICO ENVIADO:", filePath);
-
-    return;
+async function handleProductFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  const files = Array.from(e.target.files ?? []); e.target.value = "";
+  if (saving.current || uncertainSave.current) return;
+  if (product.type === "pdf" || product.type === "ebook" || product.type === "bundle") {
+    await uploads.upload(files, product.type);
   }
-
-  // 📦 Pack de Arquivos
-  const uploadedFiles: string[] = [];
-
-  for (const file of files) {
-    const fileExt = file.name.split(".").pop();
-
-    const fileName =
-      `${user.id}-${Date.now()}-${Math.random()
-        .toString(36)
-        .substring(2, 8)}.${fileExt}`;
-
-    const filePath = await uploadPrivateFile(
-      "products",
-      file,
-      fileName
-    );
-
-    if (!filePath) {
-      alert(`Erro ao enviar o arquivo: ${file.name}`);
-      return;
-    }
-
-    uploadedFiles.push(filePath);
-  }
-
-  updateField(
-    "file_path",
-    JSON.stringify(uploadedFiles)
-  );
-
-  console.log("PACK ENVIADO:", uploadedFiles);
 }
 
   async function handleCreate() {
+    if (saving.current || uploads.isUploading() || uncertainSave.current) return;
+    const validation = validateProductDraft(product);
+    if (validation) { setNotice(validation); return; }
+    saving.current = true; setNotice("");
+    let persistenceStarted = false;
+    let createdId: string | null = null;
 
     try {
 
@@ -199,8 +114,7 @@ async function handleProductFileUpload(
 
       if (!user) {
 
-        setLoading(false);
-
+        setNotice("Não foi possível confirmar sua sessão. Entre novamente antes de salvar.");
         return;
 
       }
@@ -216,6 +130,7 @@ async function handleProductFileUpload(
 
 if (product.id) {
 
+  persistenceStarted = true;
   const result =
     await supabase
       .from("products_checkout")
@@ -236,6 +151,7 @@ if (product.id) {
 
 } else {
 
+  persistenceStarted = true;
   // 1 - Criar produto principal
   const {
     data: createdProduct,
@@ -262,6 +178,7 @@ if (product.id) {
 
   } else {
 
+    createdId = createdProduct.id;
     // 2 - Criar checkout ligado ao produto
     const result =
       await supabase
@@ -303,10 +220,7 @@ if (product.id) {
 
 }
 
-      if (error) {
-        alert(error.message);
-        return;
-      }
+      if (error) throw error;
 
       alert(
         product.id
@@ -315,17 +229,23 @@ if (product.id) {
       );
 
       resetProduct();
+      uploads.clearDraft();
 
       await fetchProducts();
 
     } catch (error) {
 
-      console.error(error);
-
-      alert("Erro ao salvar produto");
+      void error;
+      uncertainSave.current = persistenceStarted;
+      setSaveBlocked(persistenceStarted);
+      setNotice(persistenceStarted
+        ? (createdId ? `Cadastro incompleto: o produto ${createdId} foi criado, mas a segunda etapa não foi confirmada.` : "Não foi possível confirmar o resultado da gravação.")
+          + " O formulário foi preservado e novos envios estão bloqueados nesta página para evitar duplicação. Confira os registros antes de recarregar ou tentar novamente. Nenhum registro ou arquivo foi excluído."
+        : "Não foi possível confirmar sua sessão. Entre novamente antes de salvar.");
 
     } finally {
 
+      saving.current = false;
       setLoading(false);
 
     }
@@ -333,6 +253,8 @@ if (product.id) {
   }
 
   function editProduct(product: Product) {
+    if (saving.current || uploads.isUploading() || uncertainSave.current) return;
+    uploads.clearDraft(); setNotice("");
     setProduct(product);
   }
 
@@ -381,13 +303,22 @@ async function deleteProduct(id: string) {
 
       <ProductStats products={products} />
 
+      {notice && <p role="alert" className="mb-6 break-words text-amber-300">{notice}</p>}
+      {uploads.message && <p role="status" className="mb-4 break-words text-zinc-300">{uploads.message}</p>}
+      {uploads.uploading && <button onClick={uploads.cancel} className="mb-4 rounded-xl border px-4 py-2">Cancelar envio</button>}
+      {uploads.canRetry && !loading && !saveBlocked && <button onClick={() => void uploads.retry()} className="mb-4 rounded-xl border px-4 py-2">Retomar envio</button>}
       {/* FORM */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
 
         <ProductForm
           product={product}
-          updateField={updateField}
+          updateField={(field, value) => {
+            if (field === "type" && value !== product.type) uploads.clearDraft();
+            updateField(field, value);
+          }}
           loading={loading}
+          uploading={uploads.uploading}
+          saveBlocked={saveBlocked}
           editingId={product.id || null}
           handleUpload={handleUpload}
           handleProductFileUpload={handleProductFileUpload}
@@ -402,11 +333,13 @@ async function deleteProduct(id: string) {
 
       </div>
 
-    <ProductList
+    {listLoading ? <p role="status" className="mt-10">Carregando produtos...</p>
+      : listError ? <div role="alert" className="mt-10"><p>Não foi possível carregar os produtos. Confira sua conexão e sessão.</p><button onClick={() => { setListLoading(true); void fetchProducts(); }}>Tentar novamente</button></div>
+      : products.length === 0 ? <p role="status" className="mt-10">Nenhum produto cadastrado.</p> : <ProductList
       products={products}
       editProduct={editProduct}
       deleteProduct={deleteProduct}
-    />
+    />}
     
   </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import LessonSection from "./LessonSection";
 import LessonVideo from "./LessonVideo";
@@ -42,10 +42,12 @@ export default function LessonCard({
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
+  const [previousLesson, setPreviousLesson] = useState(lesson);
+  if (previousLesson !== lesson) {
+    setPreviousLesson(lesson);
     setTitle(lesson.title);
     setDescription(lesson.description ?? "");
-  }, [lesson]);
+  }
 
   async function handleSave() {
     try {

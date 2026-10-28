@@ -1,3 +1,5 @@
+import CertificateDownload from "@/components/course/CertificateDownload";
+import { isCourse } from "@/lib/courses";
 import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
@@ -26,18 +28,17 @@ export default async function CertificatePage({
 
   const { data: product } = await supabase
     .from("products")
-    .select("id,title")
+    .select("id,title,type")
     .eq("id", productId)
     .single();
 
-  if (!product) {
+  if (!product || !isCourse(product.type)) {
     notFound();
   }
 
-  const completion = await getCourseCompletion(
-    user.id,
-    product.id
-  );
+  let completion;
+  try { completion = await getCourseCompletion(user.id, product.id); }
+  catch { return <p role="alert">Certificado indisponível. Verifique seu acesso e tente novamente.</p>; }
 
   return (
     <div className="max-w-3xl mx-auto py-12 px-6">
@@ -77,25 +78,7 @@ export default async function CertificatePage({
               </p>
             </div>
 
-            <a
-              href={`/api/course/certificate?productId=${product.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="
-                mt-8
-                block
-                w-full
-                rounded-xl
-                bg-blue-600
-                py-4
-                text-center
-                font-semibold
-                hover:bg-blue-700
-                transition
-              "
-            >
-              🎓 Baixar Certificado
-            </a>
+            <CertificateDownload productId={product.id} />
 
           </div>
         ) : (

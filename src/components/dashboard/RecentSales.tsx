@@ -1,13 +1,27 @@
 import { requireFinanceUser } from "@/lib/finance/access";
 import { admin } from "@/lib/supabase/admin";
+import { productTitle, orderStatus } from "@/components/finance/order-presentation";
+import { rethrowAccessError } from "@/components/finance/presentation-errors";
+import ReadRetry from "@/components/finance/ReadRetry";
 export default async function RecentSales() {
   const user = await requireFinanceUser();
-  const { data, error } = await admin.from("orders")
+  let result;
+  try {
+  result = await admin.from("orders")
     .select("id,customer_name,amount,status,created_at,products(title)")
     .eq("user_id",user.id).not("stripe_payment_intent_id","is",null)
     .order("created_at",{ascending:false}).limit(10);
-  if (error) throw new Error(error.message);
-  const sales = data ?? [];
+  if (result.error) {
+    rethrowAccessError(result.error);
+    throw new Error(result.error.message);
+  }
+  } catch (error) {
+    rethrowAccessError(error);
+    return <section role="status" className="mt-10 rounded-xl border border-zinc-700 p-6">
+      <h2>Últimas vendas</h2><p>Não foi possível carregar as últimas vendas.</p><ReadRetry />
+    </section>;
+  }
+  const sales = result.data ?? [];
   const loading = false;
   return (
     <div
@@ -102,7 +116,7 @@ export default async function RecentSales() {
                     "
                   >
                     <td className="p-5 text-white font-medium">
-                      {sale.products?.[0]?.title || "Produto"}
+                      {productTitle(sale.products)}
                     </td>
 
                     <td className="p-5 text-white">
@@ -134,7 +148,7 @@ export default async function RecentSales() {
                           whitespace-nowrap
                         "
                       >
-                        APROVADA
+                        {orderStatus(sale.status)}
                       </span>
                     </td>
 
@@ -167,4 +181,5 @@ export default async function RecentSales() {
       </div>
     </div>
   );
+
 }

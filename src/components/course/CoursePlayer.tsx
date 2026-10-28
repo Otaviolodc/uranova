@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { courseSequence, orderCourseItems, courseVideo } from "@/lib/courses";
 
 interface Product {
   id: string;
@@ -9,11 +10,13 @@ interface Product {
 }
 
 interface Module {
+  position?: number | null;
   id: string;
   title: string;
 }
 
 interface Lesson {
+  position?: number | null;
   id: string;
   module_id: string;
   title: string;
@@ -32,32 +35,18 @@ interface Props {
   completedLessons: string[];
 }
 
-function getYoutubeEmbed(url: string) {
-  try {
-    const parsed = new URL(url);
-
-    if (parsed.hostname.includes("youtu.be")) {
-      return `https://www.youtube.com/embed/${parsed.pathname.replace("/", "")}`;
-    }
-
-    if (parsed.searchParams.get("v")) {
-      return `https://www.youtube.com/embed/${parsed.searchParams.get("v")}`;
-    }
-
-    return url;
-  } catch {
-    return url;
-  }
-}
-
 export default function CoursePlayer({
-  userId,
   product,
   modules,
   lessons,
   completedLessons,
 }: Props) {
-  const firstLesson = lessons[0] ?? null;
+  const orderedModules = useMemo(() => orderCourseItems(modules), [modules]);
+  const orderedLessons = useMemo(() => courseSequence(modules, lessons), [modules, lessons]);
+  const firstLesson = orderedLessons[0] ?? null;
+  const savingRef = useRef(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   const [selectedLesson, setSelectedLesson] =
     useState(firstLesson);
@@ -67,7 +56,7 @@ export default function CoursePlayer({
 
   const playerTopRef = useRef<HTMLDivElement>(null);
 
-  const orderedLessons = useMemo(() => lessons, [lessons]);
+
 
   const currentIndex = orderedLessons.findIndex(
     (lesson) => lesson.id === selectedLesson?.id
@@ -83,18 +72,12 @@ export default function CoursePlayer({
       ? orderedLessons[currentIndex + 1]
       : null;
 
-  const videoUrl = useMemo(() => {
-    if (!selectedLesson?.video_url) return null;
-
-    if (selectedLesson.video_provider === "youtube") {
-      return getYoutubeEmbed(selectedLesson.video_url);
-    }
-
-    return selectedLesson.video_url;
-  }, [selectedLesson]);
+  const video = courseVideo(selectedLesson?.video_url ?? null, selectedLesson?.video_provider ?? null);
 
   async function handleCompleteLesson() {
-  if (!selectedLesson) return;
+  if (!selectedLesson || savingRef.current) return;
+  const lessonId = selectedLesson.id;
+  savingRef.current = true; setSaving(true); setSaveError(false);
 
   try {
     const response = await fetch(
@@ -105,7 +88,7 @@ export default function CoursePlayer({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          lessonId: selectedLesson.id,
+          lessonId,
         }),
       }
     );
@@ -114,14 +97,11 @@ export default function CoursePlayer({
       throw new Error();
     }
 
-    if (!completed.includes(selectedLesson.id)) {
-      setCompleted([
-        ...completed,
-        selectedLesson.id,
-      ]);
-    }
+    setCompleted(previous => previous.includes(lessonId) ? previous : [...previous, lessonId]);
   } catch {
-    alert("Erro ao concluir a aula.");
+    setSaveError(true);
+  } finally {
+    savingRef.current = false; setSaving(false);
   }
 }
 
@@ -132,6 +112,7 @@ export default function CoursePlayer({
         {product.title}
       </h1>
 
+      {!orderedLessons.length && <p role="status">Este curso ainda não possui aulas disponíveis.</p>}
       <div className="grid lg:grid-cols-[340px_minmax(0,1fr)] gap-8">
 
         <aside
@@ -142,7 +123,7 @@ export default function CoursePlayer({
             space-y-6
           "
         >
-          {modules.map((module) => (
+          {orderedModules.map((module) => (
             <div key={module.id}>
 
               <h2 className="font-bold mb-3">
@@ -151,7 +132,7 @@ export default function CoursePlayer({
 
               <div className="space-y-2">
 
-                {lessons
+                {orderedLessons
                   .filter(
                     (lesson) =>
                       lesson.module_id === module.id
@@ -216,13 +197,15 @@ export default function CoursePlayer({
               aspect-video
             "
           >
-            {videoUrl ? (
+            {video?.kind === "embed" ? (
               <iframe
-                src={videoUrl}
+                src={video.url}
+                title={selectedLesson?.title || "Aula"}
+                referrerPolicy="strict-origin-when-cross-origin"
                 className="w-full h-full"
                 allowFullScreen
               />
-            ) : (
+            ) : video?.kind === "video" ? <video key={video.url} src={video.url} controls className="w-full h-full" /> : video ? <a href={video.url} target="_blank" rel="noopener noreferrer" className="block p-6">Abrir material da aula</a> : (
               <div className="flex h-full items-center justify-center text-zinc-400">
                 Nenhum vídeo disponível.
               </div>
@@ -316,11 +299,12 @@ export default function CoursePlayer({
 )}
 
 <div className="mt-10">
+  {saveError && <p role="alert">Não foi possível salvar o progresso. Tente novamente.</p>}
+  {saving && <p role="status">Salvando progresso...</p>}
   <button
     onClick={handleCompleteLesson}
     disabled={
-      !!selectedLesson &&
-      completed.includes(selectedLesson.id)
+      saving || !selectedLesson || completed.includes(selectedLesson.id)
     }
     className="
       w-full

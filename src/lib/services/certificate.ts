@@ -1,4 +1,6 @@
+import { completionCount } from "@/lib/courses";
 import { admin } from "@/lib/supabase/admin";
+import { requireCourseAccess } from "@/lib/security/course-access";
 
 export interface CourseCompletion {
   completed: boolean;
@@ -10,6 +12,7 @@ export async function getCourseCompletion(
   userId: string,
   productId: string
 ): Promise<CourseCompletion> {
+  await requireCourseAccess(userId,productId);
   const { data: modules, error: modulesError } = await admin
     .from("course_modules")
     .select("id")
@@ -19,7 +22,7 @@ export async function getCourseCompletion(
     throw modulesError;
   }
 
-  const moduleIds = modules.map((module) => module.id);
+  const moduleIds = (modules ?? []).map((module) => module.id);
 
   if (moduleIds.length === 0) {
     return {
@@ -38,7 +41,7 @@ export async function getCourseCompletion(
     throw lessonsError;
   }
 
-  const lessonIds = lessons.map((lesson) => lesson.id);
+  const lessonIds = (lessons ?? []).map((lesson) => lesson.id);
 
   if (lessonIds.length === 0) {
     return {
@@ -58,12 +61,5 @@ export async function getCourseCompletion(
     throw progressError;
   }
 
-  const completedLessons = progress.length;
-  const totalLessons = lessonIds.length;
-
-  return {
-    completed: completedLessons === totalLessons,
-    completedLessons,
-    totalLessons,
-  };
+  return completionCount(lessonIds, (progress ?? []).map(item => item.lesson_id));
 }

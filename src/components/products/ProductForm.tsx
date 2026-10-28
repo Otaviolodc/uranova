@@ -1,4 +1,5 @@
 import type { Product } from "@/types/product";
+import CatalogImage from "@/components/marketplace/CatalogImage";
 
 interface Props {
   product: Product;
@@ -9,6 +10,8 @@ interface Props {
   ) => void;
 
   loading: boolean;
+  uploading?: boolean;
+  saveBlocked?: boolean;
 
   editingId: string | null;
 
@@ -26,6 +29,8 @@ export default function ProductForm({
   product,
   updateField,
   loading,
+  uploading = false,
+  saveBlocked = false,
   editingId,
   handleUpload,
   handleProductFileUpload,
@@ -33,8 +38,10 @@ export default function ProductForm({
 }: Props) {
   
   return (
-    <div
+    <fieldset
+      disabled={loading || uploading || saveBlocked}
       className="
+        min-w-0
         bg-zinc-900
         border
         border-zinc-800
@@ -43,7 +50,7 @@ export default function ProductForm({
       "
     >
       <h2 className="text-2xl font-bold mb-6">
-        Novo Produto
+        {editingId ? "Editar Produto" : "Novo Produto"}
       </h2>
 
     <div className="space-y-2 mb-6">
@@ -176,7 +183,7 @@ export default function ProductForm({
 
           <input
             type="file"
-            accept="image/*"
+            accept="image/png,image/jpeg,image/webp"
             onChange={handleUpload}
             className="hidden"
           />
@@ -203,7 +210,7 @@ export default function ProductForm({
 
     <input
       type="file"
-      accept=".pdf,.epub"
+      accept={product.type === "pdf" ? ".pdf" : ".pdf,.epub"}
       onChange={handleProductFileUpload}
       className="hidden"
     />
@@ -238,6 +245,7 @@ export default function ProductForm({
     <input
       type="file"
       multiple
+      accept=".pdf,.epub,.zip,.png,.jpg,.jpeg,.webp,.mp4"
       onChange={handleProductFileUpload}
       className="hidden"
     />
@@ -287,9 +295,9 @@ export default function ProductForm({
     </h3>
 
     <p className="text-zinc-400 mt-2">
-      Depois de criar o produto,
-      configure datas,
-      horários e links das reuniões.
+      O agendamento e os links de reunião ainda não estão disponíveis nesta área.
+      Descreva claramente na oferta como a mentoria será entregue.
+      O cadastro não cria sessões nem horários automaticamente.
     </p>
 
   </div>
@@ -313,9 +321,7 @@ export default function ProductForm({
     </h3>
 
     <p className="text-zinc-400 mt-2">
-      Após salvar,
-      será possível enviar
-      vários arquivos.
+      Envie todos os arquivos antes de salvar. Cada arquivo deve ter menos de 4 MB.
     </p>
 
   </div>
@@ -338,7 +344,7 @@ export default function ProductForm({
     </h3>
 
     <p className="text-zinc-400 mt-2">
-      Após criar o produto, envie a versão final do seu e-book.
+      Envie a versão final do seu e-book antes de criar o produto.
     </p>
   </div>
 )}
@@ -350,16 +356,16 @@ export default function ProductForm({
         )}
 
         {product.image_url && (
-          <img
+          <CatalogImage
             src={product.image_url}
             alt="Capa do produto"
-            className="w-48 rounded-2xl"
+            className="w-48 h-48 rounded-2xl"
           />
         )}
 
         <button
           onClick={handleCreate}
-          disabled={loading}
+          disabled={loading || uploading || saveBlocked}
           className="
             w-full
             bg-green-500
@@ -370,7 +376,7 @@ export default function ProductForm({
             font-bold
           "
         >
-          {loading
+          {uploading ? "Enviando arquivos..." : loading
             ? "Salvando..."
             : editingId
             ? "Atualizar Produto ✅"
@@ -378,6 +384,6 @@ export default function ProductForm({
         </button>
 
       </div>
-    </div>
+    </fieldset>
   );
 }

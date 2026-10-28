@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
+import { nextPosition, orderCourseItems } from "@/lib/courses";
 import LessonForm from "./LessonForm";
 import LessonCard from "./LessonCard";
 
@@ -30,8 +31,11 @@ export default function LessonEditor({
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
 
-  async function fetchLessons() {
-    setLoading(true);
+  const [error, setError] = useState(false);
+  const fetchLessons = useCallback(async () => {
+
+    try {
+
 
     const response = await fetch(
       `/api/course-lessons?moduleId=${moduleId}`
@@ -39,27 +43,32 @@ export default function LessonEditor({
 
     if (response.ok) {
       const data = await response.json();
-      setLessons(data);
-    }
+      if (!Array.isArray(data)) throw new Error();
+      setLessons(orderCourseItems(data));
+      setError(false);
+    } else throw new Error();
 
-    setLoading(false);
-  }
+    } catch { setError(true); } finally { setLoading(false); }
+  }, [moduleId]);
 
   useEffect(() => {
     if (moduleId) {
+      // State updates in this loader follow the network response/error.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchLessons();
     }
-  }, [moduleId]);
+  }, [moduleId, fetchLessons]);
 
   return (
     <div className="space-y-4">
 
-      <LessonForm
+      {!loading && !error && <LessonForm
         moduleId={moduleId}
+        position={nextPosition(lessons)}
         onCreated={fetchLessons}
-      />
+      />}
 
-      {loading ? (
+      {error ? <p role="alert">Erro ao carregar aulas. <button onClick={fetchLessons}>Tentar novamente</button></p> : loading ? (
         <p className="text-zinc-400">
           Carregando aulas...
         </p>

@@ -1,3 +1,4 @@
+import { assertIntegrationsEnabled } from "@/lib/security/staging-policy";
 import "server-only";
 import { stripe, assertStripeLive } from "@/lib/stripe";
 import { admin } from "@/lib/supabase/admin";
@@ -5,6 +6,7 @@ import type Stripe from "stripe";
 import { directChargeAmounts } from "@/lib/finance/money";
 
 export async function assertDirectChargeAccount(accountId: string) {
+  assertIntegrationsEnabled();
   assertStripeLive();
   const account = await stripe.v2.core.accounts.retrieve(accountId, { include: ["defaults"] });
   if (account.defaults?.responsibilities?.fees_collector !== "stripe") {
@@ -16,6 +18,7 @@ export async function assertDirectChargeAccount(accountId: string) {
 export async function processCheckoutCompleted({ session: incoming, stripeAccountId }: {
   session: Stripe.Checkout.Session; stripeAccountId: string;
 }) {
+  assertIntegrationsEnabled();
   assertStripeLive();
   if (!stripeAccountId || !incoming.livemode) throw new Error("Live Connect event required");
   const options = { stripeAccount: stripeAccountId };
@@ -64,6 +67,7 @@ export async function processCheckoutCompleted({ session: incoming, stripeAccoun
 }
 
 export async function processPaymentIntentSettlement(intentId: string, stripeAccountId: string) {
+  assertIntegrationsEnabled();
   assertStripeLive();
   const sessions = await stripe.checkout.sessions.list({ payment_intent: intentId, limit: 1 }, { stripeAccount: stripeAccountId });
   if (!sessions.data[0]?.metadata?.product_id) return { status: "ignored" };

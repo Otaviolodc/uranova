@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url';
 const moduleURL=(path)=>pathToFileURL(process.cwd()+'/src/'+path+'.ts').href;
 const sdk=new Stripe('sk_test_local_fixture_only');
 process.env.STRIPE_WEBHOOK_SECRET='whsec_local_fixture_only';
-let calls=[], processCalls=0, fail=false, claim='claimed';
+let calls=[], processCalls=0, fail=false, claim='claimed', sellerFound=true;
 const admin={async rpc(name,args){calls.push({name,args});return {data:name==='claim_stripe_event'?claim:null,error:null}}};
 mock.module(moduleURL('lib/supabase/admin'),{namedExports:{admin}});
 mock.module(moduleURL('lib/stripe'),{namedExports:{stripe:{webhooks:sdk.webhooks},assertStripeLive(){}}});
@@ -14,7 +14,7 @@ mock.module(moduleURL('lib/services/payment-processor'),{namedExports:{
  async processPaymentIntentSettlement(){processCalls++;},
 }});
 mock.module(moduleURL('lib/services/payouts'),{namedExports:{
- async recordPayout(){},async sellerForAccount(){return {id:'seller'}},async syncProducerFinance(){},
+ async recordPayout(){},async sellerForAccount(){return sellerFound?{id:'seller'}:null},async syncProducerFinance(){},
 }});
 const {POST}=await import('../src/app/api/stripe/webhook/route.ts');
 const event={id:'evt_fixture',object:'event',type:'checkout.session.completed',livemode:true,account:'acct_seller',
@@ -42,4 +42,9 @@ test('falha devolve 500 e registra erro para retry; lease ocupado não confirma 
  assert.equal((await POST(request())).status,500);fail=false;
  assert.equal(calls.find(c=>c.name==='finish_stripe_event').args.p_error,'Database unavailable');
  claim='busy';assert.equal((await POST(request())).status,409);
+});
+test('unknown seller is retryable failure, never marked processed',async()=>{
+ calls=[];processCalls=0;claim='claimed';sellerFound=false;
+ assert.equal((await POST(request())).status,500);assert.equal(processCalls,0);
+ assert.match(calls.find(c=>c.name==='finish_stripe_event').args.p_error,/Unknown Stripe seller/);sellerFound=true;
 });

@@ -11,6 +11,7 @@ export default function StripeConnectButton({
   accountId,
   stripeConnected,
 }: StripeConnectButtonProps) {
+  const [currentPassword,setCurrentPassword]=useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -33,6 +34,7 @@ export default function StripeConnectButton({
         "/api/stripe/connect/create",
         {
           method: "POST",
+          body:JSON.stringify({currentPassword}),
           headers: {
             "Content-Type": "application/json",
           },
@@ -112,6 +114,7 @@ export default function StripeConnectButton({
             BOTÃO
         ==================================================== */}
 
+        <label>Senha atual<input type="password" autoComplete="current-password" value={currentPassword} onChange={e=>setCurrentPassword(e.target.value)} className="block rounded bg-zinc-800 p-2" /></label>
         {(
           <button
             type="button"

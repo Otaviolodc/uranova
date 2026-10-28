@@ -1,6 +1,7 @@
+import { uuid } from "@/lib/security/validation";
 import { notFound } from "next/navigation";
 import { admin } from "@/lib/supabase/admin";
-import { requireFinanceAdmin } from "@/lib/finance/access";
+import { requireAdminPage } from "@/lib/security/admin-page";
 
 interface PaymentPageProps {
   params: Promise<{
@@ -11,8 +12,8 @@ interface PaymentPageProps {
 export default async function PaymentPage({
   params,
 }: PaymentPageProps) {
-  await requireFinanceAdmin();
-  const { id } = await params;
+  await requireAdminPage();
+  const { id } = await params; uuid(id);
 
   const supabase = admin;
 

@@ -45,11 +45,11 @@ export default async function FinancialHistory({
 
       <div className="p-6 border-b border-zinc-800">
         <h2 className="text-2xl font-bold text-white">
-          Histórico Financeiro
+          Histórico de vendas
         </h2>
 
         <p className="mt-1 text-sm text-zinc-500">
-          Acompanhe suas vendas e movimentações financeiras.
+          Últimas 100 vendas verificadas. Valores líquidos do produtor; esta lista não é um extrato completo de movimentações.
         </p>
       </div>
 
@@ -74,7 +74,7 @@ export default async function FinancialHistory({
               </th>
 
               <th className="p-5 text-left">
-                Valor
+                Líquido do produtor
               </th>
             </tr>
           </thead>
@@ -86,7 +86,7 @@ export default async function FinancialHistory({
                   colSpan={4}
                   className="p-6 text-center text-zinc-500"
                 >
-                  Nenhuma movimentação financeira.
+                  Nenhuma venda verificada encontrada.
                 </td>
               </tr>
             ) : (

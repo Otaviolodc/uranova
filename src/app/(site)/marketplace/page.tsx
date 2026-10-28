@@ -1,6 +1,7 @@
 "use client";
 
-import Image from "next/image";
+import CatalogImage from "@/components/marketplace/CatalogImage";
+import { catalogCategories, categoryLabel, matchesCatalogSearch, normalizeCategory } from "@/lib/public-catalog";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
@@ -28,54 +29,37 @@ export default function MarketplacePage() {
   const [sortBy, setSortBy] =
     useState("recentes");
 
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+
   useEffect(() => {
-
-    fetchProducts();
-
-  }, []);
-
-  const fetchProducts = async () => {
-
-    const { data, error } = await supabase
-  .from("products_checkout")
-  .select(`
-  id,
-  title,
-  description,
-  price,
-  image_url,
-  checkout_slug,
-  type
-  `)
-  .eq("status", "active")
-  .eq("is_marketplace", true)
-  .order("created_at", {
-    ascending: false,
-  });
-
-if (error) {
-  console.error(error);
-  return;
-}
-
-setProducts(data || []);
-
-  };
+    let active = true;
+    async function loadProducts() {
+      try {
+        const { data, error } = await supabase
+          .from("public_checkouts")
+          .select("id,title,description,price,image_url,checkout_slug,type")
+          .eq("status", "active")
+          .eq("is_marketplace", true)
+          .order("created_at", { ascending: false });
+        if (error) throw error;
+        if (active) setProducts(data || []);
+      } catch {
+        if (active) setLoadError(true);
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+    void loadProducts();
+    return () => { active = false; };
+  }, [attempt]);
 
   const filteredProducts =
   products.filter((product) => {
 
-    const matchesSearch =
-      product.title
-        ?.toLowerCase()
-        .includes(
-          search.toLowerCase()
-        );
-
-    const matchesCategory =
-      category === "todos"
-        ? true
-        : product.type === category;
+    const matchesSearch = matchesCatalogSearch(product.title, search);
+    const matchesCategory = category === "todos" || normalizeCategory(product.type) === category;
 
     return (
       matchesSearch &&
@@ -155,9 +139,10 @@ if (sortBy === "az") {
             </p>
 
             {/* BUSCA */}
-            <div className="mt-10 flex flex-col md:flex-row gap-4">
+            <form onSubmit={(event) => { event.preventDefault(); document.getElementById("marketplace-products")?.scrollIntoView({ behavior: "smooth" }); }} className="mt-10 flex flex-col md:flex-row gap-4">
 
               <input
+                aria-label="Buscar produto no marketplace"
                 placeholder="Buscar produto..."
                 value={search}
                 onChange={(e) =>
@@ -197,13 +182,13 @@ if (sortBy === "az") {
 
               </button>
 
-            </div>
+            </form>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12">
 
   <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
     <h2 className="text-4xl font-black text-green-400">
-      {products.length}
+      {loading || loadError ? "—" : products.length}
     </h2>
     <p className="text-gray-400 mt-2">
       Produtos
@@ -212,7 +197,7 @@ if (sortBy === "az") {
 
   <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
     <h2 className="text-4xl font-black text-green-400">
-      5
+      {catalogCategories.length - 1}
     </h2>
     <p className="text-gray-400 mt-2">
       Categorias
@@ -221,7 +206,7 @@ if (sortBy === "az") {
 
   <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
     <h2 className="text-4xl font-black text-green-400">
-      Ativo
+      {loading ? "Carregando" : loadError ? "Indisponível" : "Ativo"}
     </h2>
     <p className="text-gray-400 mt-2">
       Marketplace
@@ -241,19 +226,13 @@ if (sortBy === "az") {
 
         <div className="flex gap-4 overflow-x-auto pb-2">
 
-          {[  
-             "todos",
-             "ebook",
-             "curso",
-             "pdf",
-             "ferramenta",
-             "mentoria",
-          ].map((item) => (
+          {catalogCategories.map((item) => (
 
             <button
-              key={item}
+              key={item.value}
+              aria-pressed={category === item.value}
               onClick={() =>
-                setCategory(item)
+                setCategory(item.value)
               }
               className={`
                 whitespace-nowrap
@@ -266,13 +245,13 @@ if (sortBy === "az") {
                 transition
 
                 ${
-                  category === item
+                  category === item.value
                     ? "bg-green-500 text-black border-green-500"
                     : "bg-zinc-900 border-zinc-800"
                 }
              `}
           >
-              {item.charAt(0).toUpperCase() + item.slice(1)}
+              {item.label}
 
             </button>
 
@@ -286,6 +265,7 @@ if (sortBy === "az") {
 <div className="max-w-7xl mx-auto px-6 mt-6">
 
   <select
+    aria-label="Ordenar produtos"
     value={sortBy}
     onChange={(e) =>
       setSortBy(e.target.value)
@@ -321,7 +301,7 @@ if (sortBy === "az") {
 </div>
 
       {/* RECENTES */}
-<div className="max-w-7xl mx-auto px-6 mt-10">
+{!loading && !loadError && category === "todos" && !search.trim() && products.length > 0 && <div className="max-w-7xl mx-auto px-6 mt-10">
 
   <h2 className="text-3xl font-black mb-6">
     Novidades do Marketplace
@@ -335,7 +315,7 @@ if (sortBy === "az") {
 
         <Link
           key={product.id}
-          href={`/product/${product.checkout_slug}`}
+          href={`/checkout/product/${encodeURIComponent(product.checkout_slug)}`}
           className="
             bg-zinc-900
             border
@@ -365,10 +345,10 @@ if (sortBy === "az") {
 
   </div>
 
-</div>
+</div>}
 
       {/* PRODUTOS */}
-      <div className="max-w-7xl mx-auto px-6 py-14">
+      <div id="marketplace-products" className="max-w-7xl mx-auto px-6 py-14" aria-busy={loading}>
 
         <div className="flex items-center justify-between mb-10">
 
@@ -381,7 +361,7 @@ if (sortBy === "az") {
             </h2>
 
             <p className="text-zinc-500 mt-2">
-              {sortedProducts.length} produtos encontrados
+              {loading ? "Carregando produtos..." : loadError ? "Catálogo indisponível" : `${sortedProducts.length} produtos encontrados`}
             </p>
 
             <p className="text-gray-400 mt-2">
@@ -394,7 +374,16 @@ if (sortBy === "az") {
 
         </div>
 
-        {filteredProducts.length === 0 ? (
+        {loading ? (
+          <p role="status" className="text-center text-gray-400 py-20">Carregando produtos...</p>
+        ) : loadError ? (
+          <div role="alert" className="text-center py-20">
+            <p>Não foi possível carregar os produtos.</p>
+            <button className="mt-4 rounded-xl bg-green-500 px-6 py-3 text-black" onClick={() => {
+              setLoading(true); setLoadError(false); setAttempt((value) => value + 1);
+            }}>Tentar novamente</button>
+          </div>
+        ) : filteredProducts.length === 0 ? (
 
           <div className="text-center text-gray-500 py-32">
 
@@ -426,29 +415,7 @@ if (sortBy === "az") {
                 {/* IMAGEM */}
                 <div className="relative h-64 bg-zinc-800 overflow-hidden">
 
-                  {product.image_url ? (
-
-                    <Image
-                      src={product.image_url}
-                      alt={product.title}
-                      fill
-                      className="
-                        object-cover
-                        group-hover:scale-110
-                        transition-all
-                        duration-500
-                      "
-                    />
-
-                  ) : (
-
-                    <div className="w-full h-full flex items-center justify-center text-6xl">
-
-                      Produto
-
-                    </div>
-
-                  )}
+                  <CatalogImage src={product.image_url} alt={product.title} className="h-full w-full" />
 
                   {/* BADGE */}
                   <div
@@ -466,7 +433,7 @@ if (sortBy === "az") {
                     "
                   >
 
-                    {product.type?.toUpperCase()}
+                    {categoryLabel(product.type)}
 
                   </div>
 
@@ -519,8 +486,9 @@ if (sortBy === "az") {
 
                   {/* BOTÃO */}
                   <Link
-                    href={`/product/${product.checkout_slug}`}
+                    href={`/checkout/product/${encodeURIComponent(product.checkout_slug)}`}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="
                       mt-8
                       block
@@ -573,7 +541,7 @@ if (sortBy === "az") {
 
     <p className="text-zinc-400 mt-4 text-lg">
 
-      Já são {products.length} produtos
+      Já são {loading || loadError ? "—" : products.length} produtos
       publicados pela comunidade Uranova.
 
     </p>

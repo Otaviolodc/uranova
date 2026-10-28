@@ -1,9 +1,8 @@
 "use client";
 
-import AchievementProgress from "@/components/dashboard/AchievementProgress";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 
 type MenuItem = {
   icon: string;
@@ -13,11 +12,11 @@ type MenuItem = {
 
 interface SidebarProps {
   userId: string;
-  totalEarned: number;
+  financialSummary?: ReactNode;
 }
 
 export default function Sidebar({
-  totalEarned,
+  financialSummary,
 }: SidebarProps) {
 
   const pathname = usePathname();
@@ -82,6 +81,7 @@ export default function Sidebar({
   ];
 
   const customerMenu: MenuItem[] = [
+    { icon: "🎓", name: "Meus Cursos", href: "/dashboard/my-courses" },
     {
       icon: "📚",
       name: "Meus Produtos",
@@ -140,7 +140,7 @@ export default function Sidebar({
           <div key={group.title} className="flex flex-col gap-3">
             {!compact && <p className={index ? "mt-5 border-t border-zinc-800 pt-5 text-xs font-bold tracking-widest text-green-400" : "mb-2 text-xs font-bold tracking-widest text-green-400"}>{group.title}</p>}
             {group.items.map((item) => {
-              const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
+              const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(`${item.href}/`));
               return <Link key={item.href} href={item.href} prefetch={true} title={item.name}
                 aria-current={active ? "page" : undefined}
                 onClick={() => setMobileOpen(false)}
@@ -175,7 +175,7 @@ export default function Sidebar({
       <aside className={"hidden lg:flex " + (collapsed ? "w-24" : "w-72") + " shrink-0 min-h-screen bg-zinc-950/90 backdrop-blur-xl border-r border-zinc-800 p-5 flex-col gap-6 transition-all duration-300"}>
         <button type="button" onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
           className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 text-white mb-6 hover:border-green-500 transition">☰</button>
-        {!collapsed && <div className="mb-4"><AchievementProgress totalEarned={totalEarned} /></div>}
+        {!collapsed && <div className="mb-4">{financialSummary}</div>}
         {navigation(collapsed)}
       </aside>
     </>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 
 type Order = {
@@ -16,12 +16,21 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
-  async function fetchOrders() {
+  const [readError, setReadError] = useState("");
+  const requestId = useRef({ version: 0 });
+
+  const fetchOrders = useCallback(async () => {
+    const current = ++requestId.current.version;
+    setLoading(true); setReadError(""); setOrders([]);
+    try {
     const {
       data: { user },
+      error: sessionError,
     } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (current !== requestId.current.version) return;
+    if (sessionError || !user) {
+      setReadError("Não foi possível confirmar sua sessão. Entre novamente.");
       setLoading(false);
       return;
     }
@@ -41,19 +50,26 @@ export default function OrdersPage() {
         ascending: false,
       });
 
+    if (current !== requestId.current.version) return;
     if (error) {
-      console.error("Orders:", error);
-      setLoading(false);
+      setReadError(error.code === "42501" ? "Acesso aos pedidos não autorizado." : "Não foi possível carregar os pedidos.");
       return;
     }
 
     setOrders((data as Order[]) || []);
-    setLoading(false);
-  }
+    } catch {
+      if (current === requestId.current.version) setReadError("Não foi possível carregar os pedidos.");
+    } finally {
+      if (current === requestId.current.version) setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    let active = true;
+    const requests = requestId.current;
+    queueMicrotask(() => { if (active) void fetchOrders(); });
+    return () => { active = false; requests.version++; };
+  }, [fetchOrders]);
 
   const paidOrders = orders.filter(
     (order) => order.status === "PAID"
@@ -83,13 +99,13 @@ export default function OrdersPage() {
         </h1>
 
         <p className="text-zinc-400 mt-3 text-base md:text-lg">
-          Acompanhe todas as vendas realizadas na sua operação.
+          Pedidos retornados pela consulta atual, incluindo registros históricos.
         </p>
 
       </div>
 
       {/* CARDS */}
-      <div className="grid md:grid-cols-3 gap-6 mb-10">
+      {!loading && !readError && <div className="grid md:grid-cols-3 gap-6 mb-10">
 
         <div
           className="
@@ -159,6 +175,7 @@ export default function OrdersPage() {
 
       </div>
 
+      }
       {/* TABELA */}
       <div
         className="
@@ -188,6 +205,11 @@ export default function OrdersPage() {
             Carregando pedidos...
           </div>
 
+        ) : readError ? (
+          <div role="alert" className="p-10 text-center">
+            <p>{readError}</p>
+            <button type="button" onClick={() => void fetchOrders()} className="mt-4 rounded border border-zinc-600 px-4 py-2">Tentar novamente</button>
+          </div>
         ) : orders.length === 0 ? (
 
           <div className="p-12 text-center">

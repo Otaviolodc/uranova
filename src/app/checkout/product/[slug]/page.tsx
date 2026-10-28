@@ -4,6 +4,19 @@ import { supabase } from "@/lib/supabase/client";;
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
+type PublicCheckout = {
+  id: string;
+  user_id: string;
+  checkout_slug: string;
+  title: string;
+  description: string | null;
+  image_url: string | null;
+  type: string | null;
+  price: number | string | null;
+  status: string | null;
+  is_marketplace: boolean | null;
+};
+
 export default function ProductPage() {
 
 const params = useParams();
@@ -17,26 +30,26 @@ const decodedSlug = slug
   : "";
 
 const [product, setProduct] =
-  useState<any>(null);
+  useState<PublicCheckout | null>(null);
 
 const [loading, setLoading] =
   useState(true);
 
 const [relatedProducts, setRelatedProducts] =
-  useState<any[]>([]);
+  useState<PublicCheckout[]>([]);
 
+useEffect(() => {
 const fetchProduct = async () => {
   try {
     const { data, error } = await supabase
-      .from("products_checkout")
+      .from("public_checkouts")
       .select("*")
       .eq("checkout_slug", decodedSlug)
       .maybeSingle();
 
-console.log("Slug recebido:", slug);
-console.log("Slug decodificado:", decodedSlug);
-console.log("Produto encontrado:", data);
-console.log("Erro:", error);
+
+
+
 
     if (error) {
       console.error(error);
@@ -59,7 +72,7 @@ console.log("Erro:", error);
       });
 
     const { data: related } = await supabase
-      .from("products_checkout")
+      .from("public_checkouts")
       .select("*")
       .neq("id", data.id)
       .limit(4);
@@ -72,11 +85,10 @@ console.log("Erro:", error);
   }
 }; 
 
-useEffect(() => {
   if (slug) {
-    fetchProduct();
+    void fetchProduct();
   }
-}, [slug]);
+}, [slug, decodedSlug]);
   
   if (loading) {
   return (
@@ -112,6 +124,7 @@ if (!product) {
 
                 <img
                   src={product.image_url}
+                  alt={product.title}
                   className="
                     w-full
                     h-[650px]
@@ -406,6 +419,7 @@ if (!product) {
 
                   <img
                     src={item.image_url}
+                    alt={item.title}
                     className="
                       w-full
                       h-60

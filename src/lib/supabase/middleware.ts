@@ -1,9 +1,11 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { authStagingEnabled } from "@/lib/security/staging-policy";
 
 export async function updateSession(
   request: NextRequest
 ) {
+  authStagingEnabled();
   let response = NextResponse.next({
     request,
   });

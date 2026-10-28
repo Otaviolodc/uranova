@@ -1,3 +1,4 @@
+import { assertIntegrationsEnabled } from "@/lib/security/staging-policy";
 import { stripe } from "@/lib/stripe";
 import { admin } from "@/lib/supabase/admin";
 import { assertStripeLive } from "@/lib/stripe";
@@ -51,6 +52,7 @@ import { assertStripeLive } from "@/lib/stripe";
 export async function createStripeConnectAccount(
   userId: string
 ) {
+  assertIntegrationsEnabled();
   assertStripeLive();
   // ==========================================================
   // 1. BUSCA O PERFIL DO PRODUTOR
@@ -86,10 +88,6 @@ export async function createStripeConnectAccount(
   if (
     profile.stripe_account_id
   ) {
-    console.log(
-      "Conta Stripe Connect já existente:",
-      profile.stripe_account_id
-    );
 
     return {
       accountId:
@@ -242,23 +240,6 @@ export async function createStripeConnectAccount(
     );
   }
 
-  console.log(
-    "===================================="
-  );
-
-  console.log(
-    "STRIPE CONNECT ACCOUNT CRIADA"
-  );
-
-  console.log(
-    "Account ID:",
-    account.id
-  );
-
-  console.log(
-    "===================================="
-  );
-
   // ==========================================================
   // 6. SALVA O ID NO PERFIL
   // ==========================================================
@@ -289,10 +270,6 @@ export async function createStripeConnectAccount(
     );
   }
 
-  console.log(
-    "Stripe Account ID salvo no perfil."
-  );
-
   // ==========================================================
   // 7. RETORNA RESULTADO
   // ==========================================================
@@ -317,6 +294,7 @@ export async function createStripeConnectAccount(
 export async function createStripeAccountLink(
   accountId: string
 ) {
+  assertIntegrationsEnabled();
   // ==========================================================
   // 1. URL BASE
   // ==========================================================
@@ -387,10 +365,6 @@ export async function createStripeAccountLink(
     );
   }
 
-  console.log(
-    "Stripe Account Link criado."
-  );
-
   return accountLink.url;
 }
 
@@ -408,6 +382,7 @@ export async function createStripeAccountLink(
 export async function getStripeConnectAccount(
   accountId: string
 ) {
+  assertIntegrationsEnabled();
   const account =
     await stripe.v2.core.accounts.retrieve(
       accountId,

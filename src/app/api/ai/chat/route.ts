@@ -1,19 +1,24 @@
-import OpenAI from "openai";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { integrationUnavailable } from "@/lib/security/staging-policy";
+import { rateLimit } from "@/lib/security/rate-limit";
+import { requireFinanceUser } from "@/lib/finance/access";
+import { sameOrigin,jsonBody,safeError } from "@/lib/security/request";
+import { exactKeys } from "@/lib/security/validation";
+import { openai } from "@/lib/openai";
 
 export async function POST(req: Request) {
+  const unavailable = integrationUnavailable(); if (unavailable) return unavailable;
+
 
   try {
+    sameOrigin(req); const user = await requireFinanceUser(); await rateLimit("ai", user.id);
+    const body=await jsonBody(req,4096);exactKeys(body,["message","views","growth","viralProduct"]);
 
     const {
       message,
       views,
       growth,
       viralProduct,
-    } = await req.json();
+    } = body;
 
     if (!message) {
 
@@ -114,7 +119,7 @@ if (!cleanMessage) {
             ${growth}%
 
             Produto viral:
-            ${viralProduct?.title || "Nenhum"}
+            ${(viralProduct && typeof viralProduct === "object" && "title" in viralProduct && typeof viralProduct.title === "string" ? viralProduct.title.slice(0,200) : "") || "Nenhum"}
 
             Pergunta do usuário:
             ${cleanMessage}
@@ -143,17 +148,7 @@ if (!cleanMessage) {
 
   } catch (error) {
 
-    console.error("OPENAI ERROR:", error);
-
-    return Response.json(
-      {
-        message: "Erro ao conectar IA",
-      },
-      {
-        status: 500,
-      }
-    );
-
+    return safeError(error);
   }
 
 }

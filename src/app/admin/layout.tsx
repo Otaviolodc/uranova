@@ -357,7 +357,8 @@ export default async function AdminLayout({
 
         {/* LOGOUT */}
 
-        <a
+        <Link
+          prefetch={false}
           href="/auth/logout"
           className="
             mt-4
@@ -388,7 +389,7 @@ export default async function AdminLayout({
           <span>
             Sair da Conta
           </span>
-        </a>
+        </Link>
 
         </AdminNavigation>
       </aside>

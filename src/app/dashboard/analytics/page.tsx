@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import {
   LineChart,
@@ -37,6 +37,17 @@ type HeatmapItem = {
 
 export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [attempt, setAttempt] = useState(0);
+  const requestVersion = useRef(0);
+
+  function retryAnalytics() {
+    // Invalidate pending work immediately, before the next effect runs.
+    requestVersion.current += 1;
+    setLoadError("");
+    setLoading(true);
+    setAttempt((previous) => previous + 1);
+  }
 
   const [analyticsData, setAnalyticsData] = useState<
     AnalyticsItem[]
@@ -62,15 +73,19 @@ export default function AnalyticsPage() {
   |--------------------------------------------------------------------------
   */
 
+  useEffect(() => {
+  const version = ++requestVersion.current;
+  const isCurrent = () => requestVersion.current === version;
   async function fetchAnalytics() {
-    setLoading(true);
-
+    try {
     const {
       data: { user },
+      error: authError,
     } = await supabase.auth.getUser();
 
-    if (!user) {
-      setLoading(false);
+    if (!isCurrent()) return;
+    if (authError || !user) {
+      setLoadError("Não foi possível confirmar sua sessão. Entre novamente e tente outra vez.");
       return;
     }
 
@@ -88,19 +103,11 @@ export default function AnalyticsPage() {
         ascending: true,
       });
 
-    if (error) {
-      console.error(
-        "Erro ao buscar analytics:",
-        error
-      );
-
-      setLoading(false);
-      return;
-    }
+    if (!isCurrent()) return;
+    if (error) throw error;
 
     const analytics = data || [];
 
-    setAnalyticsData(analytics);
 
     /*
     |--------------------------------------------------------------------------
@@ -151,7 +158,6 @@ export default function AnalyticsPage() {
         };
       });
 
-    setChartData(formattedChart);
 
     /*
     |--------------------------------------------------------------------------
@@ -200,7 +206,6 @@ export default function AnalyticsPage() {
             Number(b.hour.replace("h", ""))
         );
 
-    setHeatmapData(formattedHeatmap);
 
     /*
     |--------------------------------------------------------------------------
@@ -232,8 +237,10 @@ export default function AnalyticsPage() {
       );
 
     if (productRanking.length === 0) {
+      setAnalyticsData(analytics);
+      setChartData(formattedChart);
+      setHeatmapData(formattedHeatmap);
       setTopProducts([]);
-      setLoading(false);
       return;
     }
 
@@ -254,15 +261,8 @@ export default function AnalyticsPage() {
       `)
       .in("id", productIds);
 
-    if (productsError) {
-      console.error(
-        "Erro ao buscar produtos:",
-        productsError
-      );
-
-      setLoading(false);
-      return;
-    }
+    if (!isCurrent()) return;
+    if (productsError) throw productsError;
 
     const finalRanking: ProductRanking[] =
       productRanking.map((rank) => {
@@ -282,14 +282,24 @@ export default function AnalyticsPage() {
         };
       });
 
+    setAnalyticsData(analytics);
+    setChartData(formattedChart);
+    setHeatmapData(formattedHeatmap);
     setTopProducts(finalRanking);
-
-    setLoading(false);
+    } catch {
+      if (isCurrent()) {
+        setLoadError("Não foi possível carregar os dados do Analytics. Tente novamente.");
+      }
+    } finally {
+      if (isCurrent()) setLoading(false);
+    }
   }
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, []);
+    void fetchAnalytics();
+    return () => {
+      if (isCurrent()) requestVersion.current += 1;
+    };
+  }, [attempt]);
 
   /*
   |--------------------------------------------------------------------------
@@ -488,6 +498,29 @@ export default function AnalyticsPage() {
   | RENDER
   |--------------------------------------------------------------------------
   */
+
+  if (loading || loadError) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <div className="p-4 md:p-8 pt-20 md:pt-8">
+          <h1 className="mb-6 text-3xl font-bold">Analytics</h1>
+          <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6" aria-busy={loading}>
+            {loading ? (
+              <p role="status" className="text-zinc-400">Carregando dados...</p>
+            ) : (
+              <>
+                <p role="alert" className="text-zinc-300">{loadError}</p>
+                <button type="button" onClick={retryAnalytics}
+                  className="mt-4 rounded-xl bg-green-500 px-5 py-3 font-bold text-black hover:bg-green-400">
+                  Tentar novamente
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">

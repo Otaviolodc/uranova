@@ -1,106 +1,17 @@
-import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-
-// LISTAR MÓDULOS
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-
-  const courseId = searchParams.get("courseId");
-
-  if (!courseId) {
-    return NextResponse.json(
-      {
-        error: "courseId é obrigatório.",
-      },
-      {
-        status: 400,
-      }
-    );
-  }
-
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from("course_modules")
-    .select("*")
-    .eq("course_id", courseId)
-    .order("position");
-
-  if (error) {
-    return NextResponse.json(
-      {
-        error: error.message,
-      },
-      {
-        status: 500,
-      }
-    );
-  }
-
-  return NextResponse.json(data);
-}
-
-// CRIAR MÓDULO
-export async function POST(req: Request) {
-  const body = await req.json();
-
-  const {
-    courseId,
-    title,
-    description,
-    position,
-  } = body;
-
-  if (!courseId || !title) {
-    return NextResponse.json(
-      {
-        error: "Dados inválidos.",
-      },
-      {
-        status: 400,
-      }
-    );
-  }
-
-  const supabase = await createClient();
-
-  const {
-  data: { user },
-} = await supabase.auth.getUser();
-
-if (!user) {
-  return NextResponse.json(
-    { error: "Não autenticado." },
-    { status: 401 }
-  );
-}
-
-  const { data, error } = await supabase
-    .from("course_modules")
-    .insert([
-      {
-        course_id: courseId,
-        user_id: user.id,
-        title,
-        description,
-        position,
-      }
-    ])
-    .select()
-    .single();
-
-  if (error) {
-  console.error("ERRO COURSE_MODULES:", error);
-
-  return NextResponse.json(
-    {
-      error,
-    },
-    {
-      status: 500,
-    }
-  );
-}
-
-  return NextResponse.json(data);
-}
+import { requireFinanceUser } from "@/lib/finance/access";
+import { sameOrigin,jsonBody,safeError } from "@/lib/security/request";
+import { exactKeys,uuid,text } from "@/lib/security/validation";
+import { courseFields } from "@/lib/security/course-input";
+export async function GET(req:Request){try{
+ await requireFinanceUser();const id=uuid(new URL(req.url).searchParams.get("courseId"));const client=await createClient();
+ const {data,error}=await client.from("course_modules").select("*").eq("course_id",id).order("position").order("id");
+ if(error)throw new Error("READ_FAILED");return Response.json(data);
+}catch(error){return safeError(error);}}
+export async function POST(req:Request){try{
+ sameOrigin(req);const user=await requireFinanceUser();const b=await jsonBody(req);exactKeys(b,["courseId","title","description","position"]);
+ const course_id=uuid(b.courseId);text(b.title,200);const client=await createClient();
+ const {data:parent,error:pe}=await client.from("products").select("id").eq("id",course_id).eq("user_id",user.id).single();if(pe||!parent)throw new Error("FORBIDDEN");
+ const {data,error}=await client.from("course_modules").insert({course_id,user_id:user.id,...courseFields(b,{title:"title",description:"description",position:"position"})}).select().single();
+ if(error)throw new Error("WRITE_FAILED");return Response.json(data,{status:201});
+}catch(error){return safeError(error);}}

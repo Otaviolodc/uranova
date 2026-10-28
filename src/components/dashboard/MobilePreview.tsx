@@ -1,3 +1,5 @@
+
+import Image from "next/image";
 type Profile = {
   avatar_url?: string | null;
   username?: string | null;
@@ -48,7 +50,7 @@ export default function MobilePreview({
           <div className="flex flex-col items-center">
 
             {profile?.avatar_url ? (
-              <img
+              <Image unoptimized loading="eager" width={96} height={96}
                 src={profile.avatar_url}
                 alt="Avatar"
                 className="w-24 h-24 rounded-full object-cover border-4 border-white"
@@ -127,7 +129,7 @@ export default function MobilePreview({
 
     {link.image_url ? (
 
-      <img
+      <Image unoptimized loading="eager" width={64} height={64}
         src={link.image_url}
         alt={link.title}
         className="

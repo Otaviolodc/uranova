@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface LessonSettingsProps {
   lessonId: string;
@@ -9,7 +9,11 @@ interface LessonSettingsProps {
   onUpdated?: () => void;
 }
 
-export default function LessonSettings({
+export default function LessonSettings(props: LessonSettingsProps) {
+  return <LessonSettingsForm key={`${props.lessonId}:${props.isFree}:${props.durationMinutes}`} {...props} />;
+}
+
+function LessonSettingsForm({
   lessonId,
   isFree,
   durationMinutes,
@@ -20,10 +24,7 @@ export default function LessonSettings({
 
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    setFree(isFree ?? false);
-    setDuration(durationMinutes ?? 0);
-  }, [isFree, durationMinutes]);
+
 
   async function handleSave() {
     try {
@@ -67,8 +68,9 @@ export default function LessonSettings({
           onChange={(e) => setFree(e.target.checked)}
         />
 
-        <span>Aula gratuita</span>
+        <span>Marcar como prévia gratuita</span>
       </label>
+      <p className="text-sm text-zinc-400">Esta marcação não libera acesso público. A disponibilização de prévias ainda não está habilitada; o acesso atual continua exigindo autorização.</p>
 
       <div>
         <label className="block text-sm mb-2">

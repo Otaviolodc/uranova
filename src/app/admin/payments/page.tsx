@@ -1,11 +1,11 @@
 import Link from "next/link";
 import FinanceSummary, { formatCents } from "@/components/finance/FinanceSummary";
 import { getFinancePayments } from "@/lib/services/finance-reader";
-import { requireFinanceAdmin } from "@/lib/finance/access";
+import { requireAdminPage } from "@/lib/security/admin-page";
 import { admin } from "@/lib/supabase/admin";
 
 export default async function PaymentsPage() {
-  await requireFinanceAdmin();
+  await requireAdminPage();
   const payments = await getFinancePayments();
   const { data: events, error } = await admin.from("stripe_webhook_events")
     .select("event_id,event_type,status,last_error,created_at")

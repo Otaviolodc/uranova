@@ -1,25 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface LessonFormProps {
   moduleId: string;
+  position: number;
   onCreated: () => void;
 }
 
 export default function LessonForm({
   moduleId,
+  position,
   onCreated,
 }: LessonFormProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
+  const busy = useRef(false);
 
   async function createLesson() {
-    if (!title.trim()) return;
+    if (!title.trim() || busy.current) return;
+    busy.current = true;
 
     setLoading(true);
 
+    try {
     const response = await fetch(
       "/api/course-lessons",
       {
@@ -33,7 +38,7 @@ export default function LessonForm({
           moduleId,
           title,
           description,
-          position: 0,
+          position,
           videoUrl: "",
         }),
       }
@@ -50,6 +55,8 @@ export default function LessonForm({
     setDescription("");
 
     onCreated();
+    } catch { alert("Falha ao salvar aula. Confira a lista antes de tentar novamente."); }
+    finally { busy.current = false; setLoading(false); }
   }
 
   return (
@@ -64,6 +71,8 @@ export default function LessonForm({
       "
     >
       <input
+        aria-label="Título da aula"
+        maxLength={200}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Título da aula"
@@ -76,6 +85,8 @@ export default function LessonForm({
       />
 
       <textarea
+        aria-label="Descrição da aula"
+        maxLength={12000}
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         placeholder="Descrição da aula"

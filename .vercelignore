@@ -1,0 +1,12 @@
+.env*
+.local
+.codex
+.agents
+.aws
+/docs
+/scripts
+/tests
+/supabase
+*.tsbuildinfo
+lint*.json
+AGENTS.md

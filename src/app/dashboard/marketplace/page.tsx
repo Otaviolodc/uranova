@@ -23,12 +23,13 @@ export default function MarketplacePage() {
 
   const [category, setCategory] = useState("Todos");
 
+  useEffect(() => {
   async function fetchProducts() {
     const {
       data,
       error,
     } = await supabase
-      .from("products_checkout")
+      .from("public_checkouts")
       .select(`
         id,
         title,
@@ -57,8 +58,7 @@ setProducts(data || []);
 setLoading(false);;
   }
 
-  useEffect(() => {
-    fetchProducts();
+    void fetchProducts();
   }, []);
 
   const filteredProducts = products.filter((product) => {

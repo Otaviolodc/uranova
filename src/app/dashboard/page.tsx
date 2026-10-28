@@ -31,9 +31,9 @@ export default async function DashboardPage() {
       <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
 
         <StatsCard
-          title="💰 Receita Total"
+          title="💰 Faturamento bruto"
           value={`R$ ${revenue.toFixed(2)}`}
-          subtitle="Receita acumulada"
+          subtitle="Vendas verificadas acumuladas (GMV)"
         />
 
         <StatsCard

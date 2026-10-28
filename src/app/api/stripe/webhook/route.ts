@@ -1,3 +1,4 @@
+import { integrationUnavailable } from "@/lib/security/staging-policy";
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
@@ -9,6 +10,8 @@ import { recordPayout, sellerForAccount, syncProducerFinance } from "@/lib/servi
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
+  const unavailable = integrationUnavailable(); if (unavailable) return unavailable;
+
   const signature = req.headers.get("stripe-signature");
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!signature) return NextResponse.json({ error: "Assinatura ausente." }, { status: 400 });
@@ -32,6 +35,7 @@ export async function POST(req: Request) {
     const accountId = event.account;
     if (accountId) {
       const seller = await sellerForAccount(accountId);
+      if (!seller) throw new Error("Unknown Stripe seller; reconciliation required");
       if (seller) {
         switch (event.type) {
           case "checkout.session.completed":

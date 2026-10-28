@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { Product } from "@/types/product";
+import CatalogImage from "@/components/marketplace/CatalogImage";
+import { categoryLabel } from "@/lib/public-catalog";
 
 interface Props {
   products: Product[];
@@ -36,8 +38,8 @@ export default function ProductList({
             "
           >
 
-            <img
-              src={product.image_url || "/logo.png"}
+            <CatalogImage
+              src={product.image_url}
               alt={product.title}
               className="
                 w-full
@@ -66,7 +68,7 @@ export default function ProductList({
                     font-bold
                   "
                 >
-                  {product.type}
+                  {categoryLabel(product.type)}
                 </span>
 
                 {product.is_marketplace && (
@@ -164,6 +166,7 @@ export default function ProductList({
               <a
                 href={`/checkout/product/${product.checkout_slug}`}
                 target="_blank"
+                rel="noopener noreferrer"
                 className="
                   mt-4
                   block

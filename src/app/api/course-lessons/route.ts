@@ -1,200 +1,29 @@
-import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-
-// LISTAR AULAS
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-
-  const moduleId = searchParams.get("moduleId");
-
-  if (!moduleId) {
-    return NextResponse.json(
-      { error: "moduleId é obrigatório." },
-      { status: 400 }
-    );
-  }
-
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json(
-      { error: "Não autenticado." },
-      { status: 401 }
-    );
-  }
-
-  const { data, error } = await supabase
-    .from("course_lessons")
-    .select("*")
-    .eq("module_id", moduleId)
-    .eq("user_id", user.id)
-    .order("position");
-
-  if (error) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
-  }
-
-  return NextResponse.json(data);
-}
-
-// CRIAR AULA
-export async function POST(req: Request) {
-  const body = await req.json();
-
-  const {
-    moduleId,
-    title,
-    description,
-    videoUrl,
-    position,
-  } = body;
-
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json(
-      { error: "Não autenticado." },
-      { status: 401 }
-    );
-  }
-
-  const { data, error } = await supabase
-    .from("course_lessons")
-    .insert([
-      {
-        module_id: moduleId,
-        user_id: user.id,
-        title,
-        description,
-        video_url: videoUrl,
-        position,
-      },
-    ])
-    .select()
-    .single();
-
-  if (error) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
-  }
-
-  return NextResponse.json(data);
-}
-
-// EDITAR AULA
-export async function PATCH(req: Request) {
-  const body = await req.json();
-
-  const {
-    id,
-    title,
-    description,
-    video_provider,
-    video_url,
-    content,
-    duration_minutes,
-    is_free,
-  } = body;
-
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json(
-      { error: "Não autenticado." },
-      { status: 401 }
-    );
-  }
-
-  const updates: Record<string, unknown> = {};
-
-  if (title !== undefined) updates.title = title;
-  if (description !== undefined) updates.description = description;
-  if (video_provider !== undefined)
-    updates.video_provider = video_provider;
-  if (video_url !== undefined)
-    updates.video_url = video_url;
-  if (content !== undefined)
-    updates.content = content;
-  if (duration_minutes !== undefined)
-    updates.duration_minutes = duration_minutes;
-  if (is_free !== undefined)
-    updates.is_free = is_free;
-
-  const { data, error } = await supabase
-    .from("course_lessons")
-    .update(updates)
-    .eq("id", id)
-    .eq("user_id", user.id)
-    .select()
-    .single();
-
-  if (error) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
-  }
-
-  return NextResponse.json(data);
-}
-
-// EXCLUIR AULA
-export async function DELETE(req: Request) {
-  const { searchParams } = new URL(req.url);
-
-  const id = searchParams.get("id");
-
-  if (!id) {
-    return NextResponse.json(
-      { error: "id é obrigatório." },
-      { status: 400 }
-    );
-  }
-
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json(
-      { error: "Não autenticado." },
-      { status: 401 }
-    );
-  }
-
-  const { error } = await supabase
-    .from("course_lessons")
-    .delete()
-    .eq("id", id)
-    .eq("user_id", user.id);
-
-  if (error) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
-  }
-
-  return NextResponse.json({
-    success: true,
-  });
-}
+import { requireFinanceUser } from "@/lib/finance/access";
+import { sameOrigin,jsonBody,safeError } from "@/lib/security/request";
+import { exactKeys,uuid,text } from "@/lib/security/validation";
+import { courseFields } from "@/lib/security/course-input";
+export async function GET(req:Request){try{
+ const user=await requireFinanceUser();const id=uuid(new URL(req.url).searchParams.get("moduleId"));const client=await createClient();
+ const {data,error}=await client.from("course_lessons").select("*").eq("module_id",id).eq("user_id",user.id).order("position").order("id");
+ if(error)throw new Error("READ_FAILED");return Response.json(data);
+}catch(error){return safeError(error);}}
+export async function POST(req:Request){try{
+ sameOrigin(req);const user=await requireFinanceUser();const b=await jsonBody(req,16384);exactKeys(b,["moduleId","title","description","videoUrl","position"]);
+ const module_id=uuid(b.moduleId);text(b.title,200);const client=await createClient();
+ const {data:parent,error:pe}=await client.from("course_modules").select("id").eq("id",module_id).eq("user_id",user.id).single();if(pe||!parent)throw new Error("FORBIDDEN");
+ const {data,error}=await client.from("course_lessons").insert({module_id,user_id:user.id,...courseFields(b,{title:"title",description:"description",videoUrl:"video_url",position:"position"})}).select().single();
+ if(error)throw new Error("WRITE_FAILED");return Response.json(data,{status:201});
+}catch(error){return safeError(error);}}
+export async function PATCH(req:Request){try{
+ sameOrigin(req);const user=await requireFinanceUser();const b=await jsonBody(req,32768);
+ const mapping={title:"title",description:"description",video_provider:"video_provider",video_url:"video_url",content:"content",duration_minutes:"duration_minutes",is_free:"is_free"};
+ exactKeys(b,["id",...Object.keys(mapping)]);const id=uuid(b.id);const fields=courseFields(b,mapping);if(!Object.keys(fields).length)throw new Error("INVALID_INPUT");
+ const client=await createClient();const {data,error}=await client.from("course_lessons").update(fields).eq("id",id).eq("user_id",user.id).select().single();
+ if(error||!data)throw new Error("FORBIDDEN");return Response.json(data);
+}catch(error){return safeError(error);}}
+export async function DELETE(req:Request){try{
+ sameOrigin(req);const user=await requireFinanceUser();const id=uuid(new URL(req.url).searchParams.get("id"));const client=await createClient();
+ const {data,error}=await client.from("course_lessons").delete().eq("id",id).eq("user_id",user.id).select("id");
+ if(error||!data?.length)throw new Error("FORBIDDEN");return Response.json({success:true});
+}catch(error){return safeError(error);}}

@@ -1,8 +1,10 @@
+import { requireAdminPage } from "@/lib/security/admin-page";
 import { getFinanceSummary } from "@/lib/services/finance-reader";
 import AdminCard from "@/components/admin/AdminCard";
 import { admin } from "@/lib/supabase/admin";
 
 export default async function AdminPage() {
+  await requireAdminPage();
   const summary = await getFinanceSummary();
   const supabase = admin;
 

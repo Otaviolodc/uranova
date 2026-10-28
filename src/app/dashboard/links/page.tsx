@@ -1,6 +1,9 @@
 "use client";
+import Image from "next/image";
+import { uploadFile } from "@/lib/services/storage.service";
 
 import {
+  type DropResult,
   DragDropContext,
   Droppable,
   Draggable,
@@ -9,7 +12,7 @@ import {
 import { slugify } from "@/lib/slug";
 import { supabase }
 from "@/lib/supabase/client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import MobilePreview from "@/components/dashboard/MobilePreview";
 
 export default function LinksPage() {
@@ -65,7 +68,7 @@ export default function LinksPage() {
     useState("");
 
   // 🚀 carregar dados
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
 
     const sessionResult =
   await supabase.auth.getSession();
@@ -114,9 +117,7 @@ if (!profileData) {
   return;
 }
 
-    if (profileData) {
-  setProfile(profileData);
-}
+
 
     // 🔗 links
     const {
@@ -143,63 +144,38 @@ if (linksError) {
 
   console.error(linksError);
 
-  return;
+  return { profile: profileData, links: null };
 
 }
 
-    setLinks(linksData || []);
+    return { profile: profileData, links: linksData || [] };
 
-    };
+    }, []);
+
+  const refreshData = useCallback(async () => {
+    const data = await fetchData();
+    if (data) {
+      setProfile(data.profile);
+      if (data.links) setLinks(data.links);
+    }
+  }, [fetchData]);
 
   useEffect(() => {
-
-  fetchData();
-
-}, []);
+    let active = true;
+    void fetchData().then((data) => {
+      if (!active || !data) return;
+      setProfile(data.profile);
+      if (data.links) setLinks(data.links);
+    });
+    return () => { active = false; };
+  }, [fetchData]);
 
 // 📸 upload imagem produto
-const handleImageUpload = async (
-  e: any
-) => {
-  const file = e.target.files?.[0];
-
-  if (!file) return;
-
-  const {
-  data: { user },
-} = await supabase.auth.getUser();
-
-if (!user) {
-  alert("Usuário não encontrado");
-  return;
+async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+ const file=e.target.files?.[0];if(!file)return;
+ try {const url=await uploadFile("products-images",file);setImageUrl(url);}
+ catch {alert("Upload indisponivel. Use PNG, JPEG ou WEBP ate 4 MB.");}
 }
-
-  const fileExt =
-    file.name.split(".").pop();
-
-  const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-
-  const { error } =
-    await supabase.storage
-      .from("products-images")
-      .upload(fileName, file, {
-        upsert: true,
-      });
-
-  if (error) {
-    console.log(error);
-
-    alert(error.message);
-
-    return;
-  }
-
-  const { data } = supabase.storage
-  .from("products-images")
-  .getPublicUrl(fileName);
-
-setImageUrl(data.publicUrl);
-};
 
 // 🤖 gerar título IA
 
@@ -478,7 +454,7 @@ if (!user) {
 
     setShowModal(false);
 
-    fetchData();
+    void refreshData();
   };
 
   // ✏️ editar
@@ -524,7 +500,7 @@ if (!user) {
     setImageUrl("");
     setDescription("");
 
-    fetchData();
+    void refreshData();
   };
 
   // 🗑️ deletar
@@ -542,12 +518,12 @@ if (!user) {
       .delete()
       .eq("id", id);
 
-    fetchData();
+    void refreshData();
   };
 
   // 📊 métricas
   const handleDragEnd = async (
-  result: any
+  result: DropResult
 ) => {
 
   if (!result.destination) return;
@@ -711,8 +687,9 @@ if (!user) {
 
 {link.image_url ? (
 
-<img
+<Image unoptimized loading="eager" width={96} height={96}
   src={link.image_url}
+  alt={link.title}
   className="
     w-16 md:w-24
     h-16 md:h-24
@@ -1074,8 +1051,9 @@ if (!user) {
               />
 
                 {imageUrl && (
-                <img
+                <Image unoptimized loading="eager" width={128} height={128}
                     src={imageUrl}
+                  alt="Imagem selecionada para o link"
                     className="w-32 h-32 rounded-2xl object-cover mt-4"
                />
             )}
@@ -1086,6 +1064,7 @@ if (!user) {
               {imageUrl && (
                 <img
                   src={imageUrl}
+                  alt="Imagem selecionada para o link"
                   className="
                     w-full
                     max-h-72

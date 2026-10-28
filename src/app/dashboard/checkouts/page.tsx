@@ -14,6 +14,7 @@ type Product = {
 export default function CheckoutsPage() {
   const [products, setProducts] = useState<Product[]>([]);
 
+  useEffect(() => {
   async function fetchProducts() {
     const {
       data: { user },
@@ -43,8 +44,7 @@ export default function CheckoutsPage() {
     setProducts(data || []);
   }
 
-  useEffect(() => {
-    fetchProducts();
+    void fetchProducts();
   }, []);
 
   const activeProducts = products.filter(

@@ -1,7 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import CatalogImage from "@/components/marketplace/CatalogImage";
 import { useParams } from "next/navigation";
+import Link from "next/link";
+import { preferredAccess, readableDate } from "@/lib/customer-library";
+import { activeAccess } from "@/lib/security/validation";
+import { normalizeCategory, publicHttpUrl } from "@/lib/public-catalog";
+import { isCourse, isMentoring } from "@/lib/courses";
 import { supabase } from "@/lib/supabase/client";
 
 type Product = {
@@ -22,7 +28,16 @@ type PackFile = {
 };
 
 export default function CustomerProductPage() {
-  const { id } = useParams();
+  const params = useParams();
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+  return <CustomerProductContent key={id} id={id} />;
+}
+
+function CustomerProductContent({ id }: { id: string }) {
+  const [loadError, setLoadError] = useState(false);
+  const [missing, setMissing] = useState(false);
+  const [downloadError, setDownloadError] = useState("");
+  const downloading = useRef(false);
 
   const [product, setProduct] =
     useState<Product | null>(null);
@@ -33,101 +48,58 @@ export default function CustomerProductPage() {
   const [hasAccess, setHasAccess] =
     useState(true);
 
-  useEffect(() => {
-    fetchProduct();
-  }, [id]);
 
   async function openSingleFile(filePath: string) {
-    const { data, error } =
-      await supabase.storage
-        .from("products")
-        .createSignedUrl(
-          filePath,
-          60 * 30
-        );
-
-    if (error) {
-      console.error(error);
-      return;
-    }
-
-    window.open(data.signedUrl, "_blank");
+    if (!product?.file_path || downloading.current) return;
+    downloading.current = true; setDownloadError("");
+    const popup = window.open("about:blank", "_blank");
+    if (popup) popup.opener = null;
+    try {
+      const paths = product.file_path.startsWith("[") ? JSON.parse(product.file_path) : [product.file_path];
+      const index = paths.indexOf(filePath);
+      if (index < 0) throw new Error();
+      const response = await fetch("/api/files/download", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({productId:product.id,index})});
+      const data = await response.json();
+      if (!response.ok) throw new Error();
+      if (!publicHttpUrl(data.url)) throw new Error();
+      if (!popup) throw new Error("POPUP_BLOCKED");
+      popup.location.href = data.url;
+    } catch { popup?.close(); setDownloadError("Download indisponível ou bloqueado pelo navegador. Verifique seu acesso e permita abrir uma nova aba para tentar novamente."); }
+    finally { downloading.current = false; }
   }
 
-  async function fetchProduct() {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      setLoading(false);
-      return;
+  useEffect(() => {
+    let active = true;
+    async function fetchProduct() {
+      try {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) throw new Error("SESSION_REQUIRED");
+        const { data: accesses, error: accessError } = await supabase
+          .from("customer_products")
+          .select("id,product_id,status,expires_at,unlocked_at,order_id")
+          .eq("customer_id", user.id)
+          .eq("product_id", id)
+          .eq("status", "active");
+        if (accessError) throw accessError;
+        const access = preferredAccess((accesses ?? []).filter(item => activeAccess(item)));
+        if (!access) { if (active) setHasAccess(false); return; }
+        const { data, error } = await supabase.from("products").select("*").eq("id", id).maybeSingle();
+        if (error) throw error;
+        if (!data) { if (active) setMissing(true); return; }
+        if (active) setProduct({
+          id: data.id, title: data.title, image_url: data.image_url, file_path: data.file_path,
+          description: data.description ?? null, type: data.type ?? null,
+          purchased_at: access.unlocked_at, order_id: access.order_id,
+        });
+      } catch {
+        if (active) setLoadError(true);
+      } finally {
+        if (active) setLoading(false);
+      }
     }
-
-    const { data: accesses, error: accessError } =
-      await supabase
-        .from("customer_products")
-        .select(`
-          id,
-          unlocked_at,
-          order_id
-        `)
-        .eq("customer_id", user.id)
-        .eq("product_id", id)
-        .eq("status", "active");
-
-    if (accessError) {
-      console.error(accessError);
-      setLoading(false);
-      return;
-    }
-
-    const access = accesses?.[0];
-
-    if (!access) {
-      setHasAccess(false);
-      setLoading(false);
-      return;
-    }
-
-    const {
-      data,
-      error,
-    } = await supabase
-      .from("products")
-      .select("*")
-      .eq("id", id)
-      .single();
-
-    console.log("Produto encontrado:", data);
-    console.log("Erro produto:", error);
-    console.log("ID recebido:", id);
-
-    if (error) {
-      console.error(error);
-      setLoading(false);
-      return;
-    }
-
-    if (!data) {
-      setHasAccess(false);
-      setLoading(false);
-      return;
-    }
-
-    setProduct({
-      id: data.id,
-      title: data.title,
-      image_url: data.image_url,
-      file_path: data.file_path,
-      description: data.description ?? null,
-      type: data.type ?? null,
-      purchased_at: access.unlocked_at,
-      order_id: access.order_id,
-    });
-
-    setLoading(false);
-  }
+    void fetchProduct();
+    return () => { active = false; };
+  }, [id]);
 
   if (loading) {
     return (
@@ -163,7 +135,7 @@ export default function CustomerProductPage() {
             a este produto.
           </p>
 
-          <a
+          <Link
             href="/dashboard/marketplace"
             className="
               inline-block
@@ -178,17 +150,41 @@ export default function CustomerProductPage() {
             "
           >
             Ir para Marketplace
-          </a>
+          </Link>
         </div>
       </div>
     );
   }
 
+  if (missing) return <p role="status" className="p-8">Este produto não está disponível. <Link href="/dashboard/customer/products">Voltar à biblioteca</Link></p>;
+
+  if (loadError || !product) {
+    return <div role="alert" className="p-10">Não foi possível carregar o produto. Confira sua sessão e conexão e atualize a página para tentar novamente.</div>;
+  }
+
   const isBundle =
-    product?.type === "bundle";
+    normalizeCategory(product?.type) === "bundle";
+
+  if (isMentoring(product.type) || isCourse(product.type)) {
+    const course = isCourse(product.type);
+    let materials: string[] = [];
+    try {
+      const value: unknown = product.file_path?.startsWith("[") ? JSON.parse(product.file_path) : product.file_path ? [product.file_path] : [];
+      if (Array.isArray(value) && value.every(path => typeof path === "string" && path.length > 0)) materials = value;
+    } catch { /* Legacy malformed reference: do not invent a download target. */ }
+    return <section className="max-w-3xl p-4 sm:p-8 space-y-5">
+      {downloadError && <p role="alert">{downloadError}</p>}
+      <h1 className="text-3xl font-bold">{product.title}</h1>
+      <p>{course ? "Curso" : "Mentoria"}</p>
+      {product.description && <p className="whitespace-pre-wrap break-words">{product.description}</p>}
+      {course ? <Link href={`/dashboard/my-courses/${product.id}`} className="inline-block rounded-xl bg-blue-600 px-5 py-3">Acessar curso</Link> : <p role="status">O agendamento e os links de reunião não estão disponíveis nesta área. Consulte as instruções recebidas do produtor. Nenhuma sessão foi agendada automaticamente.</p>}
+      {materials.map((path, index) => <button key={`${path}-${index}`} onClick={() => openSingleFile(path)} className="block rounded-xl bg-green-600 px-5 py-3">Baixar material complementar {index + 1}</button>)}
+      <Link href="/dashboard/customer/products" className="inline-block underline">Voltar aos meus produtos</Link>
+    </section>;
+  }
 
   const isEbook =
-    product?.type === "ebook";
+    normalizeCategory(product?.type) === "ebook";
 
   const productLabel = isBundle
     ? "📦 Pack de Arquivos"
@@ -213,7 +209,7 @@ export default function CustomerProductPage() {
       const parsed =
         JSON.parse(product.file_path);
 
-      if (Array.isArray(parsed)) {
+      if (Array.isArray(parsed) && parsed.every((path) => typeof path === "string" && path.length > 0)) {
         packFiles = parsed.map(
           (path: string) => ({
             path,
@@ -245,6 +241,7 @@ export default function CustomerProductPage() {
 
   return (
     <div className="space-y-8">
+      {downloadError && <p role="alert">{downloadError}</p>}
 
       <div>
         <h1 className="text-4xl font-black">
@@ -266,18 +263,7 @@ export default function CustomerProductPage() {
         "
       >
 
-        <img
-          src={
-            product.image_url ||
-            "/placeholder.png"
-          }
-          alt={product.title}
-          className="
-            w-full
-            h-72
-            object-cover
-          "
-        />
+        <CatalogImage src={product.image_url} alt={product.title} className="w-full h-72" />
 
         <div className="p-8">
 
@@ -390,13 +376,7 @@ export default function CustomerProductPage() {
                 <span className="font-medium">
                   Liberado em:
                 </span>{" "}
-                {product.purchased_at
-                  ? new Date(
-                      product.purchased_at
-                    ).toLocaleDateString(
-                      "pt-BR"
-                    )
-                  : "-"}
+                {readableDate(product.purchased_at)}
               </p>
 
               {isBundle ? (

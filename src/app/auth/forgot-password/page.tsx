@@ -2,7 +2,6 @@
 
 import { supabase } from "@/lib/supabase/client";
 import { useState } from "react";
-import Link from "next/link";
 
 import AuthCard from "@/components/auth/AuthCard";
 import AuthLogo from "@/components/auth/AuthLogo";
@@ -32,7 +31,7 @@ export default function ForgotPasswordPage() {
       email,
       {
         redirectTo:
-          `${window.location.origin}/auth/reset-password`,
+          `${window.location.origin}/auth/callback?next=/auth/reset-password`,
       }
     );
 

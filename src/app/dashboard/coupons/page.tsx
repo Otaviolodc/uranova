@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 
 export default function CouponsPage() {
@@ -21,7 +21,7 @@ const [coupons, setCoupons] =
   const [discount, setDiscount] =
     useState("");
 
-  async function fetchCoupons() {
+  const loadCoupons = useCallback(async () => {
 
     const {
       data: { user },
@@ -52,7 +52,12 @@ const [coupons, setCoupons] =
   return;
 
 }
-    setCoupons(data || []);
+    return data || [];
+  }, []);
+
+  async function fetchCoupons() {
+    const data = await loadCoupons();
+    if (data) setCoupons(data);
   }
 
   async function deleteCoupon(id: string) {
@@ -116,8 +121,10 @@ if (error) {
   }
 
   useEffect(() => {
-    fetchCoupons();
-  }, []);
+    void loadCoupons().then((data) => {
+      if (data) setCoupons(data);
+    });
+  }, [loadCoupons]);
 
   return (
     <div className="p-6 md:p-8">

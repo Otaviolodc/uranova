@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Viewport } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { authStagingEnabled } from "@/lib/security/staging-policy";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -23,7 +24,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className="bg-black text-white antialiased">
         {children}
-        <SpeedInsights />
+        {!authStagingEnabled() && <SpeedInsights />}
       </body>
     </html>
   );
