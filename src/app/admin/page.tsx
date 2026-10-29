@@ -1,49 +1,15 @@
 import { requireAdminPage } from "@/lib/security/admin-page";
 import { getFinanceSummary } from "@/lib/services/finance-reader";
 import AdminCard from "@/components/admin/AdminCard";
-import { admin } from "@/lib/supabase/admin";
+import { getAdminProductCatalog, getAdminRecordCount } from "@/lib/services/admin-products";
 
 export default async function AdminPage() {
   await requireAdminPage();
   const summary = await getFinanceSummary();
-  const supabase = admin;
-
-  // ======================================================
-  // USUÁRIOS
-  // ======================================================
-
-  const { count: users } = await supabase
-    .from("profiles")
-    .select("*", {
-      count: "exact",
-      head: true,
-    });
-
-  // ======================================================
-  // PRODUTOS
-  // ======================================================
-
-  const { count: marketplaceProducts } = await supabase
-    .from("products")
-    .select("*", {
-      count: "exact",
-      head: true,
-    });
-
-  // ======================================================
-  // PEDIDOS
-  // ======================================================
-
-  const { count: orders } = await supabase
-    .from("orders")
-    .select("*", {
-      count: "exact",
-      head: true,
-    });
-
-  // ======================================================
-  // PEDIDOS PAGOS
-  // ======================================================
+  const [catalog, users, orders] = await Promise.all([
+    getAdminProductCatalog(), getAdminRecordCount("profiles"), getAdminRecordCount("orders"),
+  ]);
+  const productCounts = catalog?.counts;
 
   const revenue = summary.gross_cents / 100;
   const paidOrdersCount = summary.approved_sales;
@@ -62,6 +28,12 @@ export default async function AdminPage() {
       {/* ==================================================
           HERO
       ================================================== */}
+
+      {(!catalog || users === null || orders === null) && (
+        <div role="alert" className="rounded-2xl border border-amber-500/30 bg-zinc-900 p-5 text-zinc-300">
+          Não foi possível carregar todos os indicadores. Valores indisponíveis aparecem como “—”. Recarregue a página para tentar novamente.
+        </div>
+      )}
 
       <section>
         <span
@@ -144,7 +116,7 @@ export default async function AdminPage() {
             "
           >
             <span className="h-2 w-2 rounded-full bg-green-500" />
-            Dados em tempo real
+            Dados consultados ao carregar
           </div>
         </div>
 
@@ -160,21 +132,25 @@ export default async function AdminPage() {
             icon="👥"
             title="Usuários"
             description="Contas cadastradas"
-            value={users ?? 0}
+            value={users ?? "—"}
           />
 
           <AdminCard
             icon="📦"
-            title="Produtos"
-            description="Produtos publicados"
-            value={marketplaceProducts ?? 0}
+            title="Produtos cadastrados"
+            description="Registros atuais e históricos"
+            value={productCounts?.registered ?? "—"}
           />
+
+          <AdminCard icon="✓" title="Produtos com checkout ativo" description="Produtos distintos com checkout ativo" value={productCounts?.active ?? "—"} />
+          <AdminCard icon="🌐" title="Publicados no Marketplace" description="Produtos distintos com publicação ativa" value={productCounts?.marketplace ?? "—"} />
+          <AdminCard icon="📁" title="Produtos sem checkout" description="Cadastros sem checkout vinculado" value={productCounts?.withoutCheckout ?? "—"} />
 
           <AdminCard
             icon="🛒"
             title="Pedidos"
             description="Pedidos registrados"
-            value={orders ?? 0}
+            value={orders ?? "—"}
           />
 
           <AdminCard
@@ -208,7 +184,7 @@ export default async function AdminPage() {
 
       <section>
         <h2 className="mb-5 text-xl font-bold">
-          Status da plataforma
+          Sobre os indicadores
         </h2>
 
         <div
@@ -230,11 +206,11 @@ export default async function AdminPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-zinc-400">
-                  Sistema
+                  Atualização
                 </p>
 
                 <h3 className="mt-2 text-2xl font-black text-green-400">
-                  Operacional
+                  Ao carregar a página
                 </h3>
               </div>
 
@@ -249,12 +225,12 @@ export default async function AdminPage() {
                   bg-green-500/10
                 "
               >
-                🟢
+                ℹ
               </div>
             </div>
 
             <p className="mt-4 text-sm text-zinc-500">
-              A Uranova está funcionando normalmente.
+              Os números refletem as consultas desta página. Não há monitoramento automático de disponibilidade.
             </p>
           </div>
 
@@ -332,17 +308,17 @@ export default async function AdminPage() {
                 </span>
 
                 <span className="font-bold">
-                  {users ?? 0}
+                  {users ?? "—"}
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
                 <span className="text-zinc-400">
-                  Produtos publicados
+                  Produtos cadastrados
                 </span>
 
                 <span className="font-bold">
-                  {marketplaceProducts ?? 0}
+                  {productCounts?.registered ?? "—"}
                 </span>
               </div>
 
@@ -352,7 +328,7 @@ export default async function AdminPage() {
                 </span>
 
                 <span className="font-bold">
-                  {orders ?? 0}
+                  {orders ?? "—"}
                 </span>
               </div>
 
