@@ -1,4 +1,5 @@
 import AdminNavigation from "@/components/layout/AdminNavigation";
+import PrivateSession from "@/components/auth/PrivateSession";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
@@ -50,6 +51,7 @@ export default async function AdminLayout({
   }
 
   return (
+    <PrivateSession userId={user.id}>
     <div className="min-h-screen bg-black text-white flex flex-col lg:flex-row">
 
       {/* ==================================================
@@ -482,5 +484,6 @@ export default async function AdminLayout({
       </main>
 
     </div>
+    </PrivateSession>
   );
 }

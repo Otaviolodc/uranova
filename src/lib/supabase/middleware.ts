@@ -53,7 +53,20 @@ export async function updateSession(
 
   // Valida a sessão sem fazer uma busca completa
   // do usuário no servidor de Auth em toda requisição.
-  await supabase.auth.getClaims();
+  const path = request.nextUrl.pathname;
+  const privatePath = ["/dashboard", "/admin", "/checkout/success"].some(prefix => path === prefix || path.startsWith(prefix + "/"));
+  if (privatePath) {
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) {
+      const redirect = NextResponse.redirect(new URL("/auth/login", request.url));
+      response.cookies.getAll().forEach(cookie => redirect.cookies.set(cookie));
+      redirect.headers.set("Cache-Control", "private, no-store");
+      return redirect;
+    }
+  } else {
+    await supabase.auth.getClaims();
+  }
+  response.headers.set("Cache-Control", "private, no-store");
 
   return response;
 }

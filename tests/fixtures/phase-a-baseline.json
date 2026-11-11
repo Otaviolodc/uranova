@@ -1,0 +1,6625 @@
+{
+  "commit": "6ce3bf19a17b25c2fb59136df35364445f86a6f2",
+  "project": "opdjpdjettgfndctjcnj",
+  "schema": [
+    {
+      "schema": "public",
+      "table_name": "analytics",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "analytics",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "analytics",
+      "column_name": "event_type",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "analytics",
+      "column_name": "product_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "analytics",
+      "column_name": "link_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "analytics",
+      "column_name": "page",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "analytics",
+      "column_name": "metadata",
+      "type": "jsonb",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "analytics",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": "timezone('utc'::text, now())"
+    },
+    {
+      "schema": "public",
+      "table_name": "balance_releases",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "balance_releases",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "balance_releases",
+      "column_name": "order_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "balance_releases",
+      "column_name": "amount",
+      "type": "numeric",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "balance_releases",
+      "column_name": "available_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "balance_releases",
+      "column_name": "status",
+      "type": "text",
+      "not_null": true,
+      "default_expr": "'pending'::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "balance_releases",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "balance_releases",
+      "column_name": "released_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "available_balance",
+      "type": "numeric(12,2)",
+      "not_null": true,
+      "default_expr": "0"
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "pending_balance",
+      "type": "numeric(12,2)",
+      "not_null": true,
+      "default_expr": "0"
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "total_earned",
+      "type": "numeric(12,2)",
+      "not_null": true,
+      "default_expr": "0"
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "total_withdrawn",
+      "type": "numeric(12,2)",
+      "not_null": true,
+      "default_expr": "0"
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "updated_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "legacy_snapshot",
+      "type": "jsonb",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "stripe_account_id",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "pending_payout",
+      "type": "numeric",
+      "not_null": true,
+      "default_expr": "0"
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "stripe_available_cents",
+      "type": "bigint",
+      "not_null": true,
+      "default_expr": "0"
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "sync_token",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "sync_until",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "synced_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "balances",
+      "column_name": "reconciliation_required",
+      "type": "boolean",
+      "not_null": true,
+      "default_expr": "true"
+    },
+    {
+      "schema": "public",
+      "table_name": "coupons",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "coupons",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "coupons",
+      "column_name": "code",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "coupons",
+      "column_name": "discount",
+      "type": "integer",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "coupons",
+      "column_name": "active",
+      "type": "boolean",
+      "not_null": false,
+      "default_expr": "true"
+    },
+    {
+      "schema": "public",
+      "table_name": "coupons",
+      "column_name": "created_at",
+      "type": "timestamp without time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "course_lessons",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "course_lessons",
+      "column_name": "module_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "course_lessons",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "course_lessons",
+      "column_name": "title",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "course_lessons",
+      "column_name": "description",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "course_lessons",
+      "column_name": "video_url",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "course_lessons",
+      "column_name": "position",
+      "type": "integer",
+      "not_null": false,
+      "default_expr": "0"
+    },
+    {
+      "schema": "public",
+      "table_name": "course_lessons",
+      "column_name": "is_free",
+      "type": "boolean",
+      "not_null": false,
+      "default_expr": "false"
+    },
+    {
+      "schema": "public",
+      "table_name": "course_lessons",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "course_lessons",
+      "column_name": "video_provider",
+      "type": "text",
+      "not_null": false,
+      "default_expr": "'youtube'::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "course_lessons",
+      "column_name": "content",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "course_lessons",
+      "column_name": "duration_minutes",
+      "type": "integer",
+      "not_null": false,
+      "default_expr": "0"
+    },
+    {
+      "schema": "public",
+      "table_name": "course_modules",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "course_modules",
+      "column_name": "course_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "course_modules",
+      "column_name": "title",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "course_modules",
+      "column_name": "description",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "course_modules",
+      "column_name": "position",
+      "type": "integer",
+      "not_null": false,
+      "default_expr": "0"
+    },
+    {
+      "schema": "public",
+      "table_name": "course_modules",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "course_modules",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "customer_products",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "customer_products",
+      "column_name": "customer_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "customer_products",
+      "column_name": "product_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "customer_products",
+      "column_name": "order_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "customer_products",
+      "column_name": "status",
+      "type": "text",
+      "not_null": true,
+      "default_expr": "'active'::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "customer_products",
+      "column_name": "unlocked_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "customer_products",
+      "column_name": "expires_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "customer_products",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "column_name": "captured_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "column_name": "available_balance",
+      "type": "numeric",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "column_name": "pending_balance",
+      "type": "numeric",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "column_name": "total_earned",
+      "type": "numeric",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "column_name": "total_withdrawn",
+      "type": "numeric",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "column_name": "ledger_sales",
+      "type": "numeric",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "column_name": "pending_releases",
+      "type": "numeric",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "column_name": "released_releases",
+      "type": "numeric",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "column_name": "withdrawal_transactions",
+      "type": "numeric",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_transactions",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_transactions",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_transactions",
+      "column_name": "order_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_transactions",
+      "column_name": "withdrawal_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_transactions",
+      "column_name": "type",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_transactions",
+      "column_name": "amount",
+      "type": "numeric(12,2)",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_transactions",
+      "column_name": "description",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "financial_transactions",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "lesson_progress",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "lesson_progress",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "lesson_progress",
+      "column_name": "lesson_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "lesson_progress",
+      "column_name": "completed_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "link_clicks_daily",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "uuid_generate_v4()"
+    },
+    {
+      "schema": "public",
+      "table_name": "link_clicks_daily",
+      "column_name": "link_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "link_clicks_daily",
+      "column_name": "click_date",
+      "type": "date",
+      "not_null": false,
+      "default_expr": "CURRENT_DATE"
+    },
+    {
+      "schema": "public",
+      "table_name": "link_clicks_daily",
+      "column_name": "click_count",
+      "type": "integer",
+      "not_null": false,
+      "default_expr": "1"
+    },
+    {
+      "schema": "public",
+      "table_name": "link_clicks_daily",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "links",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "uuid_generate_v4()"
+    },
+    {
+      "schema": "public",
+      "table_name": "links",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "links",
+      "column_name": "title",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "links",
+      "column_name": "affiliate_url",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "links",
+      "column_name": "slug",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "links",
+      "column_name": "clicks",
+      "type": "integer",
+      "not_null": false,
+      "default_expr": "0"
+    },
+    {
+      "schema": "public",
+      "table_name": "links",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "links",
+      "column_name": "updated_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "links",
+      "column_name": "image_url",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "links",
+      "column_name": "position",
+      "type": "bigint",
+      "not_null": false,
+      "default_expr": "'0'::bigint"
+    },
+    {
+      "schema": "public",
+      "table_name": "links",
+      "column_name": "description",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "notifications",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "notifications",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "notifications",
+      "column_name": "type",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "notifications",
+      "column_name": "title",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "notifications",
+      "column_name": "message",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "notifications",
+      "column_name": "is_read",
+      "type": "boolean",
+      "not_null": true,
+      "default_expr": "false"
+    },
+    {
+      "schema": "public",
+      "table_name": "notifications",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "orders",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "orders",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "orders",
+      "column_name": "product_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "orders",
+      "column_name": "amount",
+      "type": "numeric",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "orders",
+      "column_name": "customer_name",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "orders",
+      "column_name": "customer_email",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "orders",
+      "column_name": "status",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "orders",
+      "column_name": "created_at",
+      "type": "timestamp without time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "orders",
+      "column_name": "stripe_payment_intent_id",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "orders",
+      "column_name": "stripe_checkout_session_id",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "payment_provider_id",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "status",
+      "type": "text",
+      "not_null": false,
+      "default_expr": "'PENDING'::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "value",
+      "type": "numeric",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "created_at",
+      "type": "timestamp without time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "customer_name",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "customer_email",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "customer_cpf",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "original_value",
+      "type": "numeric",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "final_value",
+      "type": "numeric",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "coupon_code",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "platform_fee",
+      "type": "numeric",
+      "not_null": true,
+      "default_expr": "0"
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "platform_fee_percent",
+      "type": "numeric",
+      "not_null": true,
+      "default_expr": "10"
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "stripe_fee",
+      "type": "numeric",
+      "not_null": true,
+      "default_expr": "0"
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "net_value",
+      "type": "numeric",
+      "not_null": true,
+      "default_expr": "0"
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "finance_verified",
+      "type": "boolean",
+      "not_null": true,
+      "default_expr": "false"
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "stripe_account_id",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "stripe_checkout_session_id",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "stripe_charge_id",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "stripe_balance_transaction_id",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "order_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "customer_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "product_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "gross_cents",
+      "type": "bigint",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "platform_fee_cents",
+      "type": "bigint",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "stripe_fee_cents",
+      "type": "bigint",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "producer_net_cents",
+      "type": "bigint",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "currency",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "available_on",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "paid_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "stripe_evidence",
+      "type": "jsonb",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "payments",
+      "column_name": "reconciliation_required",
+      "type": "boolean",
+      "not_null": true,
+      "default_expr": "false"
+    },
+    {
+      "schema": "public",
+      "table_name": "products",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "products",
+      "column_name": "title",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products",
+      "column_name": "price",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products",
+      "column_name": "image_url",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products",
+      "column_name": "affiliate_url",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products",
+      "column_name": "marketplace",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "products",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products",
+      "column_name": "file_path",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products",
+      "column_name": "type",
+      "type": "text",
+      "not_null": false,
+      "default_expr": "'pdf'::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "title",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "description",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "price",
+      "type": "numeric",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "image_url",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "file_url",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "checkout_slug",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "is_active",
+      "type": "boolean",
+      "not_null": false,
+      "default_expr": "true"
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": "timezone('utc'::text, now())"
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "type",
+      "type": "text",
+      "not_null": false,
+      "default_expr": "'ebook'::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "status",
+      "type": "text",
+      "not_null": false,
+      "default_expr": "'active'::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "is_marketplace",
+      "type": "boolean",
+      "not_null": false,
+      "default_expr": "false"
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "affiliate_url",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "file_path",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "products_checkout",
+      "column_name": "product_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "username",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "bio",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "avatar",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "updated_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "theme_color",
+      "type": "character varying(7)",
+      "not_null": false,
+      "default_expr": "'#6366f1'::character varying"
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "background_color",
+      "type": "character varying(7)",
+      "not_null": false,
+      "default_expr": "'#faf7ff'::character varying"
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "button_style",
+      "type": "character varying(20)",
+      "not_null": false,
+      "default_expr": "'rounded'::character varying"
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "stripe_customer_id",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "subscription_status",
+      "type": "character varying(20)",
+      "not_null": false,
+      "default_expr": "'free'::character varying"
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "subscription_plan",
+      "type": "character varying(20)",
+      "not_null": false,
+      "default_expr": "'free'::character varying"
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "subscription_end_date",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "name",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "avatar_url",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "instagram",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "telegram",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "whatsapp",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "featured_text",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "featured_url",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "product_text_color",
+      "type": "text",
+      "not_null": false,
+      "default_expr": "'#000000'::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "template",
+      "type": "text",
+      "not_null": false,
+      "default_expr": "'dark'::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "is_pro",
+      "type": "boolean",
+      "not_null": false,
+      "default_expr": "false"
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "background_style",
+      "type": "text",
+      "not_null": false,
+      "default_expr": "'''gradient'''::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "card_style",
+      "type": "text",
+      "not_null": false,
+      "default_expr": "'''glass'''::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "font_style",
+      "type": "text",
+      "not_null": false,
+      "default_expr": "'''modern'''::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "role",
+      "type": "text",
+      "not_null": false,
+      "default_expr": "'user'::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "phone",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "city",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "state",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "address",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "profiles",
+      "column_name": "stripe_account_id",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "stripe_webhook_events",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "stripe_webhook_events",
+      "column_name": "event_id",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "stripe_webhook_events",
+      "column_name": "event_type",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "stripe_webhook_events",
+      "column_name": "status",
+      "type": "text",
+      "not_null": true,
+      "default_expr": "'processing'::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "stripe_webhook_events",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "stripe_webhook_events",
+      "column_name": "processed_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "stripe_webhook_events",
+      "column_name": "stripe_account_id",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "stripe_webhook_events",
+      "column_name": "lease_token",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "stripe_webhook_events",
+      "column_name": "lease_until",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "stripe_webhook_events",
+      "column_name": "attempts",
+      "type": "integer",
+      "not_null": true,
+      "default_expr": "0"
+    },
+    {
+      "schema": "public",
+      "table_name": "stripe_webhook_events",
+      "column_name": "last_error",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "subscriptions",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "uuid_generate_v4()"
+    },
+    {
+      "schema": "public",
+      "table_name": "subscriptions",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "subscriptions",
+      "column_name": "asaas_id",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "subscriptions",
+      "column_name": "status",
+      "type": "character varying(20)",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "subscriptions",
+      "column_name": "plan",
+      "type": "character varying(20)",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "subscriptions",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "support_bugs",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "support_bugs",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "support_bugs",
+      "column_name": "title",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "support_bugs",
+      "column_name": "description",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "support_bugs",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "support_feedback",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "support_feedback",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "support_feedback",
+      "column_name": "rating",
+      "type": "smallint",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "support_feedback",
+      "column_name": "comment",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "support_feedback",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "support_messages",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "support_messages",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "support_messages",
+      "column_name": "message",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "support_messages",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "support_suggestions",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "support_suggestions",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "support_suggestions",
+      "column_name": "title",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "support_suggestions",
+      "column_name": "description",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "support_suggestions",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "withdraw_requests",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "withdraw_requests",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdraw_requests",
+      "column_name": "amount",
+      "type": "numeric(10,2)",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdraw_requests",
+      "column_name": "pix_key",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdraw_requests",
+      "column_name": "pix_key_type",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdraw_requests",
+      "column_name": "status",
+      "type": "text",
+      "not_null": true,
+      "default_expr": "'pending'::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "withdraw_requests",
+      "column_name": "admin_note",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdraw_requests",
+      "column_name": "created_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "withdraw_requests",
+      "column_name": "approved_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdraw_requests",
+      "column_name": "paid_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdraw_requests",
+      "column_name": "updated_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "user_id",
+      "type": "uuid",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "amount",
+      "type": "numeric(12,2)",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "pix_key",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "pix_type",
+      "type": "text",
+      "not_null": true,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "status",
+      "type": "text",
+      "not_null": true,
+      "default_expr": "'pending'::text"
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "requested_at",
+      "type": "timestamp with time zone",
+      "not_null": true,
+      "default_expr": "now()"
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "processed_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "processed_by",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "stripe_payout_id",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "stripe_account_id",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "request_key",
+      "type": "uuid",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "amount_cents",
+      "type": "bigint",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "stripe_status",
+      "type": "text",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "stripe_evidence",
+      "type": "jsonb",
+      "not_null": false,
+      "default_expr": null
+    },
+    {
+      "schema": "public",
+      "table_name": "withdrawals",
+      "column_name": "last_synced_at",
+      "type": "timestamp with time zone",
+      "not_null": false,
+      "default_expr": null
+    }
+  ],
+  "constraints": [
+    {
+      "table_name": "analytics",
+      "conname": "analytics_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "balance_releases",
+      "conname": "balance_releases_amount_check",
+      "contype": "c",
+      "definition": "CHECK ((amount > (0)::numeric))"
+    },
+    {
+      "table_name": "balance_releases",
+      "conname": "balance_releases_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "balance_releases",
+      "conname": "balance_releases_status_check",
+      "contype": "c",
+      "definition": "CHECK ((status = ANY (ARRAY['pending'::text, 'released'::text, 'cancelled'::text])))"
+    },
+    {
+      "table_name": "balances",
+      "conname": "balances_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "balances",
+      "conname": "balances_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "balances",
+      "conname": "balances_user_id_key",
+      "contype": "u",
+      "definition": "UNIQUE (user_id)"
+    },
+    {
+      "table_name": "balances",
+      "conname": "nonnegative_finance_balance",
+      "contype": "c",
+      "definition": "CHECK (((available_balance >= (0)::numeric) AND (pending_balance >= (0)::numeric) AND (pending_payout >= (0)::numeric) AND (total_withdrawn >= (0)::numeric)))"
+    },
+    {
+      "table_name": "coupons",
+      "conname": "coupons_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "course_lessons",
+      "conname": "course_lessons_module_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (module_id) REFERENCES course_modules(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "course_lessons",
+      "conname": "course_lessons_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "course_lessons",
+      "conname": "course_lessons_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id)"
+    },
+    {
+      "table_name": "course_modules",
+      "conname": "course_modules_course_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (course_id) REFERENCES products(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "course_modules",
+      "conname": "course_modules_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "course_modules",
+      "conname": "course_modules_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id)"
+    },
+    {
+      "table_name": "customer_products",
+      "conname": "customer_products_customer_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (customer_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "customer_products",
+      "conname": "customer_products_order_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL"
+    },
+    {
+      "table_name": "customer_products",
+      "conname": "customer_products_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "customer_products",
+      "conname": "customer_products_product_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "financial_balance_audit_snapshots",
+      "conname": "financial_balance_audit_snapshots_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "financial_transactions",
+      "conname": "financial_transactions_order_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL"
+    },
+    {
+      "table_name": "financial_transactions",
+      "conname": "financial_transactions_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "financial_transactions",
+      "conname": "financial_transactions_type_check",
+      "contype": "c",
+      "definition": "CHECK ((type = ANY (ARRAY['sale'::text, 'withdrawal'::text, 'refund'::text, 'adjustment'::text])))"
+    },
+    {
+      "table_name": "financial_transactions",
+      "conname": "financial_transactions_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "financial_transactions",
+      "conname": "financial_transactions_withdrawal_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (withdrawal_id) REFERENCES withdraw_requests(id) ON DELETE SET NULL"
+    },
+    {
+      "table_name": "lesson_progress",
+      "conname": "lesson_progress_lesson_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES course_lessons(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "lesson_progress",
+      "conname": "lesson_progress_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "lesson_progress",
+      "conname": "lesson_progress_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "lesson_progress",
+      "conname": "lesson_progress_user_id_lesson_id_key",
+      "contype": "u",
+      "definition": "UNIQUE (user_id, lesson_id)"
+    },
+    {
+      "table_name": "link_clicks_daily",
+      "conname": "link_clicks_daily_link_id_click_date_key",
+      "contype": "u",
+      "definition": "UNIQUE (link_id, click_date)"
+    },
+    {
+      "table_name": "link_clicks_daily",
+      "conname": "link_clicks_daily_link_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (link_id) REFERENCES links(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "link_clicks_daily",
+      "conname": "link_clicks_daily_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "links",
+      "conname": "links_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "links",
+      "conname": "links_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "links",
+      "conname": "links_user_id_slug_key",
+      "contype": "u",
+      "definition": "UNIQUE (user_id, slug)"
+    },
+    {
+      "table_name": "notifications",
+      "conname": "notifications_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "notifications",
+      "conname": "notifications_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "orders",
+      "conname": "orders_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "orders",
+      "conname": "orders_product_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (product_id) REFERENCES products(id)"
+    },
+    {
+      "table_name": "orders",
+      "conname": "orders_stripe_checkout_session_id_key",
+      "contype": "u",
+      "definition": "UNIQUE (stripe_checkout_session_id)"
+    },
+    {
+      "table_name": "orders",
+      "conname": "orders_stripe_payment_intent_id_key",
+      "contype": "u",
+      "definition": "UNIQUE (stripe_payment_intent_id)"
+    },
+    {
+      "table_name": "payments",
+      "conname": "payments_customer_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (customer_id) REFERENCES profiles(id)"
+    },
+    {
+      "table_name": "payments",
+      "conname": "payments_order_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (order_id) REFERENCES orders(id)"
+    },
+    {
+      "table_name": "payments",
+      "conname": "payments_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "payments",
+      "conname": "payments_product_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (product_id) REFERENCES products(id)"
+    },
+    {
+      "table_name": "payments",
+      "conname": "verified_payment_integrity",
+      "contype": "c",
+      "definition": "CHECK (((NOT finance_verified) OR ((stripe_account_id IS NOT NULL) AND (stripe_checkout_session_id IS NOT NULL) AND (payment_provider_id IS NOT NULL) AND (stripe_charge_id IS NOT NULL) AND (stripe_balance_transaction_id IS NOT NULL) AND (order_id IS NOT NULL) AND (customer_id IS NOT NULL) AND (product_id IS NOT NULL) AND (currency IS NOT NULL) AND (currency = 'brl'::text) AND (gross_cents IS NOT NULL) AND (gross_cents > 0) AND (platform_fee_cents IS NOT NULL) AND (platform_fee_cents = ((gross_cents + 5) / 10)) AND (stripe_fee_cents IS NOT NULL) AND (stripe_fee_cents >= 0) AND (producer_net_cents IS NOT NULL) AND (producer_net_cents >= 0) AND (gross_cents = ((platform_fee_cents + stripe_fee_cents) + producer_net_cents)) AND (stripe_evidence IS NOT NULL) AND COALESCE(((stripe_evidence ->> 'livemode'::text) = 'true'::text), false) AND COALESCE(((status = 'PAID'::text) AND ((value * (100)::numeric) = (gross_cents)::numeric) AND ((original_value * (100)::numeric) = (gross_cents)::numeric) AND ((final_value * (100)::numeric) = (producer_net_cents)::numeric) AND ((platform_fee * (100)::numeric) = (platform_fee_cents)::numeric) AND ((stripe_fee * (100)::numeric) = (stripe_fee_cents)::numeric) AND ((net_value * (100)::numeric) = (platform_fee_cents)::numeric)), false) AND (available_on IS NOT NULL) AND (paid_at IS NOT NULL))))"
+    },
+    {
+      "table_name": "products",
+      "conname": "products_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "products",
+      "conname": "products_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES profiles(id)"
+    },
+    {
+      "table_name": "products_checkout",
+      "conname": "products_checkout_checkout_slug_key",
+      "contype": "u",
+      "definition": "UNIQUE (checkout_slug)"
+    },
+    {
+      "table_name": "products_checkout",
+      "conname": "products_checkout_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "products_checkout",
+      "conname": "products_checkout_product_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (product_id) REFERENCES products(id)"
+    },
+    {
+      "table_name": "products_checkout",
+      "conname": "products_checkout_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id)"
+    },
+    {
+      "table_name": "profiles",
+      "conname": "profiles_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "profiles",
+      "conname": "profiles_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "profiles",
+      "conname": "profiles_username_key",
+      "contype": "u",
+      "definition": "UNIQUE (username)"
+    },
+    {
+      "table_name": "profiles",
+      "conname": "username_format",
+      "contype": "c",
+      "definition": "CHECK ((username ~ '^[a-zA-Z0-9_]+$'::text))"
+    },
+    {
+      "table_name": "stripe_webhook_events",
+      "conname": "stripe_webhook_events_event_id_key",
+      "contype": "u",
+      "definition": "UNIQUE (event_id)"
+    },
+    {
+      "table_name": "stripe_webhook_events",
+      "conname": "stripe_webhook_events_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "subscriptions",
+      "conname": "subscriptions_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "subscriptions",
+      "conname": "subscriptions_stripe_subscription_id_key",
+      "contype": "u",
+      "definition": "UNIQUE (asaas_id)"
+    },
+    {
+      "table_name": "subscriptions",
+      "conname": "subscriptions_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "support_bugs",
+      "conname": "support_bugs_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "support_bugs",
+      "conname": "support_bugs_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "support_feedback",
+      "conname": "support_feedback_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "support_feedback",
+      "conname": "support_feedback_rating_check",
+      "contype": "c",
+      "definition": "CHECK (((rating >= 1) AND (rating <= 5)))"
+    },
+    {
+      "table_name": "support_feedback",
+      "conname": "support_feedback_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "support_messages",
+      "conname": "support_messages_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "support_messages",
+      "conname": "support_messages_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "support_suggestions",
+      "conname": "support_suggestions_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "support_suggestions",
+      "conname": "support_suggestions_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "withdraw_requests",
+      "conname": "withdraw_requests_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "withdraw_requests",
+      "conname": "withdraw_requests_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "withdrawals",
+      "conname": "payout_cents_valid",
+      "contype": "c",
+      "definition": "CHECK (((amount_cents IS NULL) OR (amount_cents > 0)))"
+    },
+    {
+      "table_name": "withdrawals",
+      "conname": "withdrawals_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "withdrawals",
+      "conname": "withdrawals_processed_by_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (processed_by) REFERENCES profiles(id)"
+    },
+    {
+      "table_name": "withdrawals",
+      "conname": "withdrawals_request_key_key",
+      "contype": "u",
+      "definition": "UNIQUE (request_key)"
+    },
+    {
+      "table_name": "withdrawals",
+      "conname": "withdrawals_status_check",
+      "contype": "c",
+      "definition": "CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'paid'::text, 'rejected'::text])))"
+    },
+    {
+      "table_name": "withdrawals",
+      "conname": "withdrawals_stripe_payout_id_key",
+      "contype": "u",
+      "definition": "UNIQUE (stripe_payout_id)"
+    },
+    {
+      "table_name": "withdrawals",
+      "conname": "withdrawals_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    }
+  ],
+  "policies": [
+    {
+      "schemaname": "public",
+      "tablename": "coupons",
+      "policyname": "Users can delete own coupons",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "DELETE",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "coupons",
+      "policyname": "Users can insert own coupons",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(auth.uid() = user_id)"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "coupons",
+      "policyname": "Users can update own coupons",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "UPDATE",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "coupons",
+      "policyname": "Users can view own coupons",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "SELECT",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "course_lessons",
+      "policyname": "Customers can view purchased lessons",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(EXISTS ( SELECT 1\n   FROM (customer_products cp\n     JOIN course_modules cm ON ((cm.id = course_lessons.module_id)))\n  WHERE ((cp.customer_id = auth.uid()) AND (cp.product_id = cm.course_id) AND (cp.status = 'active'::text))))",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "course_lessons",
+      "policyname": "Users can delete own lessons",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "DELETE",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "course_lessons",
+      "policyname": "Users can insert own lessons",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(auth.uid() = user_id)"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "course_lessons",
+      "policyname": "Users can update own lessons",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "UPDATE",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "course_lessons",
+      "policyname": "Users can view own lessons",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "course_modules",
+      "policyname": "Allow customers to view modules",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(EXISTS ( SELECT 1\n   FROM customer_products cp\n  WHERE ((cp.customer_id = auth.uid()) AND (cp.product_id = course_modules.course_id) AND (cp.status = 'active'::text))))",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "course_modules",
+      "policyname": "Users can delete own modules",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "DELETE",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "course_modules",
+      "policyname": "Users can insert own modules",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(auth.uid() = user_id)"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "course_modules",
+      "policyname": "Users can update own modules",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "UPDATE",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": "(auth.uid() = user_id)"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "course_modules",
+      "policyname": "Users can view own modules",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "customer_products",
+      "policyname": "Users can view own customer products",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(customer_id = auth.uid())",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "lesson_progress",
+      "policyname": "Users can insert own lesson progress",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(auth.uid() = user_id)"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "lesson_progress",
+      "policyname": "Users can update own lesson progress",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "UPDATE",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "lesson_progress",
+      "policyname": "Users can view own lesson progress",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "SELECT",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "links",
+      "policyname": "Allow all",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "ALL",
+      "qual": "true",
+      "with_check": "true"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "links",
+      "policyname": "Allow delete",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "DELETE",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "links",
+      "policyname": "Allow insert",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "true"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "links",
+      "policyname": "Allow select",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "SELECT",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "links",
+      "policyname": "Allow update",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "UPDATE",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "links",
+      "policyname": "Public links are viewable by everyone",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "SELECT",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "links",
+      "policyname": "Users can delete own links",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "DELETE",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "links",
+      "policyname": "Users can insert their own links",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(auth.uid() = user_id)"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "links",
+      "policyname": "Users can update own links",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "UPDATE",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "notifications",
+      "policyname": "Users can read their notifications",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "SELECT",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "notifications",
+      "policyname": "Users can update their notifications",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "UPDATE",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "orders",
+      "policyname": "Users can view own orders",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "products",
+      "policyname": "Allow all inserts",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "true"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "products",
+      "policyname": "Allow delete products",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "DELETE",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "products",
+      "policyname": "Allow read products",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "SELECT",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "products_checkout",
+      "policyname": "Public checkout read",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "SELECT",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "products_checkout",
+      "policyname": "Users can delete own products",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "DELETE",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "products_checkout",
+      "policyname": "Users can insert own products",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(auth.uid() = user_id)"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "products_checkout",
+      "policyname": "Users can update own products",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "UPDATE",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "products_checkout",
+      "policyname": "Users can view own products",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "profiles",
+      "policyname": "Public profiles are viewable by everyone",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "SELECT",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "profiles",
+      "policyname": "Users can insert their own profile",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(auth.uid() = id)"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "profiles",
+      "policyname": "Users can update own profile",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "UPDATE",
+      "qual": "(auth.uid() = id)",
+      "with_check": "(auth.uid() = id)"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "profiles",
+      "policyname": "Users can update own username",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "UPDATE",
+      "qual": "(auth.uid() = id)",
+      "with_check": "(auth.uid() = id)"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "subscriptions",
+      "policyname": "Users can insert own subscriptions",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(auth.uid() = user_id)"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "subscriptions",
+      "policyname": "Users can update own subscriptions",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "UPDATE",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "subscriptions",
+      "policyname": "Users can view own subscriptions",
+      "permissive": "PERMISSIVE",
+      "roles": "{public}",
+      "cmd": "SELECT",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "support_bugs",
+      "policyname": "Users can insert own bugs",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(auth.uid() = user_id)"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "support_bugs",
+      "policyname": "Users can view own bugs",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "support_feedback",
+      "policyname": "Users can insert own feedback",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(auth.uid() = user_id)"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "support_feedback",
+      "policyname": "Users can view own feedback",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "support_messages",
+      "policyname": "Usuário pode inserir suas próprias mensagens",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(user_id = auth.uid())"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "support_messages",
+      "policyname": "Usuário pode visualizar suas próprias mensagens",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(user_id = auth.uid())",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "support_suggestions",
+      "policyname": "Users can insert own suggestions",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(auth.uid() = user_id)"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "support_suggestions",
+      "policyname": "Users can view own suggestions",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(auth.uid() = user_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "Upload avatars",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(bucket_id = 'avatars'::text)"
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "Upload avatars 1oj01fe_0",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(bucket_id = 'true'::text)"
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "Upload product images 1e6ovep_0",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(bucket_id = 'products-images'::text)"
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "Upload products",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(bucket_id = 'products'::text)"
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "View avatars",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(bucket_id = 'avatars'::text)",
+      "with_check": null
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "View avatars 1oj01fe_0",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(bucket_id = 'true'::text)",
+      "with_check": null
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "View product images 1e6ovep_0",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(bucket_id = 'products-images'::text)",
+      "with_check": null
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "View products",
+      "permissive": "PERMISSIVE",
+      "roles": "{authenticated}",
+      "cmd": "SELECT",
+      "qual": "(bucket_id = 'products'::text)",
+      "with_check": null
+    }
+  ],
+  "grants": [
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "analytics",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "balance_releases",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "balance_releases",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "balance_releases",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "balance_releases",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "balance_releases",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "balance_releases",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "balance_releases",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "balances",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "balances",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "balances",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "balances",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "balances",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "balances",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "balances",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "coupons",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_lessons",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "course_modules",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "customer_products",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "customer_products",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "customer_products",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "customer_products",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "customer_products",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "customer_products",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "customer_products",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "customer_products",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "customer_products",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "financial_balance_audit_snapshots",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "financial_transactions",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "financial_transactions",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "financial_transactions",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "financial_transactions",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "financial_transactions",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "financial_transactions",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "financial_transactions",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "lesson_progress",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "link_clicks_daily",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "links",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "notifications",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "orders",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "orders",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "orders",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "orders",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "orders",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "orders",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "orders",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "orders",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "orders",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "payments",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "payments",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "payments",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "payments",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "payments",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "payments",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "payments",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "products_checkout",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "profiles",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "stripe_webhook_events",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "stripe_webhook_events",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "stripe_webhook_events",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "stripe_webhook_events",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "stripe_webhook_events",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "stripe_webhook_events",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "stripe_webhook_events",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "subscriptions",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_bugs",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_feedback",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_messages",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "support_suggestions",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "withdraw_requests",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "withdraw_requests",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "withdraw_requests",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "withdraw_requests",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "withdraw_requests",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "withdraw_requests",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "withdraw_requests",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "withdrawals",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "withdrawals",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "withdrawals",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "withdrawals",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "withdrawals",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "withdrawals",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "withdrawals",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_analytics",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_vectors",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_vectors",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "buckets_vectors",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "anon",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "anon",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "anon",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "anon",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "anon",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "anon",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "authenticated",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "authenticated",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "authenticated",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "authenticated",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "authenticated",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "authenticated",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "objects",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads_parts",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads_parts",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads_parts",
+      "grantee": "service_role",
+      "privilege_type": "DELETE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads_parts",
+      "grantee": "service_role",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads_parts",
+      "grantee": "service_role",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads_parts",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads_parts",
+      "grantee": "service_role",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads_parts",
+      "grantee": "service_role",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "s3_multipart_uploads_parts",
+      "grantee": "service_role",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "vector_indexes",
+      "grantee": "anon",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "vector_indexes",
+      "grantee": "authenticated",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_schema": "storage",
+      "table_name": "vector_indexes",
+      "grantee": "service_role",
+      "privilege_type": "SELECT"
+    }
+  ],
+  "functions": [
+    {
+      "schema": "public",
+      "proname": "update_updated_at",
+      "signature": "update_updated_at()",
+      "prosecdef": false,
+      "definition": "CREATE OR REPLACE FUNCTION public.update_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\r\nbegin\r\n    new.updated_at = now();\r\n    return new;\r\nend;\r\n$function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "guard_financial_profile",
+      "signature": "guard_financial_profile()",
+      "prosecdef": false,
+      "definition": "CREATE OR REPLACE FUNCTION public.guard_financial_profile()\n RETURNS trigger\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nBEGIN\n  IF current_user IN ('anon','authenticated') THEN\n    IF TG_OP='INSERT' THEN\n      IF coalesce(NEW.role,'user') <> 'user' OR NEW.stripe_account_id IS NOT NULL OR\n         coalesce((to_jsonb(NEW)->>'is_pro')::boolean,false) OR\n         to_jsonb(NEW)->>'stripe_customer_id' IS NOT NULL OR\n         coalesce(to_jsonb(NEW)->>'subscription_plan','free') <> 'free' OR\n         coalesce(to_jsonb(NEW)->>'subscription_status','free') <> 'free' OR\n         to_jsonb(NEW)->>'subscription_end_date' IS NOT NULL THEN\n        RAISE EXCEPTION 'Protected profile fields';\n      END IF;\n    ELSIF NEW.id IS DISTINCT FROM OLD.id OR NEW.role IS DISTINCT FROM OLD.role OR\n          NEW.stripe_account_id IS DISTINCT FROM OLD.stripe_account_id OR\n          to_jsonb(NEW)->'is_pro' IS DISTINCT FROM to_jsonb(OLD)->'is_pro' OR\n          to_jsonb(NEW)->'stripe_customer_id' IS DISTINCT FROM to_jsonb(OLD)->'stripe_customer_id' OR\n          to_jsonb(NEW)->'subscription_plan' IS DISTINCT FROM to_jsonb(OLD)->'subscription_plan' OR\n          to_jsonb(NEW)->'subscription_status' IS DISTINCT FROM to_jsonb(OLD)->'subscription_status' OR\n          to_jsonb(NEW)->'subscription_end_date' IS DISTINCT FROM to_jsonb(OLD)->'subscription_end_date' THEN\n      RAISE EXCEPTION 'Protected profile fields';\n    END IF;\n  END IF;\n  RETURN NEW;\nEND $function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "claim_stripe_event",
+      "signature": "claim_stripe_event(text,text,text,uuid)",
+      "prosecdef": false,
+      "definition": "CREATE OR REPLACE FUNCTION public.claim_stripe_event(p_id text, p_type text, p_account text, p_token uuid)\n RETURNS text\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nDECLARE e public.stripe_webhook_events;\nBEGIN\n  INSERT INTO public.stripe_webhook_events(event_id,event_type,stripe_account_id,status)\n    VALUES(p_id,p_type,p_account,'processing') ON CONFLICT(event_id) DO NOTHING;\n  SELECT * INTO e FROM public.stripe_webhook_events WHERE event_id=p_id FOR UPDATE;\n  IF e.status='processed' THEN RETURN 'processed'; END IF;\n  IF e.lease_until > now() THEN RETURN 'busy'; END IF;\n  UPDATE public.stripe_webhook_events SET lease_token=p_token,lease_until=now()+interval '3 minutes',\n    attempts=attempts+1,status='processing',last_error=NULL WHERE event_id=p_id;\n  RETURN 'claimed';\nEND $function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "increment_clicks",
+      "signature": "increment_clicks(uuid)",
+      "prosecdef": true,
+      "definition": "CREATE OR REPLACE FUNCTION public.increment_clicks(link_id uuid)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\nAS $function$\r\nBEGIN\r\n  UPDATE links \r\n  SET clicks = clicks + 1 \r\n  WHERE id = link_id;\r\nEND;\r\n$function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "finish_stripe_event",
+      "signature": "finish_stripe_event(text,uuid,text)",
+      "prosecdef": false,
+      "definition": "CREATE OR REPLACE FUNCTION public.finish_stripe_event(p_id text, p_token uuid, p_error text DEFAULT NULL::text)\n RETURNS void\n LANGUAGE sql\n SET search_path TO ''\nAS $function$\n  UPDATE public.stripe_webhook_events SET status=CASE WHEN p_error IS NULL THEN 'processed' ELSE 'failed' END,\n    processed_at=CASE WHEN p_error IS NULL THEN now() ELSE NULL END,\n    last_error=left(p_error,1000),lease_until=NULL\n    WHERE event_id=p_id AND lease_token=p_token;\n$function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "finance_chart",
+      "signature": "finance_chart(uuid,text)",
+      "prosecdef": false,
+      "definition": "CREATE OR REPLACE FUNCTION public.finance_chart(p_user uuid, p_period text DEFAULT '7d'::text)\n RETURNS jsonb\n LANGUAGE sql\n STABLE\n SET search_path TO ''\nAS $function$\n  WITH series AS (\n    SELECT day FROM generate_series(\n      CASE WHEN p_period='12m' THEN date_trunc('month',now() AT TIME ZONE 'America/Sao_Paulo')-interval '11 months'\n      ELSE date_trunc('day',now() AT TIME ZONE 'America/Sao_Paulo') -\n        (CASE p_period WHEN '90d' THEN 89 WHEN '30d' THEN 29 ELSE 6 END)*interval '1 day' END,\n      now() AT TIME ZONE 'America/Sao_Paulo',CASE WHEN p_period='12m' THEN interval '1 month' ELSE interval '1 day' END) day\n  ) SELECT coalesce(jsonb_agg(x ORDER BY x.date),'[]'::jsonb) FROM (\n    SELECT to_char(s.day,'YYYY-MM-DD') date,to_char(s.day,CASE WHEN p_period='12m' THEN 'MM/YY' ELSE 'DD/MM' END) label,\n      coalesce(sum(p.gross_cents),0)::numeric/100 revenue,count(p.id) sales\n    FROM series s LEFT JOIN public.payments p ON p.user_id=p_user AND p.finance_verified AND\n      date_trunc(CASE WHEN p_period='12m' THEN 'month' ELSE 'day' END,p.paid_at AT TIME ZONE 'America/Sao_Paulo')=s.day\n    GROUP BY s.day\n  ) x;\n$function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "finance_customers",
+      "signature": "finance_customers(uuid)",
+      "prosecdef": false,
+      "definition": "CREATE OR REPLACE FUNCTION public.finance_customers(p_user uuid)\n RETURNS jsonb\n LANGUAGE sql\n STABLE\n SET search_path TO ''\nAS $function$\n  SELECT jsonb_build_object('count',(SELECT count(DISTINCT customer_id) FROM public.payments WHERE user_id=p_user AND finance_verified),\n    'customers',coalesce((SELECT jsonb_agg(x) FROM (\n      SELECT customer_id id,coalesce(max(customer_name),'Cliente') name,coalesce(max(customer_email),'') email,\n        count(*) purchases,sum(gross_cents)::numeric/100 total,max(paid_at) \"lastPurchase\"\n      FROM public.payments WHERE user_id=p_user AND finance_verified\n      GROUP BY customer_id ORDER BY max(paid_at) DESC LIMIT 500\n    )x),'[]'::jsonb));\n$function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "track_click_with_date",
+      "signature": "track_click_with_date(text)",
+      "prosecdef": true,
+      "definition": "CREATE OR REPLACE FUNCTION public.track_click_with_date(link_slug text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\nAS $function$\r\nDECLARE\r\n  target_link_id UUID;\r\nBEGIN\r\n  -- Get link ID\r\n  SELECT id INTO target_link_id FROM links WHERE slug = link_slug;\r\n  \r\n  -- Update total clicks\r\n  UPDATE links SET clicks = clicks + 1 WHERE id = target_link_id;\r\n  \r\n  -- Update daily clicks\r\n  INSERT INTO link_clicks_daily (link_id, click_date, click_count)\r\n  VALUES (target_link_id, CURRENT_DATE, 1)\r\n  ON CONFLICT (link_id, click_date)\r\n  DO UPDATE SET click_count = link_clicks_daily.click_count + 1;\r\nEND;\r\n$function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "handle_new_user",
+      "signature": "handle_new_user()",
+      "prosecdef": true,
+      "definition": "CREATE OR REPLACE FUNCTION public.handle_new_user()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\nAS $function$\r\nBEGIN\r\n    INSERT INTO public.profiles (id, username)\r\n    VALUES (new.id, 'user_' || substr(new.id::text, 1, 8));\r\n    RETURN new;\r\nEND;\r\n$function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "record_stripe_payout",
+      "signature": "record_stripe_payout(uuid,text,jsonb,timestamp with time zone)",
+      "prosecdef": false,
+      "definition": "CREATE OR REPLACE FUNCTION public.record_stripe_payout(p_user uuid, p_account text, p jsonb, p_started timestamp with time zone)\n RETURNS void\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nDECLARE w public.withdrawals; new_status text;\nBEGIN\n  PERFORM pg_advisory_xact_lock(hashtextextended(p_user::text,0));\n  IF p->>'livemode' IS DISTINCT FROM 'true' OR p->>'currency' IS DISTINCT FROM 'brl' OR\n     p->>'id' IS NULL OR p->>'amount' IS NULL OR (p->>'amount')::bigint<=0 OR\n     NOT EXISTS(SELECT 1 FROM public.profiles WHERE id=p_user AND stripe_account_id=p_account) THEN\n    RAISE EXCEPTION 'Invalid payout'; END IF;\n  new_status := CASE p->>'status' WHEN 'paid' THEN 'paid' WHEN 'failed' THEN 'rejected'\n    WHEN 'canceled' THEN 'rejected' WHEN 'pending' THEN 'pending' WHEN 'in_transit' THEN 'approved' ELSE NULL END;\n  IF new_status IS NULL THEN RAISE EXCEPTION 'Unknown payout status'; END IF;\n  SELECT * INTO w FROM public.withdrawals WHERE stripe_payout_id=p->>'id' OR\n    (p->'metadata'->>'uranova_withdrawal_id' IS NOT NULL AND id::text=p->'metadata'->>'uranova_withdrawal_id') FOR UPDATE;\n  IF FOUND THEN\n    IF w.user_id<>p_user OR w.stripe_account_id<>p_account OR w.amount_cents<>(p->>'amount')::bigint OR\n       (w.stripe_payout_id IS NOT NULL AND w.stripe_payout_id<>p->>'id') THEN RAISE EXCEPTION 'Payout mismatch'; END IF;\n    IF w.last_synced_at>p_started THEN RETURN; END IF;\n    UPDATE public.withdrawals SET stripe_payout_id=p->>'id',status=new_status,stripe_status=p->>'status',\n      stripe_evidence=p,last_synced_at=p_started,processed_at=CASE WHEN new_status IN ('paid','rejected') THEN now() ELSE NULL END\n      WHERE id=w.id;\n  ELSE\n    INSERT INTO public.withdrawals(user_id,amount,amount_cents,stripe_account_id,stripe_payout_id,status,\n      stripe_status,stripe_evidence,last_synced_at,pix_key,pix_type)\n    VALUES(p_user,(p->>'amount')::numeric/100,(p->>'amount')::bigint,p_account,p->>'id',new_status,\n      p->>'status',p,p_started,'stripe','stripe');\n  END IF;\n  UPDATE public.balances SET synced_at=NULL,available_balance=0 WHERE user_id=p_user;\nEND $function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "finance_summary",
+      "signature": "finance_summary(uuid)",
+      "prosecdef": false,
+      "definition": "CREATE OR REPLACE FUNCTION public.finance_summary(p_user uuid DEFAULT NULL::uuid)\n RETURNS jsonb\n LANGUAGE sql\n STABLE\n SET search_path TO ''\nAS $function$\n SELECT jsonb_build_object(\n   'gross_cents',coalesce(sum(gross_cents),0), 'platform_fee_cents',coalesce(sum(platform_fee_cents),0),\n   'stripe_fee_cents',coalesce(sum(stripe_fee_cents),0),'producer_net_cents',coalesce(sum(producer_net_cents),0),\n   'approved_sales',count(*),\n   'available_cents',(SELECT coalesce(sum(available_balance*100),0) FROM public.balances WHERE (p_user IS NULL OR user_id=p_user) AND NOT reconciliation_required AND synced_at>now()-interval '5 minutes'),\n   'pending_cents',(SELECT coalesce(sum(pending_balance*100),0) FROM public.balances WHERE p_user IS NULL OR user_id=p_user),\n   'withdrawn_cents',(SELECT coalesce(sum(amount_cents),0) FROM public.withdrawals WHERE status='paid' AND (p_user IS NULL OR user_id=p_user)),\n   'pending_payout_cents',(SELECT coalesce(sum(amount_cents),0) FROM public.withdrawals WHERE status IN ('pending','approved') AND (p_user IS NULL OR user_id=p_user)),\n   'unverified_payments',(SELECT count(*) FROM public.payments WHERE NOT finance_verified AND (p_user IS NULL OR user_id=p_user)),\n   'failed_events',(SELECT count(*) FROM public.stripe_webhook_events WHERE status='failed' AND (p_user IS NULL OR stripe_account_id=(SELECT stripe_account_id FROM public.profiles WHERE id=p_user))),\n   'pending_events',(SELECT count(*) FROM public.stripe_webhook_events WHERE status='processing' AND (p_user IS NULL OR stripe_account_id=(SELECT stripe_account_id FROM public.profiles WHERE id=p_user))),\n   'reconciliation_required',EXISTS(SELECT 1 FROM public.balances WHERE (p_user IS NULL OR user_id=p_user) AND (reconciliation_required OR synced_at IS NULL OR synced_at<now()-interval '5 minutes'))\n ) FROM public.payments WHERE finance_verified AND (p_user IS NULL OR user_id=p_user);\n$function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "claim_finance_sync",
+      "signature": "claim_finance_sync(uuid,uuid)",
+      "prosecdef": false,
+      "definition": "CREATE OR REPLACE FUNCTION public.claim_finance_sync(p_user uuid, p_token uuid)\n RETURNS boolean\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nBEGIN\n  PERFORM pg_advisory_xact_lock(hashtextextended(p_user::text,0));\n  INSERT INTO public.balances(user_id) VALUES(p_user) ON CONFLICT(user_id) DO NOTHING;\n  IF EXISTS(SELECT 1 FROM public.balances WHERE user_id=p_user AND sync_until>now()) THEN RETURN false; END IF;\n  UPDATE public.balances SET sync_token=p_token,sync_until=now()+interval '3 minutes',synced_at=NULL,available_balance=0 WHERE user_id=p_user;\n  RETURN true;\nEND $function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "complete_finance_sync",
+      "signature": "complete_finance_sync(uuid,uuid,text,bigint,bigint,timestamp with time zone)",
+      "prosecdef": false,
+      "definition": "CREATE OR REPLACE FUNCTION public.complete_finance_sync(p_user uuid, p_token uuid, p_account text, p_available bigint, p_pending bigint, p_started timestamp with time zone)\n RETURNS void\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nBEGIN\n  PERFORM pg_advisory_xact_lock(hashtextextended(p_user::text,0));\n  IF NOT EXISTS(SELECT 1 FROM public.balances WHERE user_id=p_user AND sync_token=p_token AND sync_until>now()) THEN\n    RAISE EXCEPTION 'Sync lease expired'; END IF;\n  PERFORM public.sync_finance_balance(p_user,p_account,p_available,p_pending,p_started);\n  UPDATE public.balances SET sync_token=NULL,sync_until=NULL WHERE user_id=p_user;\nEND $function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "settle_stripe_sale",
+      "signature": "settle_stripe_sale(jsonb)",
+      "prosecdef": false,
+      "definition": "CREATE OR REPLACE FUNCTION public.settle_stripe_sale(p jsonb)\n RETURNS uuid\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nDECLARE\n  seller uuid := (p->>'seller_id')::uuid;\n  buyer uuid := (p->>'customer_id')::uuid;\n  product uuid := (p->>'product_id')::uuid;\n  gross bigint := (p->>'gross')::bigint;\n  fee bigint := (p->>'platform_fee')::bigint;\n  stripe_fee bigint := (p->>'stripe_fee')::bigint;\n  net bigint := (p->>'producer_net')::bigint;\n  payment public.payments;\n  order_uuid uuid;\n  payment_uuid uuid;\nBEGIN\n  IF p->>'livemode' IS DISTINCT FROM 'true' OR p->>'currency' IS DISTINCT FROM 'brl' OR\n     gross IS NULL OR gross <= 0 OR fee IS NULL OR fee <= 0 OR fee <> (gross+5)/10 OR\n     stripe_fee IS NULL OR stripe_fee < 0 OR net IS NULL OR net < 0 OR gross <> fee+stripe_fee+net THEN\n    RAISE EXCEPTION 'Invalid verified settlement';\n  END IF;\n  -- Same seller lock also serializes access grants, projections, and payout reservations.\n  PERFORM pg_advisory_xact_lock(hashtextextended(seller::text,0));\n  IF NOT EXISTS(SELECT 1 FROM public.profiles WHERE id=seller AND stripe_account_id=p->>'account_id') OR\n     NOT EXISTS(SELECT 1 FROM public.products_checkout c JOIN public.products pr ON pr.id=c.product_id\n       WHERE c.id=(p->>'checkout_id')::uuid AND c.product_id=product AND c.user_id=seller AND pr.user_id=seller) OR\n     NOT EXISTS(SELECT 1 FROM public.profiles WHERE id=buyer) THEN\n    RAISE EXCEPTION 'Invalid product, buyer or account';\n  END IF;\n  SELECT * INTO payment FROM public.payments WHERE payment_provider_id=p->>'intent_id'\n    OR stripe_checkout_session_id=p->>'session_id';\n  IF FOUND THEN\n    IF NOT payment.finance_verified THEN RAISE EXCEPTION 'Legacy payment requires explicit reconciliation'; END IF;\n    IF payment.user_id IS DISTINCT FROM seller OR payment.customer_id IS DISTINCT FROM buyer OR\n       payment.product_id IS DISTINCT FROM product OR payment.stripe_account_id IS DISTINCT FROM p->>'account_id' OR\n       payment.stripe_checkout_session_id IS DISTINCT FROM p->>'session_id' OR\n       payment.payment_provider_id IS DISTINCT FROM p->>'intent_id' OR payment.gross_cents IS DISTINCT FROM gross OR\n       payment.platform_fee_cents IS DISTINCT FROM fee OR payment.stripe_fee_cents IS DISTINCT FROM stripe_fee OR\n       payment.stripe_charge_id IS DISTINCT FROM p->>'charge_id' OR\n       payment.stripe_balance_transaction_id IS DISTINCT FROM p->>'transaction_id' THEN\n      RAISE EXCEPTION 'Conflicting duplicate payment';\n    END IF;\n    RETURN payment.id;\n  END IF;\n  INSERT INTO public.orders(user_id,product_id,amount,customer_name,customer_email,status,\n    stripe_payment_intent_id,stripe_checkout_session_id)\n  VALUES(seller,product,gross::numeric/100,p->>'customer_name',p->>'customer_email','PAID',p->>'intent_id',p->>'session_id')\n  RETURNING id INTO order_uuid;\n  INSERT INTO public.payments(user_id,payment_provider_id,status,value,original_value,final_value,platform_fee,\n    platform_fee_percent,stripe_fee,net_value,customer_name,customer_email,finance_verified,stripe_account_id,\n    stripe_checkout_session_id,stripe_charge_id,stripe_balance_transaction_id,order_id,customer_id,product_id,\n    gross_cents,platform_fee_cents,stripe_fee_cents,producer_net_cents,currency,available_on,paid_at,stripe_evidence)\n  VALUES(seller,p->>'intent_id','PAID',gross::numeric/100,gross::numeric/100,net::numeric/100,fee::numeric/100,\n    10,stripe_fee::numeric/100,fee::numeric/100,p->>'customer_name',p->>'customer_email',true,p->>'account_id',\n    p->>'session_id',p->>'charge_id',p->>'transaction_id',order_uuid,buyer,product,gross,fee,stripe_fee,net,'brl',\n    (p->>'available_on')::timestamptz,(p->>'paid_at')::timestamptz,p) RETURNING id INTO payment_uuid;\n  -- Serialize grants for the same buyer even when buying different sellers' products.\n  PERFORM pg_advisory_xact_lock(hashtextextended(buyer::text||product::text,1));\n  IF NOT EXISTS(SELECT 1 FROM public.customer_products WHERE customer_id=buyer AND product_id=product) THEN\n    INSERT INTO public.customer_products(customer_id,product_id,order_id,status) VALUES(buyer,product,order_uuid,'active');\n  ELSE\n    UPDATE public.customer_products SET status='active',expires_at=NULL\n      WHERE customer_id=buyer AND product_id=product;\n  END IF;\n  INSERT INTO public.balances(user_id,stripe_account_id,total_earned,pending_balance)\n    VALUES(seller,p->>'account_id',net::numeric/100,net::numeric/100)\n  ON CONFLICT(user_id) DO UPDATE SET total_earned=public.balances.total_earned+net::numeric/100,\n    pending_balance=public.balances.pending_balance+net::numeric/100,synced_at=NULL;\n  RETURN payment_uuid;\nEND $function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "sync_finance_balance",
+      "signature": "sync_finance_balance(uuid,text,bigint,bigint,timestamp with time zone)",
+      "prosecdef": false,
+      "definition": "CREATE OR REPLACE FUNCTION public.sync_finance_balance(p_user uuid, p_account text, p_available bigint, p_pending bigint, p_started timestamp with time zone)\n RETURNS void\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nDECLARE earned bigint; matured bigint; paid bigint; reserved bigint; blocked boolean;\nBEGIN\n  IF p_available IS NULL OR p_pending IS NULL OR p_started IS NULL THEN RAISE EXCEPTION 'Stripe balance snapshot required'; END IF;\n  PERFORM pg_advisory_xact_lock(hashtextextended(p_user::text,0));\n  IF NOT EXISTS(SELECT 1 FROM public.profiles WHERE id=p_user AND stripe_account_id=p_account) THEN\n    RAISE EXCEPTION 'Account mismatch'; END IF;\n  INSERT INTO public.balances(user_id,stripe_account_id) VALUES(p_user,p_account) ON CONFLICT(user_id) DO NOTHING;\n  IF EXISTS(SELECT 1 FROM public.balances WHERE user_id=p_user AND synced_at>p_started) THEN RETURN; END IF;\n  SELECT coalesce(sum(producer_net_cents),0),coalesce(sum(producer_net_cents) FILTER(WHERE available_on<=now()),0)\n    INTO earned,matured FROM public.payments WHERE user_id=p_user AND finance_verified;\n  SELECT coalesce(sum(amount_cents) FILTER(WHERE status='paid'),0),\n    coalesce(sum(amount_cents) FILTER(WHERE status IN ('pending','approved')),0)\n    INTO paid,reserved FROM public.withdrawals WHERE user_id=p_user AND amount_cents IS NOT NULL;\n  blocked := p_available < 0 OR p_pending < 0 OR paid+reserved>earned OR\n    EXISTS(SELECT 1 FROM public.payments WHERE user_id=p_user AND (NOT finance_verified OR reconciliation_required)) OR\n    EXISTS(SELECT 1 FROM public.withdrawals WHERE user_id=p_user AND amount_cents IS NULL);\n  UPDATE public.balances SET stripe_account_id=p_account,total_earned=earned::numeric/100,\n    total_withdrawn=paid::numeric/100,pending_payout=reserved::numeric/100,\n    available_balance=CASE WHEN blocked THEN 0 ELSE greatest(0,least(matured-paid-reserved,p_available))::numeric/100 END,\n    pending_balance=greatest(0,least(earned-matured,p_pending))::numeric/100,\n    stripe_available_cents=greatest(0,p_available),synced_at=p_started,reconciliation_required=blocked,updated_at=now()\n    WHERE user_id=p_user;\nEND $function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "reserve_stripe_payout",
+      "signature": "reserve_stripe_payout(uuid,uuid,bigint)",
+      "prosecdef": false,
+      "definition": "CREATE OR REPLACE FUNCTION public.reserve_stripe_payout(p_user uuid, p_key uuid, p_amount bigint)\n RETURNS withdrawals\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nDECLARE b public.balances; w public.withdrawals;\nBEGIN\n  PERFORM pg_advisory_xact_lock(hashtextextended(p_user::text,0));\n  SELECT * INTO w FROM public.withdrawals WHERE request_key=p_key;\n  IF FOUND THEN\n    IF w.user_id<>p_user OR w.amount_cents<>p_amount THEN RAISE EXCEPTION 'Idempotency conflict'; END IF;\n    RETURN w;\n  END IF;\n  SELECT * INTO b FROM public.balances WHERE user_id=p_user FOR UPDATE;\n  IF NOT FOUND OR b.reconciliation_required OR b.synced_at IS NULL OR b.synced_at<now()-interval '2 minutes' OR\n    b.sync_until>now() OR p_amount IS NULL OR p_amount<=0 OR p_amount::numeric>b.available_balance*100 OR\n    p_amount>b.stripe_available_cents OR\n    EXISTS(SELECT 1 FROM public.withdrawals WHERE user_id=p_user AND status IN ('pending','approved')) THEN\n    RAISE EXCEPTION 'Insufficient available balance or reconciliation required';\n  END IF;\n  INSERT INTO public.withdrawals(user_id,amount,amount_cents,request_key,stripe_account_id,status,pix_key,pix_type)\n    VALUES(p_user,p_amount::numeric/100,p_amount,p_key,b.stripe_account_id,'pending','stripe','stripe') RETURNING * INTO w;\n  UPDATE public.balances SET available_balance=available_balance-p_amount::numeric/100,\n    pending_payout=pending_payout+p_amount::numeric/100,stripe_available_cents=stripe_available_cents-p_amount,\n    synced_at=NULL WHERE user_id=p_user;\n  RETURN w;\nEND $function$\n"
+    },
+    {
+      "schema": "public",
+      "proname": "finance_top_product",
+      "signature": "finance_top_product(uuid)",
+      "prosecdef": false,
+      "definition": "CREATE OR REPLACE FUNCTION public.finance_top_product(p_user uuid)\n RETURNS jsonb\n LANGUAGE sql\n STABLE\n SET search_path TO ''\nAS $function$\n  SELECT to_jsonb(x) FROM (\n    SELECT pr.id,pr.title,pr.type,pr.price,count(*) sales,sum(p.gross_cents)::numeric/100 revenue\n    FROM public.payments p JOIN public.products pr ON pr.id=p.product_id\n    WHERE p.user_id=p_user AND p.finance_verified GROUP BY pr.id ORDER BY count(*) DESC,sum(p.gross_cents) DESC LIMIT 1\n  ) x;\n$function$\n"
+    }
+  ],
+  "triggers": [
+    {
+      "table_name": "auth.users",
+      "tgname": "on_auth_user_created",
+      "definition": "CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION handle_new_user()"
+    },
+    {
+      "table_name": "balances",
+      "tgname": "trg_balances_updated_at",
+      "definition": "CREATE TRIGGER trg_balances_updated_at BEFORE UPDATE ON public.balances FOR EACH ROW EXECUTE FUNCTION update_updated_at()"
+    },
+    {
+      "table_name": "cron.job",
+      "tgname": "cron_job_cache_invalidate",
+      "definition": "CREATE TRIGGER cron_job_cache_invalidate AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON cron.job FOR EACH STATEMENT EXECUTE FUNCTION cron.job_cache_invalidate()"
+    },
+    {
+      "table_name": "profiles",
+      "tgname": "financial_profile_guard",
+      "definition": "CREATE TRIGGER financial_profile_guard BEFORE INSERT OR UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION guard_financial_profile()"
+    },
+    {
+      "table_name": "realtime.subscription",
+      "tgname": "tr_check_filters",
+      "definition": "CREATE TRIGGER tr_check_filters BEFORE INSERT OR UPDATE ON realtime.subscription FOR EACH ROW EXECUTE FUNCTION realtime.subscription_check_filters()"
+    },
+    {
+      "table_name": "storage.buckets",
+      "tgname": "enforce_bucket_name_length_trigger",
+      "definition": "CREATE TRIGGER enforce_bucket_name_length_trigger BEFORE INSERT OR UPDATE OF name ON storage.buckets FOR EACH ROW EXECUTE FUNCTION storage.enforce_bucket_name_length()"
+    },
+    {
+      "table_name": "storage.buckets",
+      "tgname": "protect_bucket_control_insert",
+      "definition": "CREATE TRIGGER protect_bucket_control_insert BEFORE INSERT ON storage.buckets FOR EACH ROW EXECUTE FUNCTION storage.protect_bucket_control_columns('service_role')"
+    },
+    {
+      "table_name": "storage.buckets",
+      "tgname": "protect_bucket_control_update",
+      "definition": "CREATE TRIGGER protect_bucket_control_update BEFORE UPDATE OF lifecycle_configuration, lifecycle_configuration_generation ON storage.buckets FOR EACH ROW EXECUTE FUNCTION storage.protect_bucket_control_columns()"
+    },
+    {
+      "table_name": "storage.buckets",
+      "tgname": "protect_bucket_control_update_role",
+      "definition": "CREATE TRIGGER protect_bucket_control_update_role AFTER UPDATE OF lifecycle_configuration, lifecycle_configuration_generation ON storage.buckets FOR EACH ROW EXECUTE FUNCTION storage.enforce_bucket_lifecycle_service_role('service_role')"
+    },
+    {
+      "table_name": "storage.buckets",
+      "tgname": "protect_buckets_delete",
+      "definition": "CREATE TRIGGER protect_buckets_delete BEFORE DELETE ON storage.buckets FOR EACH STATEMENT EXECUTE FUNCTION storage.protect_delete()"
+    },
+    {
+      "table_name": "storage.objects",
+      "tgname": "protect_objects_delete",
+      "definition": "CREATE TRIGGER protect_objects_delete BEFORE DELETE ON storage.objects FOR EACH STATEMENT EXECUTE FUNCTION storage.protect_delete()"
+    },
+    {
+      "table_name": "storage.objects",
+      "tgname": "update_objects_updated_at",
+      "definition": "CREATE TRIGGER update_objects_updated_at BEFORE UPDATE ON storage.objects FOR EACH ROW EXECUTE FUNCTION storage.update_updated_at_column()"
+    },
+    {
+      "table_name": "withdraw_requests",
+      "tgname": "trg_withdraw_requests_updated_at",
+      "definition": "CREATE TRIGGER trg_withdraw_requests_updated_at BEFORE UPDATE ON public.withdraw_requests FOR EACH ROW EXECUTE FUNCTION update_updated_at()"
+    }
+  ],
+  "counts": [
+    {
+      "table_name": "analytics",
+      "n": 0,
+      "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table_name": "balance_releases",
+      "n": 0,
+      "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table_name": "balances",
+      "n": 1,
+      "fingerprint": "cb90b6e8969be2262d856fa5579256b4"
+    },
+    {
+      "table_name": "coupons",
+      "n": 1,
+      "fingerprint": "770308b246a02e8052f8cf718326523e"
+    },
+    {
+      "table_name": "course_lessons",
+      "n": 2,
+      "fingerprint": "b32cccd6dc92b860ff5685815a6b0a16"
+    },
+    {
+      "table_name": "course_modules",
+      "n": 2,
+      "fingerprint": "98a331128eb3eca4d0a394f6d56e3057"
+    },
+    {
+      "table_name": "customer_products",
+      "n": 5,
+      "fingerprint": "eea90fe9ca956c1901552239cb11570e"
+    },
+    {
+      "table_name": "financial_balance_audit_snapshots",
+      "n": 4,
+      "fingerprint": "8c656d3de94a489bf331253b6e1cfa6f"
+    },
+    {
+      "table_name": "financial_transactions",
+      "n": 5,
+      "fingerprint": "9031f7872f11921aac6a53a48f810b89"
+    },
+    {
+      "table_name": "lesson_progress",
+      "n": 4,
+      "fingerprint": "312f0bcff4ac095110f583cdd0d6e511"
+    },
+    {
+      "table_name": "link_clicks_daily",
+      "n": 0,
+      "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table_name": "links",
+      "n": 0,
+      "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table_name": "notifications",
+      "n": 1,
+      "fingerprint": "c41b2ec5e857f6f1b2ca5f7744531a32"
+    },
+    {
+      "table_name": "orders",
+      "n": 5,
+      "fingerprint": "1267c00af10632efb9935de54e3efb90"
+    },
+    {
+      "table_name": "payments",
+      "n": 5,
+      "fingerprint": "738fce2d3325851220cd764eab5ac252"
+    },
+    {
+      "table_name": "products",
+      "n": 6,
+      "fingerprint": "823efa8e9ca0f843b3ff98f2a61ed58b"
+    },
+    {
+      "table_name": "products_checkout",
+      "n": 3,
+      "fingerprint": "b0dde37749c607ff5e1075ae24e42eaf"
+    },
+    {
+      "table_name": "profiles",
+      "n": 5,
+      "fingerprint": "23987c27965d0a77d9e585fae35f3cc2"
+    },
+    {
+      "table_name": "stripe_webhook_events",
+      "n": 0,
+      "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table_name": "subscriptions",
+      "n": 1,
+      "fingerprint": "5e0b253bf1a8b5a169c5e1eec89db3f2"
+    },
+    {
+      "table_name": "support_bugs",
+      "n": 1,
+      "fingerprint": "5fc7425f9869d7d1cc8f3ab956f0b969"
+    },
+    {
+      "table_name": "support_feedback",
+      "n": 1,
+      "fingerprint": "d99149cb6f87aa982a254f0ee07d10ec"
+    },
+    {
+      "table_name": "support_messages",
+      "n": 1,
+      "fingerprint": "bc04eed059c96d1c7954351e143144d3"
+    },
+    {
+      "table_name": "support_suggestions",
+      "n": 1,
+      "fingerprint": "554e556666980d390014619959053b60"
+    },
+    {
+      "table_name": "withdraw_requests",
+      "n": 0,
+      "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table_name": "withdrawals",
+      "n": 0,
+      "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table_name": "auth.users",
+      "n": 5,
+      "fingerprint": "9b1270f8ef932714cb26300aa923d6f5"
+    },
+    {
+      "table_name": "storage.objects",
+      "n": 76,
+      "fingerprint": "0e8affd0f6c2f7733b24bbd431ec6444"
+    }
+  ],
+  "storage": [
+    {
+      "id": "avatars",
+      "public": true,
+      "n": 17
+    },
+    {
+      "id": "products",
+      "public": false,
+      "n": 26
+    },
+    {
+      "id": "products-images",
+      "public": true,
+      "n": 33
+    }
+  ]
+}

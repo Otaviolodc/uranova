@@ -2,7 +2,7 @@ import "server-only";
 import { createClient as createIsolatedClient } from "@supabase/supabase-js";
 import type { User } from "@supabase/supabase-js";
 import { authStagingEnabled } from "@/lib/security/staging-policy";
-import { RateLimitError } from "@/lib/security/rate-limit";
+import { RateLimitError } from "@/lib/security/rate-limit-error";
 
 
 export function sameOrigin(req: Request) {

@@ -24,7 +24,7 @@ process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://logout-test.supabase.co';
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'synthetic-anon-key';
 mock.method(globalThis, 'fetch', async (url, options) => {
   calls.push({ url: String(url), options });
-  assert.equal(String(url), 'https://logout-test.supabase.co/auth/v1/logout?scope=global');
+  assert.equal(String(url), 'https://logout-test.supabase.co/auth/v1/logout?scope=local');
   assert.equal(options.method, 'POST');
   return providerFailure
     ? Response.json({ message: 'PRIVATE_PROVIDER_DETAIL' }, { status: 500 })
@@ -63,7 +63,8 @@ test('GET preserves session and supplies branded native POST with compatible ref
   const csp = response.headers.get('content-security-policy');
   assert.ok(csp.includes(`style-src 'sha256-${createHash('sha256').update(css).digest('base64')}'`));
   for (const directive of ["default-src 'none'", "form-action 'self'", "frame-ancestors 'none'", "base-uri 'none'"]) assert.ok(csp.includes(directive));
-  assert.doesNotMatch(html, /<script/);
+  const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+  assert.ok(csp.includes(`script-src 'sha256-${createHash('sha256').update(script).digest('base64')}'`));
   assert.deepEqual(calls, []);
   assert.deepEqual(writes, []);
 });
@@ -117,4 +118,17 @@ test('Auth failure does not claim success, clear session or leak provider detail
   assert.equal(response.headers.get('cache-control'), 'no-store');
   assert.doesNotMatch(await response.text(), /PRIVATE_PROVIDER_DETAIL|synthetic/);
   assert.deepEqual(writes, []);
+});
+
+test('enhanced POST reports success only after SDK revocation and cookie deletion', async () => {
+  reset();
+  const response = await POST(request(origins[0], origins[0], { accept: 'application/json' }));
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { success: true });
+  assert.equal(calls.length, 1);
+  assert.ok(writes.length > 0);
+  reset(); providerFailure = true;
+  const failed = await POST(request(origins[0], origins[0], { accept: 'application/json' }));
+  assert.equal(failed.status, 503);
+  assert.equal((await failed.json()).success, undefined);
 });

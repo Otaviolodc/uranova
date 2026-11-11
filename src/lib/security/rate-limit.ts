@@ -4,9 +4,8 @@ import { isIP } from "node:net";
 import { admin } from "@/lib/supabase/admin";
 
 export type RateScope = "checkout" | "payout" | "connect" | "password" | "upload" | "download" | "ai" | "sync" | "tracking" | "admin";
-export class RateLimitError extends Error {
-  constructor(public readonly retryAfter: number) { super("RATE_LIMITED"); }
-}
+import { RateLimitError } from "./rate-limit-error";
+export { RateLimitError } from "./rate-limit-error";
 
 // Only Vercel's overwritten header is accepted. No client-supplied forwarding fallback.
 export function trackingPrincipal(req: Request): string {

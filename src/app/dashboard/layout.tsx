@@ -1,4 +1,5 @@
 import { ReactNode, Suspense } from "react";
+import PrivateSession from "@/components/auth/PrivateSession";
 import { redirect } from "next/navigation";
 import SidebarFinance from "@/components/finance/SidebarFinance";
 
@@ -25,6 +26,7 @@ export default async function DashboardLayout({
   }
 
   return (
+    <PrivateSession userId={user.id}>
     <div className="flex bg-black min-h-screen">
       <Sidebar
         userId={user.id}
@@ -43,5 +45,6 @@ export default async function DashboardLayout({
 
       <SupportButton />
     </div>
+    </PrivateSession>
   );
 }

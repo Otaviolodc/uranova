@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { authStagingEnabled } from "@/lib/security/staging-policy";
 
-export async function createClient() {
+export async function createClient({ writableCookies = false } = {}) {
   authStagingEnabled();
   const cookieStore = await cookies();
 
@@ -21,6 +21,7 @@ export async function createClient() {
               cookieStore.set(name, value, options);
             });
           } catch {
+            if (writableCookies) throw new Error("AUTH_COOKIE_WRITE_FAILED");
             // Server Components não podem alterar cookies
           }
         },

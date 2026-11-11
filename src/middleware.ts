@@ -31,8 +31,13 @@ export async function middleware(
   }
   // Preserve production session refresh scope.
   const path = request.nextUrl.pathname;
-  return ["/dashboard","/admin","/auth"].some(prefix=>path===prefix||path.startsWith(prefix+"/"))
+  // Logout must not race a separate token refresh before its cookie mutation.
+  const response = path !== "/auth/logout" && ["/dashboard","/admin","/auth", "/checkout/success"].some(prefix=>path===prefix||path.startsWith(prefix+"/"))
     ? await updateSession(request) : NextResponse.next();
+  if (["/dashboard", "/admin", "/auth", "/api", "/checkout/success"].some(prefix => path === prefix || path.startsWith(prefix + "/"))) {
+    response.headers.set("Cache-Control", "private, no-store");
+  }
+  return response;
 }
 
 export const config = {

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { sameOrigin, safeError } from "@/lib/security/request";
 import { createHash } from "node:crypto";
 
-// Static CSS is authorized by its hash; scripts and arbitrary inline styles stay blocked.
+// Only the exact static CSS and enhancement script are authorized by CSP hashes.
 const styles = `
 *{box-sizing:border-box}body{margin:0;background:#050505;color:#fafafa;font-family:Arial,Helvetica,sans-serif;min-height:100svh;display:grid;place-items:center;padding:24px}
 main{width:100%;max-width:512px;border:1px solid #27272a;border-radius:24px;background:#09090b;padding:32px 24px 40px;text-align:center;box-shadow:0 0 50px #0007}
@@ -13,6 +13,28 @@ a{display:inline-block;margin-top:24px;color:#d4d4d8;line-height:1.5;padding:8px
 @media(min-width:640px){main{padding-left:48px;padding-right:48px}}
 `;
 const styleHash = createHash("sha256").update(styles).digest("base64");
+const script = `
+const form = document.querySelector('form');
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const button = form.querySelector('button');
+  button.disabled = true;
+  document.getElementById('logout-error').textContent = '';
+  try {
+    const response = await fetch('/auth/logout', {method:'POST', headers:{Accept:'application/json'}, credentials:'same-origin', cache:'no-store'});
+    if (!response.ok || !(await response.json()).success) throw new Error('logout');
+    try { localStorage.setItem('uranova:logout', String(Date.now())); } catch {}
+    if (typeof BroadcastChannel !== 'undefined') {
+      const channel = new BroadcastChannel('uranova:auth');
+      channel.postMessage('SIGNED_OUT'); channel.close();
+    }
+    window.location.replace('/auth/login');
+  } catch {
+    document.getElementById('logout-error').textContent = 'Não foi possível confirmar a saída. Tente novamente.';
+    button.disabled = false;
+  }
+});`;
+const scriptHash = createHash("sha256").update(script).digest("base64");
 
 // Navigation (including prefetches and external links) must not mutate a session.
 export async function GET() {
@@ -23,11 +45,12 @@ export async function GET() {
 <h1 id="logout-title">Sair da sua conta?</h1>
 <p>Confirme para encerrar sua sessão. Você poderá entrar novamente quando quiser.</p>
 <form method="post" action="/auth/logout"><button type="submit">Confirmar saída</button></form>
-<a href="/dashboard">Voltar ao painel</a></main></body></html>`, {
+<p id="logout-error" role="alert"></p>
+<a href="/dashboard">Voltar ao painel</a></main><script>${script}</script></body></html>`, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
-      "Content-Security-Policy": `default-src 'none'; img-src 'self'; style-src 'sha256-${styleHash}'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'`,
+      "Content-Security-Policy": `default-src 'none'; img-src 'self'; connect-src 'self'; script-src 'sha256-${scriptHash}'; style-src 'sha256-${styleHash}'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'`,
       // no-referrer makes native form POSTs send Origin: null, failing sameOrigin.
       // Keep the real same-origin Origin without disclosing Referer cross-origin.
       "Referrer-Policy": "same-origin",
@@ -38,9 +61,12 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     sameOrigin(request);
-    const supabase = await createClient();
-    const { error } = await supabase.auth.signOut();
+    const supabase = await createClient({ writableCookies: true });
+    const { error } = await supabase.auth.signOut({ scope: "local" });
     if (error) throw new Error("LOGOUT_FAILED");
+    if (request.headers.get("accept") === "application/json") {
+      return Response.json({ success: true }, { headers: { "Cache-Control": "private, no-store" } });
+    }
     const response = NextResponse.redirect(new URL("/auth/login", request.url), 303);
     response.headers.set("Cache-Control", "no-store");
     return response;

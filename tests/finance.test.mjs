@@ -14,7 +14,7 @@ const settle=(db,p=sale)=>db.query('select settle_stripe_sale($1::jsonb) id',[JS
 async function database() {
  const db=new PGlite();
  await db.exec(readFileSync(new URL('./fixtures/finance-schema.sql',import.meta.url),'utf8'));
- await db.exec(readFileSync(new URL('../supabase/migrations/20260913014834_official_finance.sql',import.meta.url),'utf8').replace(/^\uFEFF/,''));
+ await db.exec(readFileSync(new URL('../supabase/migrations/20260914204949_official_finance.sql',import.meta.url),'utf8').replace(/^\uFEFF/,''));
  return db;
 }
 const sync=(db)=>db.query('select sync_finance_balance($1,$2,8562,0,now())',[seller,'acct_seller']);
