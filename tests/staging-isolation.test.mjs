@@ -25,7 +25,7 @@ const {admin}=await import('../src/lib/supabase/admin.ts');
 const {NextRequest}=await import('next/server');
 const {middleware}=await import('../src/middleware.ts');
 const {GET:callback}=await import('../src/app/auth/callback/route.ts');
-const routes=await Promise.all(['stripe/checkout','stripe/webhook','stripe/connect/create','finance/payout','finance/sync','ai/chat','files/upload','files/download'].map(async p=>[p,(await import('../src/app/api/'+p+'/route.ts')).POST]));
+const routes=await Promise.all(['stripe/checkout','stripe/webhook','stripe/connect/webhook','stripe/connect/create','finance/payout','finance/sync','ai/chat','files/upload','files/download'].map(async p=>[p,(await import('../src/app/api/'+p+'/route.ts')).POST]));
 const {GET:tracking}=await import('../src/app/checkout/go/[slug]/route.ts');
 const payouts=await import('../src/lib/services/payouts.ts');
 const processor=await import('../src/lib/services/payment-processor.ts');
@@ -107,7 +107,7 @@ test('staging: missing, mismatched, expired or opaque keys and inherited externa
   {NEXT_PUBLIC_SUPABASE_ANON_KEY:token('service_role')},
   {NEXT_PUBLIC_SUPABASE_ANON_KEY:'opaque-fixture'},
   {NEXT_PUBLIC_SUPABASE_ANON_KEY:'fixture.'+Buffer.from(JSON.stringify({role:'anon',ref:registration.supabaseProjectRef,exp:1})).toString('base64url')+'.invalid'},
-  {STRIPE_SECRET_KEY:'forbidden-fixture'},{STRIPE_WEBHOOK_SECRET:'forbidden-fixture'},
+  {STRIPE_SECRET_KEY:'forbidden-fixture'},{STRIPE_WEBHOOK_SECRET:'forbidden-fixture'},{STRIPE_CONNECT_WEBHOOK_SECRET:'forbidden-fixture'},
   {NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:'forbidden-fixture'},
   {OPENAI_API_KEY:'forbidden-fixture'},{OPENAI_ADMIN_KEY:'forbidden-fixture'},
   {SUPABASE_ACCESS_TOKEN:'forbidden-fixture'},{DATABASE_URL:'forbidden-fixture'},

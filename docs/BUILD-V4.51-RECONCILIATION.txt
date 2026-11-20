@@ -1,0 +1,14 @@
+V4.51 candidate, based on e4b0412802e2136ab281434673fbcd8d70a1a2be.
+Local-only proposed history reconciliation; no remote state changed.
+The ten active versions match the remote migration inventory read during V4.51.
+All ten normalized SQL bodies matched (comments/whitespace/outer transaction ignored).
+The old 20260913014834 finance file is preserved byte-for-byte in supabase/archive.
+Its normalized SQL equals 20260914204949, the actual remote version.
+V446 and the earlier-timestamp V448 draft are preserved in archive, not executable history.
+Canonical applied V448: 20261120014444_financial_auxiliary_acl_v448.sql.
+Other environments were NOT inventoried. Do not replay this history elsewhere without review.
+No db push, repair, new index, deduplication or financial recovery is authorized.
+This candidate has an independent Git checkout/branch at the base SHA, with uncommitted changes.
+No commit is created. Review manifest before staging.
+No .env or private directory is exported. Tests/build must use synthetic process-only config.
+Dependencies for local checks may be shared from the existing node_modules; a fresh npm ci is a separate verification.

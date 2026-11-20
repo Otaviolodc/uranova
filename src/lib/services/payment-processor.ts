@@ -70,6 +70,6 @@ export async function processPaymentIntentSettlement(intentId: string, stripeAcc
   assertIntegrationsEnabled();
   assertStripeLive();
   const sessions = await stripe.checkout.sessions.list({ payment_intent: intentId, limit: 1 }, { stripeAccount: stripeAccountId });
-  if (!sessions.data[0]?.metadata?.product_id) return { status: "ignored" };
+  if (!sessions.data[0]) throw new Error("RECOVERY_REQUIRED: Checkout Session not found for PaymentIntent");
   return processCheckoutCompleted({ session: sessions.data[0], stripeAccountId });
 }
