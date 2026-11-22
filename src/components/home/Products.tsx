@@ -1,66 +1,17 @@
-import {
-  BookOpen,
-  FileText,
-  Users,
-  Repeat,
-} from "lucide-react";
+import { BookOpen, ChartNoAxesCombined, PanelsTopLeft, Package } from "lucide-react";
+import SectionHeading from "./SectionHeading";
+import styles from "./home.module.css";
 
-const items = [
-  {
-    icon: BookOpen,
-    title: "Cursos Online",
-  },
-  {
-    icon: FileText,
-    title: "E-books",
-  },
-  {
-    icon: Users,
-    title: "Mentorias",
-  },
-  {
-    icon: Repeat,
-    title: "Assinaturas",
-  },
+const resources = [
+  { Icon: Package, title: "Seu catálogo, organizado", text: "Reúna cursos, e-books e arquivos digitais. Gerencie a apresentação dos seus produtos em um só lugar." },
+  { Icon: BookOpen, title: "Conteúdo com continuidade", text: "Organize cursos em módulos e aulas para que seus alunos acompanhem o aprendizado." },
+  { Icon: ChartNoAxesCombined, title: "Clareza para acompanhar", text: "Consulte pedidos e vendas e tenha uma visão dos valores do seu negócio." },
+  { Icon: PanelsTopLeft, title: "Uma vitrine para compartilhar", text: "Apresente seus produtos na loja pública e reúna seus links em uma página de perfil." },
 ];
 
 export default function Products() {
-  return (
-    <section className="py-32 px-6">
-
-      <div className="max-w-7xl mx-auto">
-
-        <h2 className="text-5xl font-bold text-center">
-          Tudo em um só lugar
-        </h2>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
-
-          {items.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <div
-                key={item.title}
-                className="glass rounded-3xl p-8"
-              >
-                <Icon
-                  size={32}
-                  className="text-green-400 mb-6"
-                />
-
-                <h3 className="text-2xl font-bold">
-                  {item.title}
-                </h3>
-
-              </div>
-            );
-          })}
-
-        </div>
-
-      </div>
-
-    </section>
-  );
+  return <section id="recursos" className={`${styles.container} ${styles.section}`}>
+    <SectionHeading eyebrow="MENOS DISPERSÃO. MAIS DIREÇÃO." title="Seu talento cria. A Uranova conecta.">Uma base para organizar o que você vende, entregar o que ensina e acompanhar o que acontece.</SectionHeading>
+    <div className={styles.featureGrid}>{resources.map(({ Icon, title, text }) => <article className={styles.featureCard} key={title}><span className={styles.iconBox}><Icon size={23} aria-hidden="true" /></span><h3>{title}</h3><p>{text}</p></article>)}</div>
+  </section>;
 }

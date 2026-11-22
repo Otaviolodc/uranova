@@ -10,7 +10,7 @@ export default function SiteLayout({
     <>
       <Navbar />
 
-      <main>
+      <main id="conteudo" tabIndex={-1}>
         {children}
       </main>
 
