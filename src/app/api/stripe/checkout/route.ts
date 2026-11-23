@@ -9,6 +9,7 @@ import { requireFinanceUser } from "@/lib/finance/access";
 import { platformFeeCents, priceToCents } from "@/lib/finance/money";
 import { assertDirectChargeAccount } from "@/lib/services/payment-processor";
 import { logCheckoutFailure, type CheckoutStage } from "@/lib/security/checkout-observability";
+import { checkoutImage } from "@/lib/products/checkout-image";
 
 export async function POST(req: Request) {
   const unavailable = integrationUnavailable();
@@ -65,7 +66,7 @@ export async function POST(req: Request) {
       cancel_url: base + "/checkout/" + encodeURIComponent(product.checkout_slug),
       payment_intent_data: { application_fee_amount: fee, metadata },
       line_items: [{ quantity: 1, price_data: { currency: "brl", unit_amount: amount,
-        product_data: { name: product.title } } }],
+        product_data: { name: product.title, ...checkoutImage(product.image_url) } } }],
     }, { stripeAccount: profile.stripe_account_id });
     stage = "SESSION_URL_VALIDATION";
     stripeRequestId = session.lastResponse?.requestId;

@@ -144,3 +144,41 @@ test('logging infrastructure failure cannot change the public checkout response'
     assert.deepEqual(await response.json(), { error: 'Operação indisponível. Tente novamente ou procure o suporte.' });
   } finally { brokenLogger.mock.restore(); }
 });
+
+test('public product covers change only images, preserving the entire session and Connect options', async () => {
+  process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://fixture-project.supabase.co';
+  assert.equal((await POST(request())).status, 200);
+  const baseline = structuredClone(calls[0]);
+  for (const ext of ['png', 'jpg', 'jpeg', 'webp']) {
+    product.image_url = `https://fixture-project.supabase.co/storage/v1/object/public/products-images/seller/cover.${ext}`;
+    assert.equal((await POST(request())).status, 200);
+    const actual = structuredClone(calls.at(-1));
+    assert.deepEqual(actual.payload.line_items[0].price_data.product_data.images, [product.image_url]);
+    delete actual.payload.line_items[0].price_data.product_data.images;
+    assert.deepEqual(actual, baseline);
+  }
+});
+
+test('missing, malformed, private and signed covers preserve the exact no-image session', async () => {
+  process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://fixture-project.supabase.co';
+  await POST(request());
+  const baseline = structuredClone(calls[0]);
+  const prefix = 'https://fixture-project.supabase.co/storage/v1/object/';
+  for (const value of [null, undefined, '', 123, {}, '/cover.png', 'not a URL',
+    'http://fixture-project.supabase.co/cover.png', 'https://127.0.0.1/cover.png',
+    'https://localhost/cover.png', 'https://10.0.0.1/cover.png',
+    'https://foreign.example/cover.png', 'data:image/png;base64,AAAA',
+    prefix + 'sign/products-images/seller/cover.png?token=synthetic',
+    prefix + 'authenticated/products-images/seller/cover.png',
+    prefix + 'public/products/seller/file.png',
+    prefix + 'public/products-images/seller/cover.svg',
+    prefix + 'public/products-images/seller/cover.png?token=synthetic',
+    prefix + 'public/products-images/seller/cover.png#private',
+    prefix + 'public/products-images/seller/%2fcover.png',
+    'https://user:synthetic@fixture-project.supabase.co/storage/v1/object/public/products-images/seller/cover.png']) {
+    product.image_url = value;
+    assert.equal((await POST(request())).status, 200);
+    assert.deepEqual(calls.at(-1), baseline);
+  }
+  assert.deepEqual(entries, []);
+});
